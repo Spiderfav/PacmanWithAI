@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 	"log"
 
@@ -21,12 +22,10 @@ type MazeSquare struct {
 }
 
 func (square MazeSquare) DrawSquare(screen *ebiten.Image) {
-	y := square.X + 20
-
-	ebitenutil.DrawLine(screen, square.X, square.X, square.X, y, color.Black)
-	ebitenutil.DrawLine(screen, square.X, square.X, y, square.X, color.Black)
-	ebitenutil.DrawLine(screen, y, y, square.X, y, color.Black)
-	ebitenutil.DrawLine(screen, y, y, y, square.X, color.Black)
+	ebitenutil.DrawLine(screen, square.X, 20, square.X+20, 20, color.Black)
+	ebitenutil.DrawLine(screen, square.X+20, 20, square.X+20, 40, color.Black)
+	ebitenutil.DrawLine(screen, square.X+20, 40, square.X, 40, color.Black)
+	ebitenutil.DrawLine(screen, square.X, 40, square.X, 20, color.Black)
 }
 
 type Game struct{}
@@ -51,6 +50,7 @@ func DrawMaze(screen *ebiten.Image) {
 	var prevSquare MazeSquare
 
 	for i = 20; i < 200; i += 20 {
+		fmt.Println(i)
 		var square = MazeSquare{i, nil, nil, nil, nil}
 		square.DrawSquare(screen)
 
