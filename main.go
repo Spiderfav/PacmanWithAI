@@ -8,18 +8,25 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+type MazePoints struct {
+	Start MazeSquare
+	End   MazeSquare
+}
 type MazeSquare struct {
-	X_Value                                       float64
-	LeftSquare, DownSquare, RightSquare, UpSquare *MazeSquare
+	X     float64
+	Left  *MazeSquare
+	Down  *MazeSquare
+	Right *MazeSquare
+	Up    *MazeSquare
 }
 
 func (square MazeSquare) DrawSquare(screen *ebiten.Image) {
-	y := square.X_Value + 20
+	y := square.X + 20
 
-	ebitenutil.DrawLine(screen, square.X_Value, square.X_Value, square.X_Value, y, color.Black)
-	ebitenutil.DrawLine(screen, square.X_Value, square.X_Value, y, square.X_Value, color.Black)
-	ebitenutil.DrawLine(screen, y, y, square.X_Value, y, color.Black)
-	ebitenutil.DrawLine(screen, y, y, y, square.X_Value, color.Black)
+	ebitenutil.DrawLine(screen, square.X, square.X, square.X, y, color.Black)
+	ebitenutil.DrawLine(screen, square.X, square.X, y, square.X, color.Black)
+	ebitenutil.DrawLine(screen, y, y, square.X, y, color.Black)
+	ebitenutil.DrawLine(screen, y, y, y, square.X, color.Black)
 }
 
 type Game struct{}
@@ -37,9 +44,35 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func DrawMaze(screen *ebiten.Image) {
 
-	var square1 = MazeSquare{20, nil, nil, nil, nil}
+	var i float64
 
-	square1.DrawSquare(screen)
+	var maze MazePoints
+
+	var prevSquare MazeSquare
+
+	for i = 20; i < 200; i += 20 {
+		var square = MazeSquare{i, nil, nil, nil, nil}
+		square.DrawSquare(screen)
+
+		if (prevSquare != MazeSquare{}) {
+			square.Left = &prevSquare
+			prevSquare.Right = &square
+		}
+
+		prevSquare = square
+
+		if i == 20 {
+			maze.Start = square
+		}
+
+		if i == 180 {
+			maze.End = square
+		}
+	}
+
+	// var square1 = MazeSquare{20, nil, nil, nil, nil}
+
+	// square1.DrawSquare(screen)
 
 	//var i float64
 
@@ -63,7 +96,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 	ebiten.SetWindowSize(640, 480)
-	ebiten.SetWindowTitle("Hello, World!")
+	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
