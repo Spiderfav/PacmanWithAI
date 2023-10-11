@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 type MazePoints struct {
@@ -21,13 +22,15 @@ type MazeSquare struct {
 	Up    *MazeSquare
 }
 
-func (square MazeSquare) DrawSquare(screen *ebiten.Image, x float64, y float64) {
+func (square MazeSquare) DrawSquare(screen *ebiten.Image, x float32, y float32) {
 
-	ebitenutil.DrawLine(screen, x, y, x+20, y, color.Black)
-	ebitenutil.DrawLine(screen, x+20, y, x+20, y+20, color.Black)
+	var strokeWidth float32 = 1
 
-	ebitenutil.DrawLine(screen, x+20, y+20, x, y+20, color.Black)
-	ebitenutil.DrawLine(screen, x, y+20, x, y, color.Black)
+	vector.StrokeLine(screen, x, y, x+20, y, strokeWidth, color.Black, false)
+	vector.StrokeLine(screen, x+20, y, x+20, y+20, strokeWidth, color.Black, false)
+
+	vector.StrokeLine(screen, x+20, y+20, x, y+20, strokeWidth, color.Black, false)
+	vector.StrokeLine(screen, x, y+20, x, y, strokeWidth, color.Black, false)
 
 }
 
@@ -46,13 +49,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func DrawMaze(screen *ebiten.Image) {
 
-	var i float64
+	var i float32
 
 	var maze MazePoints
 
 	var prevSquare MazeSquare
 
-	var squareLength float64 = 20
+	var squareLength float32 = 20
 
 	for i = 1; i < 9; i += 1 {
 		fmt.Println(i)
