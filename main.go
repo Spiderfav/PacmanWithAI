@@ -48,36 +48,38 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func DrawMaze(screen *ebiten.Image) {
 
-	var i float32
+	var i, j float32
 
 	var maze MazePoints
 
 	var prevSquare MazeSquare
 
-	var squareLength float32 = 20
+	var squareLengthX, squareLengthY float32 = 20, 20
 
-	for i = 1; i < 9; i += 1 {
-		fmt.Println(i)
+	for j = 1; j < 9; j += 1 {
 
-		var square = MazeSquare{nil, nil, nil, nil}
-		square.DrawSquare(screen, squareLength*i, squareLength)
+		for i = 1; i < 9; i += 1 {
+			fmt.Println(i)
 
-		if (prevSquare != MazeSquare{}) {
-			square.Left = &prevSquare
-			prevSquare.Right = &square
-		}
+			var square = MazeSquare{nil, nil, nil, nil}
+			square.DrawSquare(screen, squareLengthX*i, squareLengthY*j)
 
-		prevSquare = square
+			if (prevSquare != MazeSquare{}) {
+				square.Left = &prevSquare
+				prevSquare.Right = &square
+			}
 
-		if i == 1 {
-			maze.Start = square
-		}
+			prevSquare = square
 
-		if i == 8 {
-			maze.End = square
+			if i == 1 {
+				maze.Start = square
+			}
+
+			if i == 8 {
+				maze.End = square
+			}
 		}
 	}
-
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
