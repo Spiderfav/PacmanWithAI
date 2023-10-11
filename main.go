@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -78,24 +77,6 @@ func DrawMaze(screen *ebiten.Image) {
 			maze.End = square
 		}
 	}
-
-	// var square1 = MazeSquare{20, nil, nil, nil, nil}
-
-	// square1.DrawSquare(screen)
-
-	//var i float64
-
-	// for i = 20; i < 200; i += 20 {
-	// 	DrawSquareOld(screen, i)
-	// 	//fmt.Println(sum)
-	// }
-}
-
-func DrawSquareOld(screen *ebiten.Image, x float64) {
-	ebitenutil.DrawLine(screen, 25, 25, 25, 45, color.Black)
-	ebitenutil.DrawLine(screen, 25, 25, 45, 25, color.Black)
-	ebitenutil.DrawLine(screen, 45, 45, 25, 45, color.Black)
-	ebitenutil.DrawLine(screen, 45, 45, 45, 25, color.Black)
 
 }
 
