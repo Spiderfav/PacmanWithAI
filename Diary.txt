@@ -1,0 +1,23 @@
+Week 1:
+
+- During this week, I spent most of the time just researching all the techologies I needed to use for my project. These included the algorithms I am going to use as well as the technology needed to complete this project. 
+- I have settled on using Golang as my main programming language as it is fast and efficient but, I still have Python in mind if anything goes wrong.
+- I have made a list of all the things I need to research:
+    - Pathfinding algorithms such as: Dijkstras, A*, Greedy 
+    - How to implement Q learning algorithms for the final product
+    - How to get a visual, game like interface in Golang to display the maze (using ebitten)
+
+
+Week 2:
+
+- In this week I had a go at making small programs in golang to get to grips on how to approach this language. 
+    - As it is not exactly an object oriented language, trying to implement some ideas in an object oriented way is proving to be more difficult than expected.
+- I have also discovered that there are many implementations of maze generating algorithms in golang to be used as packages as well as Pathfinding algorithms
+    - This means I can maybe use their implementations and compare them to mine to check how efficient each is when running on the mazes created
+
+
+Week 3:
+
+- This week, I have begun working on the project and creating the maze graphically. The plan is to at least have a maze by the end of the week.
+    - Proving to be more of a challenge than expected as the "ebitten" package that I'm using contains little to no documentation on how to properly use it
+    - I am having to figure out how to draw each square on the screen and have it in a way that each square knows its neighbours (so that an algorithm like DFS can be applied to it and a maze created)
