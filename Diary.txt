@@ -21,3 +21,4 @@ Week 3:
 - This week, I have begun working on the project and creating the maze graphically. The plan is to at least have a maze by the end of the week.
     - Proving to be more of a challenge than expected as the "ebitten" package that I'm using contains little to no documentation on how to properly use it
     - I am having to figure out how to draw each square on the screen and have it in a way that each square knows its neighbours (so that an algorithm like DFS can be applied to it and a maze created)
+    - I have now created the grid for the maze, next part is figuring out how to create a maze from it using DFS
