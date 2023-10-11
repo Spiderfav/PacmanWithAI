@@ -14,18 +14,21 @@ type MazePoints struct {
 	End   MazeSquare
 }
 type MazeSquare struct {
-	X     float64
+	//X     float64
 	Left  *MazeSquare
 	Down  *MazeSquare
 	Right *MazeSquare
 	Up    *MazeSquare
 }
 
-func (square MazeSquare) DrawSquare(screen *ebiten.Image) {
-	ebitenutil.DrawLine(screen, square.X, 20, square.X+20, 20, color.Black)
-	ebitenutil.DrawLine(screen, square.X+20, 20, square.X+20, 40, color.Black)
-	ebitenutil.DrawLine(screen, square.X+20, 40, square.X, 40, color.Black)
-	ebitenutil.DrawLine(screen, square.X, 40, square.X, 20, color.Black)
+func (square MazeSquare) DrawSquare(screen *ebiten.Image, x float64, y float64) {
+
+	ebitenutil.DrawLine(screen, x, y, x+20, y, color.Black)
+	ebitenutil.DrawLine(screen, x+20, y, x+20, y+20, color.Black)
+
+	ebitenutil.DrawLine(screen, x+20, y+20, x, y+20, color.Black)
+	ebitenutil.DrawLine(screen, x, y+20, x, y, color.Black)
+
 }
 
 type Game struct{}
@@ -49,10 +52,13 @@ func DrawMaze(screen *ebiten.Image) {
 
 	var prevSquare MazeSquare
 
-	for i = 20; i < 200; i += 20 {
+	var squareLength float64 = 20
+
+	for i = 1; i < 9; i += 1 {
 		fmt.Println(i)
-		var square = MazeSquare{i, nil, nil, nil, nil}
-		square.DrawSquare(screen)
+
+		var square = MazeSquare{nil, nil, nil, nil}
+		square.DrawSquare(screen, squareLength*i, squareLength)
 
 		if (prevSquare != MazeSquare{}) {
 			square.Left = &prevSquare
@@ -61,11 +67,11 @@ func DrawMaze(screen *ebiten.Image) {
 
 		prevSquare = square
 
-		if i == 20 {
+		if i == 1 {
 			maze.Start = square
 		}
 
-		if i == 180 {
+		if i == 8 {
 			maze.End = square
 		}
 	}
