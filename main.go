@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"log"
 
@@ -9,17 +8,16 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-type MazePoints struct {
-	Start MazeSquare
-	End   MazeSquare
-}
 type MazeSquare struct {
-	//X     float64
-	Left  *MazeSquare
-	Down  *MazeSquare
-	Right *MazeSquare
-	Up    *MazeSquare
+	XCoordinate float32
+	YCoordinate float32
+	Left        *MazeSquare
+	Down        *MazeSquare
+	Right       *MazeSquare
+	Up          *MazeSquare
 }
+
+var gameGrid [8][8]MazeSquare
 
 func (square MazeSquare) DrawSquare(screen *ebiten.Image, x float32, y float32) {
 
@@ -43,14 +41,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Clear the screen
 	screen.Fill(color.White)
 	DrawMaze(screen)
-
 }
 
 func DrawMaze(screen *ebiten.Image) {
 
 	var i, j float32
-
-	var maze MazePoints
 
 	var prevSquare MazeSquare
 
@@ -59,9 +54,8 @@ func DrawMaze(screen *ebiten.Image) {
 	for j = 1; j < 9; j += 1 {
 
 		for i = 1; i < 9; i += 1 {
-			fmt.Println(i)
 
-			var square = MazeSquare{nil, nil, nil, nil}
+			var square = MazeSquare{squareLengthX * i, squareLengthY * j, nil, nil, nil, nil}
 			square.DrawSquare(screen, squareLengthX*i, squareLengthY*j)
 
 			if (prevSquare != MazeSquare{}) {
@@ -71,15 +65,11 @@ func DrawMaze(screen *ebiten.Image) {
 
 			prevSquare = square
 
-			if i == 1 {
-				maze.Start = square
-			}
+			gameGrid[int(j)-1][int(i-1)] = square
 
-			if i == 8 {
-				maze.End = square
-			}
 		}
 	}
+
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
