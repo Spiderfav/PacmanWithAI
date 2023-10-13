@@ -51,24 +51,34 @@ func DrawMaze(screen *ebiten.Image) {
 
 	var squareLengthX, squareLengthY float32 = 20, 20
 
-	for j = 1; j < 9; j += 1 {
+	for j = 0; j < 8; j += 1 {
 
-		for i = 1; i < 9; i += 1 {
+		for i = 0; i < 8; i += 1 {
 
-			var square = MazeSquare{squareLengthX * i, squareLengthY * j, nil, nil, nil, nil}
-			square.DrawSquare(screen, squareLengthX*i, squareLengthY*j)
+			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
+			var square = MazeSquare{squareLengthX * (i + 1), squareLengthY * (j + 1), nil, nil, nil, nil}
+			square.DrawSquare(screen, squareLengthX*(i+1), squareLengthY*(j+1))
 
 			if (prevSquare != MazeSquare{}) {
 				square.Left = &prevSquare
 				prevSquare.Right = &square
 			}
 
+			if j > 0 {
+				square.Up = &gameGrid[int(j-1)][int(i)]
+				gameGrid[int(j-1)][int(i)].Down = &square
+
+			}
+
 			prevSquare = square
 
-			gameGrid[int(j)-1][int(i-1)] = square
+			gameGrid[int(j)][int(i)] = square
 
 		}
 	}
+
+	// fmt.Println(gameGrid[0][0].XCoordinate)
+	// fmt.Println(gameGrid[0][0].Down.YCoordinate)
 
 }
 
@@ -83,3 +93,15 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
+/*
+
+The & Operator
+
+	& goes in front of a variable when you want to get that variable's memory address.
+
+The * Operator
+
+	* goes in front of a variable that holds a memory address and resolves it (it is therefore the counterpart to the & operator). It goes and gets the thing that the pointer was pointing at
+
+*/
