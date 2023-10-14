@@ -41,13 +41,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Clear the screen
 	screen.Fill(color.White)
 	DrawMaze(screen)
+	breakLine(gameGrid[3][3], screen)
 }
 
 func DrawMaze(screen *ebiten.Image) {
 
 	var i, j float32
-
-	var prevSquare MazeSquare
 
 	var squareLengthX, squareLengthY float32 = 20, 20
 
@@ -59,27 +58,24 @@ func DrawMaze(screen *ebiten.Image) {
 			var square = MazeSquare{squareLengthX * (i + 1), squareLengthY * (j + 1), nil, nil, nil, nil}
 			square.DrawSquare(screen, squareLengthX*(i+1), squareLengthY*(j+1))
 
-			if (prevSquare != MazeSquare{}) {
-				square.Left = &prevSquare
-				prevSquare.Right = &square
+			if i > 0 {
+				square.Left = &gameGrid[int(j)][int(i-1)]
+				gameGrid[int(j)][int(i-1)].Right = &square
 			}
 
-			if j > 0 {
+			if j > 0 || (i == 0 && j > 0) {
 				square.Up = &gameGrid[int(j-1)][int(i)]
 				gameGrid[int(j-1)][int(i)].Down = &square
 
 			}
 
-			prevSquare = square
-
-			gameGrid[int(j)][int(i)] = square
+			gameGrid[int(i)][int(j)] = square
 
 		}
 	}
 
-	// fmt.Println(gameGrid[0][0].XCoordinate)
+	//fmt.Println(gameGrid[3][3])
 	// fmt.Println(gameGrid[0][0].Down.YCoordinate)
-
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
