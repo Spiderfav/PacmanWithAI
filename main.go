@@ -41,7 +41,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Clear the screen
 	screen.Fill(color.White)
 	DrawMaze(screen)
-	breakLine(gameGrid[3][3], screen)
+	//breakLine(gameGrid[3][3], screen)
 }
 
 func DrawMaze(screen *ebiten.Image) {
