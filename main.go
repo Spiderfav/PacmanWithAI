@@ -60,14 +60,11 @@ func CreateMaze() [8][8]MazeSquare {
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
 			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false}
-			//square.DrawSquare(screen, squareLengthX*(i+1), squareLengthY*(j+1))
 
 			gameGrid[int(y)][int(x)] = square
 
 			if x > 0 {
-				//fmt.Println("Square ", square)
 				gameGrid[int(y)][int(x)].Left = &gameGrid[int(y)][int(x-1)]
-				//fmt.Println("Square next ", square)
 				gameGrid[int(y)][int(x-1)].Right = &gameGrid[int(y)][int(x)]
 			}
 
