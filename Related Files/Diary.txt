@@ -22,3 +22,14 @@ Week 3:
     - Proving to be more of a challenge than expected as the "ebitten" package that I'm using contains little to no documentation on how to properly use it
     - I am having to figure out how to draw each square on the screen and have it in a way that each square knows its neighbours (so that an algorithm like DFS can be applied to it and a maze created)
     - I have now created the grid for the maze, next part is figuring out how to create a maze from it using DFS
+
+
+Week 4:
+
+- This week I wanted to already have started on implementing Pathfinding algorithms. However, I had to re-write my implementation for mostly everything so that maze generation algorithms could work.
+- However, this week I have:
+    - Created the maze generation algorithm (Randomised DFS)
+    - Implemented the maze generation algorithm (Randomised DFS) on a given maze grid
+    - Created function to generate the maze from a given grid
+    - After generation the maze is now stored so that at a later date, the contents can be emptied to a file and reloaded as needed for testing the same maze
+        - I have also attached a photo of one of the generations of the maze
