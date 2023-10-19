@@ -7,20 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type MazeSquare struct {
-	XCoordinate float32
-	YCoordinate float32
-	Left        *MazeSquare
-	HasLeft     bool
-	Down        *MazeSquare
-	HasDown     bool
-	Right       *MazeSquare
-	HasRight    bool
-	Up          *MazeSquare
-	HasUp       bool
-	Visited     bool
-}
-
 type Game struct{}
 
 var gameGridDFS [8][8]MazeSquare = DFS()
@@ -29,56 +15,26 @@ func (g *Game) Update() error {
 	return nil
 }
 
+// This function is called every second to update what is drawn on the screen
 func (g *Game) Draw(screen *ebiten.Image) {
-	// Clear the screen
+	// Clear the screen to white
 	screen.Fill(color.White)
-	// DFS(8, gameGrid)
 
+	// Draw the maze to the screen
 	DrawMaze(screen)
 
 }
 
+// The DrawMaze function takes the screen argument given as the screen to draw to maze to
+// It draws the maze from the GameGridDFS
 func DrawMaze(screen *ebiten.Image) {
 
+	// For each row and column, it looks at the walls of the block and draws the ones it has
 	for i := 0; i < 8; i++ {
 		for j := 0; j < 8; j++ {
 			DrawSquare(screen, gameGridDFS[i][j])
 		}
 	}
-}
-
-func CreateMaze() [8][8]MazeSquare {
-	var gameGrid [8][8]MazeSquare
-
-	var x, y float32
-
-	var squareLengthX, squareLengthY float32 = 20, 20
-
-	for y = 0; y < 8; y++ {
-
-		for x = 0; x < 8; x++ {
-
-			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
-			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false}
-
-			gameGrid[int(y)][int(x)] = square
-
-			if x > 0 {
-				gameGrid[int(y)][int(x)].Left = &gameGrid[int(y)][int(x-1)]
-				gameGrid[int(y)][int(x-1)].Right = &gameGrid[int(y)][int(x)]
-			}
-
-			if y > 0 {
-				gameGrid[int(y)][int(x)].Up = &gameGrid[int(y-1)][int(x)]
-				gameGrid[int(y-1)][int(x)].Down = &gameGrid[int(y)][int(x)]
-
-			}
-
-		}
-
-	}
-
-	return gameGrid
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {

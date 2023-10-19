@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"math/rand"
 
@@ -9,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-var gameGrid = CreateMaze()
+var gameGrid = CreateGrid()
 
 func DFS() [8][8]MazeSquare {
 
@@ -19,15 +18,17 @@ func DFS() [8][8]MazeSquare {
 
 	var nextNodeNoGrid *MazeSquare
 
-	// Randomly selecting a node
+	// Randomly selecting a node from the grid
 	startPointX := rand.Intn(gridSize)
 	startPointY := rand.Intn(gridSize)
 
+	// Selected node chosen
 	startNode := &gameGrid[startPointX][startPointY]
 
 	// Appending node to stack
 	stack = append(stack, startNode)
 
+	// While the stack of nodes is not empty; While we have not visited every node
 	for len(stack) != 0 {
 		currentAllNodes := 0
 
@@ -37,8 +38,10 @@ func DFS() [8][8]MazeSquare {
 		// Choose random direction to go in
 		nextNodeNoGrid = chooseDirection(int(startNode.XCoordinate), int(startNode.YCoordinate))
 
+		// Get the node for the direction we want to go in
 		nextNode := gameGrid[int(nextNodeNoGrid.YCoordinate/20)-1][int(nextNodeNoGrid.XCoordinate/20)-1]
 
+		// If the node we picked has already been visited, pop off the stack until one that hasn't been visited is chosen
 		if nextNode.Visited {
 			currentAllNodes = 1
 			startNode = stack[len(stack)-1]
@@ -46,12 +49,16 @@ func DFS() [8][8]MazeSquare {
 
 		}
 
+		// Resets the while loop to get a new node
+		// If all the nodes have been popped off the stack, exits the loop
 		if currentAllNodes == 1 {
 			continue
 		}
 
+		// Clearing the variable
 		startNode = &MazeSquare{}
 
+		// Assigning the new startNode to be the direction chosen
 		startNode = &nextNode
 
 		// Appending node to stack
@@ -62,10 +69,8 @@ func DFS() [8][8]MazeSquare {
 
 }
 
+// This function draws a given square to the screen
 func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
-
-	fmt.Println("Drawing this square now: ", squareToDraw)
-
 	var strokeWidth float32 = 1
 
 	if squareToDraw.HasDown {
@@ -84,11 +89,9 @@ func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
 		vector.StrokeLine(screen, squareToDraw.XCoordinate, squareToDraw.YCoordinate, squareToDraw.XCoordinate+20, squareToDraw.YCoordinate, strokeWidth, color.Black, false)
 	}
 
-	fmt.Println("Finished the function!")
-	fmt.Println(" ")
-
 }
 
+// This function, given an X and Y co-ordinate from a MazeNode, choses a random direction to go in
 func chooseDirection(x int, y int) *MazeSquare {
 	startNode := gameGrid[(y/20)-1][(x/20)-1]
 
@@ -97,6 +100,8 @@ func chooseDirection(x int, y int) *MazeSquare {
 	var direction *MazeSquare
 
 	directionNumber := 0
+
+	// These if blocks check if the MazeSquare chosen is not an edge and that its neighbours are not empty or visited
 
 	if ((y / 20) - 1) != 7 {
 		if (gameGrid[((y/20)-1)+1][(x/20)-1] != MazeSquare{}) && !gameGrid[((y/20)-1)+1][(x/20)-1].Visited {
@@ -125,13 +130,18 @@ func chooseDirection(x int, y int) *MazeSquare {
 		}
 	}
 
+	// If there are no options to choose
 	if len(options) == 0 {
+		// Return the same object
 		return &gameGrid[(y/20)-1][(x/20)-1]
 	}
 
+	// Choose a random direction out of the available ones to go to
 	nodeChosenPos := rand.Intn(len(options))
 
 	directionNumber = options[nodeChosenPos]
+
+	// Given the direction chosen, break the walls between the two nodes
 
 	switch directionNumber {
 
