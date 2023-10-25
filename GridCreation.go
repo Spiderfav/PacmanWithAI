@@ -13,6 +13,7 @@ type MazeSquare struct {
 	Up          *MazeSquare
 	HasUp       bool
 	Visited     bool
+	Weight      int
 }
 
 // This function creates a grid of 8*8 MazeSquares, each with pointers to its direct neighbours
@@ -31,7 +32,7 @@ func CreateGrid() [8][8]MazeSquare {
 		for x = 0; x < 8; x++ {
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
-			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false}
+			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false, 0}
 
 			// Setting the game grid values to the MazeSquare object
 			gameGrid[int(y)][int(x)] = square

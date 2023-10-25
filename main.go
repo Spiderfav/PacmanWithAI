@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 	"log"
 
@@ -42,6 +43,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func main() {
+
+	calculateWeights(&gameGridDFS, 0, 0, 0, 0)
+	fmt.Println(gameGridDFS)
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
