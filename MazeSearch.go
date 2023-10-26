@@ -2,17 +2,20 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func calculateWeights(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) {
 
+	markUnvisited(gameGridDFS)
 	//For now, setting the start point to be 0,0 and the end point to be 7,7
 	startX = 20
 	startY = 20
 
 	finishX = 160
 	finishY = 160
+
+	prevWeight := 0
+	var nodePrevWeights []int
 
 	var splitNodes []MazeSquare
 
@@ -24,97 +27,68 @@ func calculateWeights(gameGridDFS *[8][8]MazeSquare, startX int, startY int, fin
 	// Will change this to be the end node we want
 
 	fmt.Println(" ")
-	for (gameGridDFS[7][7].Weight == 0) || (len(splitNodes) != 0) {
-		fmt.Println(" ")
-		fmt.Println(gameGridDFS[int(startX/20)-1][int(startY/20)-1])
-		fmt.Println(" ")
-		startXTemp := 0
-		startYTemp := 0
+	for !gameGridDFS[7][7].Visited || startX == 0 {
 
-		nodeSplitCounter := 0
+		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[0][0] {
+			prevWeight += 1
+			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight
+		}
 
-		fmt.Println("Current X Start : ", startX)
-		fmt.Println("Current Y Start : ", startY)
+		fmt.Println("Here is current node before", gameGridDFS[int(startX/20)-1][int(startY/20)-1])
+		gameGridDFS[int(startX/20)-1][int(startY/20)-1].Visited = true
+		fmt.Println("Here is current node after", gameGridDFS[int(startX/20)-1][int(startY/20)-1])
+		fmt.Println(" ")
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
+			fmt.Println("Down node", gameGridDFS[int(startX/20)-1+1][int(startY/20)-1])
+			fmt.Println(" ")
+			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1+1][int(startY/20)-1])
+			nodePrevWeights = append(nodePrevWeights, prevWeight)
+		}
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
+			fmt.Println("Up node", gameGridDFS[int(startX/20)-1-1][int(startY/20)-1])
+			fmt.Println(" ")
+			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1-1][int(startY/20)-1])
+			nodePrevWeights = append(nodePrevWeights, prevWeight)
+
+		}
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
+			fmt.Println("Left node", gameGridDFS[int(startX/20)-1][int(startY/20)-1-1])
+			fmt.Println(" ")
+			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1-1])
+			nodePrevWeights = append(nodePrevWeights, prevWeight)
+
+		}
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
+			fmt.Println("Left node", gameGridDFS[int(startX/20)-1][int(startY/20)-1+1])
+			fmt.Println(" ")
+			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1+1])
+			nodePrevWeights = append(nodePrevWeights, prevWeight)
+
+		}
+
+		fmt.Println("Here is the nodes in the array: ", splitNodes)
+		fmt.Println("Here is the prevWeights in the array: ", nodePrevWeights)
 		fmt.Println(" ")
 		fmt.Println(" ")
-		fmt.Println("Current Weight : ", gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight)
+		fmt.Println(" ")
 		fmt.Println(" ")
 
 		//time.Sleep(2 * time.Second)
 
-		fmt.Println("Has Down Wall: ", gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown)
-
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Weight == 0 {
-
-			nodeSplitCounter += 1
-			gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Weight = gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight + 1
-			startXTemp = int(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate)
-			startYTemp = int(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate)
-			fmt.Println("New Down Weight : ", gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Weight)
-		}
-
-		fmt.Println("Has Up Wall: ", gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp)
-
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Weight == 0 {
-
-			nodeSplitCounter += 1
-			gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Weight = gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight + 1
-			startXTemp = int(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate)
-			startYTemp = int(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate)
-			fmt.Println("New Up Weight : ", gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Weight)
-		}
-
-		fmt.Println("Has Left Wall: ", gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft)
-
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Weight == 0 {
-
-			nodeSplitCounter += 1
-			gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Weight = gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight + 1
-			startXTemp = int(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate)
-			startYTemp = int(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate)
-			fmt.Println("New Left Weight : ", gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Weight)
-		}
-
-		fmt.Println("Has Right Wall: ", gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight)
-
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Weight == 0 {
-
-			nodeSplitCounter += 1
-			gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Weight = gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight + 1
-			startXTemp = int(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate)
-			startYTemp = int(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate)
-			fmt.Println("New Right Weight : ", gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Weight)
-		}
-
-		fmt.Println(" ")
-		fmt.Println(gameGridDFS[int(startX/20)-1][int(startY/20)-1])
-		fmt.Println(" ")
-
-		startY = startXTemp
-		startX = startYTemp
-
-		fmt.Println("Current X End : ", startX)
-		fmt.Println("Current Y End : ", startY)
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println(" ")
-
-		time.Sleep(2 * time.Second)
-
-		if nodeSplitCounter > 0 {
-			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1])
-		}
-
-		if len(splitNodes) != 0 && nodeSplitCounter == 0 {
+		if len(splitNodes) != 0 {
 			nodePopped := splitNodes[len(splitNodes)-1]
 			splitNodes = splitNodes[:len(splitNodes)-1]
-			startX = int(nodePopped.XCoordinate)
-			startY = int(nodePopped.YCoordinate)
-		}
 
-		fmt.Println("Is weight? ", gameGridDFS[7][7].Weight == 0)
-		fmt.Println("Is length? ", len(splitNodes) == 0)
+			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
+			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
+
+			startY = int(nodePopped.XCoordinate)
+			startX = int(nodePopped.YCoordinate)
+		}
 
 	}
 }
