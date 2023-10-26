@@ -27,7 +27,7 @@ func calculateWeights(gameGridDFS *[8][8]MazeSquare, startX int, startY int, fin
 	// Will change this to be the end node we want
 
 	fmt.Println(" ")
-	for !gameGridDFS[7][7].Visited || startX == 0 {
+	for !gameGridDFS[7][7].Visited || len(splitNodes) != 0 {
 
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[0][0] {
 			prevWeight += 1
