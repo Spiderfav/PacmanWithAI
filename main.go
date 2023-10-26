@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"log"
 
@@ -11,6 +10,7 @@ import (
 type Game struct{}
 
 var gameGridDFS [8][8]MazeSquare = DFS()
+var shortestPath1 = dijkstras(&gameGridDFS, 20, 20, 160, 160)
 
 func (g *Game) Update() error {
 	return nil
@@ -23,6 +23,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// Draw the maze to the screen
 	DrawMaze(screen)
+	drawDijkstras(screen, shortestPath1)
 
 }
 
@@ -44,8 +45,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 
-	calculateWeights(&gameGridDFS, 20, 20, 160, 160)
-	fmt.Println(gameGridDFS)
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
