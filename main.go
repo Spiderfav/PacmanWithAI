@@ -44,7 +44,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 
-	calculateWeights(&gameGridDFS, 0, 0, 0, 0)
+	calculateWeights(&gameGridDFS, 20, 20, 160, 160)
 	fmt.Println(gameGridDFS)
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("Single Agent Maze!")
