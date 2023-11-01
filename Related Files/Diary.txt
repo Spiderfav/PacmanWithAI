@@ -33,3 +33,14 @@ Week 4:
     - Created function to generate the maze from a given grid
     - After generation the maze is now stored so that at a later date, the contents can be emptied to a file and reloaded as needed for testing the same maze
         - I have also attached a photo of one of the generations of the maze
+
+
+Week 5:
+
+- This week, I implemented the Dijkstras algorithm on the mazes.
+- Every time the algorithm is run, a shortest path is produced from the start square to the given square.
+    - Note: While testing, two opposite corners have been given to calculate the biggest distance.
+
+
+- TO DO THIS WEEK: Draw the path taken from the start node to the end node?
+

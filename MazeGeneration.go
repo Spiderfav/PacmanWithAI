@@ -176,3 +176,17 @@ func chooseDirection(x int, y int) *MazeSquare {
 
 	return direction
 }
+
+func markUnvisited(gameGridDFS *[8][8]MazeSquare) {
+
+	for y := 0; y < 8; y++ {
+
+		for x := 0; x < 8; x++ {
+
+			gameGridDFS[y][x].Visited = false
+
+		}
+
+	}
+
+}
