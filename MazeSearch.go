@@ -3,9 +3,20 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"log"
+	"strconv"
 
+	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
+)
+
+var (
+	mplusNormalFont font.Face
+	mplusBigFont    font.Face
 )
 
 func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
@@ -72,7 +83,7 @@ func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX in
 	return pathTaken
 }
 
-func drawDijkstras(screen *ebiten.Image, pathTaken []MazeSquare) {
+func drawDijkstrasOld(screen *ebiten.Image, pathTaken []MazeSquare) {
 	fmt.Println(pathTaken)
 
 	prevX := pathTaken[0].XCoordinate + 10
@@ -82,6 +93,25 @@ func drawDijkstras(screen *ebiten.Image, pathTaken []MazeSquare) {
 		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].XCoordinate+10, pathTaken[i].YCoordinate+10, 1, color.RGBA{255, 0, 0, 250}, false)
 		prevX = pathTaken[i].XCoordinate + 10
 		prevY = pathTaken[i].YCoordinate + 10
+	}
+
+}
+
+func drawDijkstras(screen *ebiten.Image, pathTaken []MazeSquare) {
+	tt, err := opentype.Parse(fonts.MPlus1pRegular_ttf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	const dpi = 72
+	mplusNormalFont, _ = opentype.NewFace(tt, &opentype.FaceOptions{
+		Size:    8,
+		DPI:     dpi,
+		Hinting: font.HintingVertical,
+	})
+
+	for i := 0; i < len(pathTaken); i++ {
+		vector.DrawFilledCircle(screen, pathTaken[i].XCoordinate+10, pathTaken[i].YCoordinate+10, 2, color.RGBA{255, 0, 0, 250}, true)
+		text.Draw(screen, strconv.Itoa(i), mplusNormalFont, int(pathTaken[i].XCoordinate)+10, int(pathTaken[i].YCoordinate)+10, color.RGBA{255, 0, 255, 250})
 	}
 
 }
