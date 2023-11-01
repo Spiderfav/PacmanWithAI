@@ -16,7 +16,6 @@ import (
 
 var (
 	mplusNormalFont font.Face
-	mplusBigFont    font.Face
 )
 
 func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
