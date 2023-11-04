@@ -43,7 +43,6 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 		choosingNodes := make(map[float64]MazeSquare)
 
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[int(originalStartX/20)-1][int(originalStartY/20)-1] {
-			//if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[0][0] {
 			prevWeight += 1
 			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight
 		}
@@ -53,32 +52,24 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			// pathsToTake = append(pathsToTake, gameGridDFS[int(startX/20)-1+1][int(startY/20)-1])
-			// pathsToTakeDist = append(pathsToTakeDist, tempminDistance)
 			choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			// pathsToTake = append(pathsToTake, gameGridDFS[int(startX/20)-1-1][int(startY/20)-1])
-			// pathsToTakeDist = append(pathsToTakeDist, tempminDistance)
 			choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			// pathsToTake = append(pathsToTake, gameGridDFS[int(startX/20)-1][int(startY/20)-1-1])
-			// pathsToTakeDist = append(pathsToTakeDist, tempminDistance)
 			choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			// pathsToTake = append(pathsToTake, gameGridDFS[int(startX/20)-1][int(startY/20)-1+1])
-			// pathsToTakeDist = append(pathsToTakeDist, tempminDistance)
 			choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]
 
 		}
@@ -91,33 +82,12 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 
 		sort.Float64s(keys)
 
-		//slices.Sort[]()
-
-		// for _, k := range keys {
-		// 	fmt.Println(k, choosingNodes[k])
-		// 	fmt.Println(" ")
-		// }
-
-		fmt.Println("Prev:", splitNodes)
-
-		fmt.Println(" ")
-		fmt.Println(" ")
-
 		for i := len(keys) - 1; i >= 0; i-- {
 			k := keys[i]
-			fmt.Println(k, choosingNodes[k])
 			splitNodes = append(splitNodes, gameGridDFS[int(choosingNodes[k].YCoordinate/20)-1][int(choosingNodes[k].XCoordinate/20)-1])
 			nodePrevWeights = append(nodePrevWeights, prevWeight)
 		}
-		fmt.Println(" ")
-		fmt.Println(" ")
 
-		fmt.Println("After:", splitNodes)
-
-		fmt.Println(" ")
-		fmt.Println(" ")
-
-		//time.Sleep(5 * time.Second)
 		if len(splitNodes) != 0 {
 			nodePopped := splitNodes[len(splitNodes)-1]
 			splitNodes = splitNodes[:len(splitNodes)-1]
@@ -171,7 +141,6 @@ func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX in
 	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
 
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[(originalStartX/20)-1][(originalStartY/20)-1] {
-			//if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[0][0] {
 			prevWeight += 1
 			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight
 		}
@@ -218,6 +187,7 @@ func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX in
 	return pathTaken
 }
 
+// This is the old function used that draws lines for each path taken
 func drawDijkstrasOld(screen *ebiten.Image, pathTaken []MazeSquare) {
 	fmt.Println(pathTaken)
 
@@ -232,6 +202,7 @@ func drawDijkstrasOld(screen *ebiten.Image, pathTaken []MazeSquare) {
 
 }
 
+// This is the new draw function that works for every maze algorithm
 func drawPaths(screen *ebiten.Image, pathTaken []MazeSquare) {
 	tt, err := opentype.Parse(fonts.MPlus1pRegular_ttf)
 	if err != nil {
