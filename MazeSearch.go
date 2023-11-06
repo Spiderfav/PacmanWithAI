@@ -171,7 +171,7 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 		}
 
 		sort.SliceStable(keys, func(i, j int) bool {
-			return choosingNodes[keys[i]] < choosingNodes[keys[j]]
+			return choosingNodes[keys[i]] > choosingNodes[keys[j]]
 		})
 
 		for i := 0; i < len(keys); i++ {
