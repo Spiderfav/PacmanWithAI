@@ -20,7 +20,7 @@ var (
 	mplusNormalFont font.Face
 )
 
-func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
+func aStarOld(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
 
 	// Producing output on its own
 	originalStartX := startX
@@ -101,6 +101,99 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 
 	}
 
+	fmt.Println("A* Old Concluded")
+	return bestPath
+}
+
+func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
+
+	// Producing output on its own
+	originalStartX := startX
+	originalStartY := startY
+
+	markUnvisited(gameGridDFS)
+
+	var bestPath []MazeSquare
+
+	prevWeight := 0
+
+	var nodePrevWeights []int
+
+	var splitNodes []MazeSquare
+
+	gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = 0
+
+	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
+
+		//choosingNodes := make(map[float64]MazeSquare)
+		choosingNodes := make(map[MazeSquare]float64)
+
+		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[int(originalStartX/20)-1][int(originalStartY/20)-1] {
+			prevWeight += 1
+			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight
+		}
+
+		gameGridDFS[int(startX/20)-1][int(startY/20)-1].Visited = true
+		bestPath = append(bestPath, gameGridDFS[int(startX/20)-1][int(startY/20)-1])
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
+			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
+			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]
+			choosingNodes[gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]] = tempminDistance
+
+		}
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
+			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
+			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]
+			choosingNodes[gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]] = tempminDistance
+
+		}
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
+			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
+			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]
+			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]] = tempminDistance
+
+		}
+
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
+			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
+			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]
+			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]] = tempminDistance
+
+		}
+
+		keys := make([]MazeSquare, 0, len(choosingNodes))
+
+		for key := range choosingNodes {
+			keys = append(keys, key)
+		}
+
+		sort.SliceStable(keys, func(i, j int) bool {
+			return choosingNodes[keys[i]] < choosingNodes[keys[j]]
+		})
+
+		for i := 0; i < len(keys); i++ {
+			k := keys[i]
+			splitNodes = append(splitNodes, gameGridDFS[int(k.YCoordinate/20)-1][int(k.XCoordinate/20)-1])
+			nodePrevWeights = append(nodePrevWeights, prevWeight)
+		}
+
+		if len(splitNodes) != 0 {
+			nodePopped := splitNodes[len(splitNodes)-1]
+			splitNodes = splitNodes[:len(splitNodes)-1]
+
+			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
+			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
+
+			startY = int(nodePopped.XCoordinate)
+			startX = int(nodePopped.YCoordinate)
+		}
+
+	}
+
+	fmt.Println("A* Concluded")
 	return bestPath
 }
 
@@ -183,18 +276,17 @@ func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX in
 
 	}
 
+	fmt.Println("Dijkstra Concluded")
 	return pathTaken
 }
 
 // This is the old function used that draws lines for each path taken
-func drawDijkstrasOld(screen *ebiten.Image, pathTaken []MazeSquare) {
-	fmt.Println(pathTaken)
-
+func drawPathsLines(screen *ebiten.Image, pathTaken []MazeSquare) {
 	prevX := pathTaken[0].XCoordinate + 10
 	prevY := pathTaken[0].YCoordinate + 10
 
 	for i := 1; i < len(pathTaken); i++ {
-		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].XCoordinate+10, pathTaken[i].YCoordinate+10, 1, color.RGBA{255, 0, 0, 250}, false)
+		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].XCoordinate+10, pathTaken[i].YCoordinate+10, 1, color.RGBA{0, 255, 0, 250}, false)
 		prevX = pathTaken[i].XCoordinate + 10
 		prevY = pathTaken[i].YCoordinate + 10
 	}
