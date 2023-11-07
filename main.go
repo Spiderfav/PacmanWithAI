@@ -16,8 +16,6 @@ var shortestPath1 = dijkstras(&gameGridDFS, 20, 20, 160, 160)
 
 var shortestPath2 = aStar(&gameGridDFS, 20, 20, 160, 160)
 
-var shortestPath3 = aStarOld(&gameGridDFS, 20, 20, 160, 160)
-
 func (g *Game) Update() error {
 	return nil
 }
@@ -54,7 +52,6 @@ func main() {
 
 	fmt.Println("Size of Dijkstras:", len(shortestPath1))
 	fmt.Println("Size of A*:", len(shortestPath2))
-	fmt.Println("Size of A* Old:", len(shortestPath3))
 
 	ebiten.SetWindowSize(1280, 720)
 	ebiten.SetWindowTitle("Single Agent Maze!")
