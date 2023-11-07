@@ -1,11 +1,7 @@
 package main
 
 import (
-	"image/color"
 	"math/rand"
-
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 var gameGrid = CreateGrid()
@@ -66,29 +62,6 @@ func DFS() [8][8]MazeSquare {
 	}
 
 	return gameGrid
-
-}
-
-// This function draws a given square to the screen
-// It checks if the current node has a given wall, then draws it to the screen
-func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
-	var strokeWidth float32 = 1
-
-	if squareToDraw.HasDown {
-		vector.StrokeLine(screen, squareToDraw.XCoordinate, squareToDraw.YCoordinate+20, squareToDraw.XCoordinate+20, squareToDraw.YCoordinate+20, strokeWidth, color.Black, false)
-	}
-
-	if squareToDraw.HasRight {
-		vector.StrokeLine(screen, squareToDraw.XCoordinate+20, squareToDraw.YCoordinate, squareToDraw.XCoordinate+20, squareToDraw.YCoordinate+20, strokeWidth, color.Black, false)
-	}
-
-	if squareToDraw.HasLeft {
-		vector.StrokeLine(screen, squareToDraw.XCoordinate, squareToDraw.YCoordinate, squareToDraw.XCoordinate, squareToDraw.YCoordinate+20, strokeWidth, color.Black, false)
-	}
-
-	if squareToDraw.HasUp {
-		vector.StrokeLine(screen, squareToDraw.XCoordinate, squareToDraw.YCoordinate, squareToDraw.XCoordinate+20, squareToDraw.YCoordinate, strokeWidth, color.Black, false)
-	}
 
 }
 
