@@ -70,6 +70,7 @@ func DFS() [8][8]MazeSquare {
 }
 
 // This function draws a given square to the screen
+// It checks if the current node has a given wall, then draws it to the screen
 func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
 	var strokeWidth float32 = 1
 
@@ -177,6 +178,7 @@ func chooseDirection(x int, y int) *MazeSquare {
 	return direction
 }
 
+// This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
 func markUnvisited(gameGridDFS *[8][8]MazeSquare) {
 
 	for y := 0; y < 8; y++ {
