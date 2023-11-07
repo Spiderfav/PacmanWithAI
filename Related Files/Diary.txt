@@ -49,6 +49,7 @@ Week 6:
 - I have implemented a drawing function with lines for Dijkstras. It works for the most part but when backtracking, produces some interesting things.
 - I remodeled the same drawing function to just simple Dots and number for the user to see the path it took to get to the destination.
 - It now also draws to the screen the Start and End node and the distance to get there.
+- I created a function that calculates the euclidean distance between two points
 - A crude method of A* was also implemented, however it crashes sometimes for an unknown reason.
 - Both drawing methods are now both called, each with different colours to see the effects of running each algorithm, i.e which has shortest path.
 
