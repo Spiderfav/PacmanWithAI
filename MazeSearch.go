@@ -40,7 +40,6 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 
 	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
 
-		//choosingNodes := make(map[float64]MazeSquare)
 		choosingNodes := make(map[MazeSquare]float64)
 
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[int(originalStartX/20)-1][int(originalStartY/20)-1] {
@@ -53,28 +52,24 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]
 			choosingNodes[gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]] = tempminDistance
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]
 			choosingNodes[gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]] = tempminDistance
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]
 			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]] = tempminDistance
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(finishX/20)-1][int(startY/20)-1].YCoordinate))
-			//choosingNodes[tempminDistance] = gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]
 			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]] = tempminDistance
 
 		}
