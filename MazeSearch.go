@@ -66,11 +66,6 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 
 		}
 
-		fmt.Println(" ")
-		fmt.Println("Number:", len(bestPath)-1)
-		fmt.Println("Before ordering:", choosingNodes)
-		fmt.Println(" ")
-
 		keys := make([]MazeSquare, 0, len(choosingNodes))
 
 		// The neighbouring nodes are added to a map and then sorted by the distances
@@ -82,10 +77,6 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 		sort.SliceStable(keys, func(i, j int) bool {
 			return choosingNodes[keys[i]] > choosingNodes[keys[j]]
 		})
-
-		fmt.Println("After ordering:", choosingNodes)
-		fmt.Println(" ")
-		fmt.Println(" ")
 
 		// This is adding the sorted nodes back to the array to check for all paths possible
 		// This way, the shortest distance nodes are checked first and then the highest distance checked later
