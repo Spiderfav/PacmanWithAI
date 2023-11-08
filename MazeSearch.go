@@ -7,6 +7,60 @@ import (
 	"time"
 )
 
+func absolutePath(pathTaken []MazeSquare) []MazeSquare {
+	var finalPath []MazeSquare
+
+	currentNode := pathTaken[len(pathTaken)-1]
+	finalPath = append(finalPath, currentNode)
+
+	for i := len(pathTaken) - 1; i > 0; i-- {
+
+		if i == 0 {
+			currentNode = pathTaken[i-1]
+			finalPath = append(finalPath, pathTaken[i])
+			continue
+		}
+
+		if !currentNode.HasLeft {
+			if currentNode.Left.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Left.YCoordinate == pathTaken[i-1].YCoordinate {
+				currentNode = pathTaken[i-1]
+				finalPath = append(finalPath, pathTaken[i-1])
+				continue
+			}
+		}
+		if !currentNode.HasRight {
+			if currentNode.Right.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Right.YCoordinate == pathTaken[i-1].YCoordinate {
+				currentNode = pathTaken[i-1]
+				finalPath = append(finalPath, pathTaken[i-1])
+				continue
+			}
+		}
+
+		if !currentNode.HasDown {
+			if currentNode.Down.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Down.YCoordinate == pathTaken[i-1].YCoordinate {
+				currentNode = pathTaken[i-1]
+				finalPath = append(finalPath, pathTaken[i-1])
+				continue
+			}
+
+		}
+
+		if !currentNode.HasUp {
+			if currentNode.Up.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Up.YCoordinate == pathTaken[i-1].YCoordinate {
+				currentNode = pathTaken[i-1]
+				finalPath = append(finalPath, pathTaken[i-1])
+				continue
+			}
+
+		}
+
+		continue
+
+	}
+
+	return finalPath
+}
+
 // This function uses the A* Algorithm to find the shortest path from one node to another in a given maze
 func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
 	start := time.Now()
