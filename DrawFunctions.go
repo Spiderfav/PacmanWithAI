@@ -68,7 +68,7 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []MazeSquare) {
 
 // This function draws circles with their position in the path
 // It also draws the start node and end node and the total cost
-func drawPaths(screen *ebiten.Image, pathTaken []MazeSquare) {
+func drawPaths(screen *ebiten.Image, pathTaken []MazeSquare, algo string) {
 
 	// Here we are defining the font to be used from the general golang fonts
 	tt, err := opentype.Parse(fonts.MPlus1pRegular_ttf)
@@ -92,6 +92,7 @@ func drawPaths(screen *ebiten.Image, pathTaken []MazeSquare) {
 
 	text.Draw(screen, "Start node is "+strconv.Itoa(int(pathTaken[0].XCoordinate))+","+strconv.Itoa(int(pathTaken[0].YCoordinate)), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].YCoordinate)+40, color.RGBA{0, 0, 0, 250})
 	text.Draw(screen, "End node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].XCoordinate))+","+strconv.Itoa(int(pathTaken[len(pathTaken)-1].YCoordinate)), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].YCoordinate)+50, color.RGBA{0, 0, 0, 250})
+	text.Draw(screen, "Algorithm Used: "+algo, mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].YCoordinate)+60, color.RGBA{0, 0, 0, 250})
 
 	text.Draw(screen, "Path cost to desired node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].Weight)), mplusNormalFont, 10, 10, color.RGBA{0, 0, 0, 250})
 }

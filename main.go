@@ -49,7 +49,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawMaze(screen)
 
 		// Draw Dijkstra's Path to the screen
-		drawPaths(screen, shortestPath1)
+		drawPaths(screen, shortestPath1, "Dijstra")
 		drawPathsLines(screen, absolutePath1)
 
 	} else if whichPath == 1 {
@@ -60,7 +60,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawMaze(screen)
 
 		// Draw A*'s Path to the screen
-		drawPaths(screen, shortestPath2)
+		drawPaths(screen, shortestPath2, "A Star")
 		drawPathsLines(screen, absolutePath2)
 
 	}
