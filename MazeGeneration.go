@@ -4,11 +4,13 @@ import (
 	"math/rand"
 )
 
-var gameGrid = CreateGrid()
+func DFS(size int) [][]MazeSquare {
 
-func DFS() [8][8]MazeSquare {
+	var gameGrid = CreateGrid(size)
 
-	gridSize := 7
+	size = size - 1
+
+	gridSize := size
 
 	var stack []*MazeSquare
 
@@ -32,7 +34,7 @@ func DFS() [8][8]MazeSquare {
 		gameGrid[int(startNode.YCoordinate/20)-1][int(startNode.XCoordinate/20)-1].Visited = true
 
 		// Choose random direction to go in
-		nextNodeNoGrid = chooseDirection(int(startNode.XCoordinate), int(startNode.YCoordinate))
+		nextNodeNoGrid = chooseDirection(int(startNode.XCoordinate), int(startNode.YCoordinate), size, gameGrid)
 
 		// Get the node for the direction we want to go in
 		nextNode := gameGrid[int(nextNodeNoGrid.YCoordinate/20)-1][int(nextNodeNoGrid.XCoordinate/20)-1]
@@ -66,7 +68,7 @@ func DFS() [8][8]MazeSquare {
 }
 
 // This function, given an X and Y co-ordinate from a MazeNode, choses a random direction to go in
-func chooseDirection(x int, y int) *MazeSquare {
+func chooseDirection(x int, y int, size int, gameGrid [][]MazeSquare) *MazeSquare {
 	startNode := gameGrid[(y/20)-1][(x/20)-1]
 
 	var options []int
@@ -77,7 +79,7 @@ func chooseDirection(x int, y int) *MazeSquare {
 
 	// These if blocks check if the MazeSquare chosen is not an edge and that its neighbours are not empty or visited
 
-	if ((y / 20) - 1) != 7 {
+	if ((y / 20) - 1) != size {
 		if (gameGrid[((y/20)-1)+1][(x/20)-1] != MazeSquare{}) && !gameGrid[((y/20)-1)+1][(x/20)-1].Visited {
 			options = append(options, 1)
 		}
@@ -90,7 +92,7 @@ func chooseDirection(x int, y int) *MazeSquare {
 		}
 	}
 
-	if ((x / 20) - 1) != 7 {
+	if ((x / 20) - 1) != size {
 		if (gameGrid[(y/20)-1][((x/20)-1)+1] != MazeSquare{}) && !gameGrid[(y/20)-1][((x/20)-1)+1].Visited {
 
 			options = append(options, 2)
@@ -152,11 +154,11 @@ func chooseDirection(x int, y int) *MazeSquare {
 }
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
-func markUnvisited(gameGridDFS *[8][8]MazeSquare) {
+func markUnvisited(gameGridDFS [][]MazeSquare, size int) {
 
-	for y := 0; y < 8; y++ {
+	for y := 0; y < size; y++ {
 
-		for x := 0; x < 8; x++ {
+		for x := 0; x < size; x++ {
 
 			gameGridDFS[y][x].Visited = false
 

@@ -11,11 +11,13 @@ import (
 
 type Game struct{}
 
-var gameGridDFS [8][8]MazeSquare = DFS()
+var mazeSize = 40
 
-var shortestPath1 = dijkstras(&gameGridDFS, 20, 20, 160, 160)
+var gameGridDFS [][]MazeSquare = DFS(mazeSize)
 
-var shortestPath2 = aStar(&gameGridDFS, 20, 20, 160, 160)
+var shortestPath1 = dijkstras(gameGridDFS, 20, 20, 20*mazeSize, 20*mazeSize)
+
+var shortestPath2 = aStar(gameGridDFS, 20, 20, 20*mazeSize, 20*mazeSize)
 
 var absolutePath1 = absolutePath(shortestPath1)
 
@@ -39,14 +41,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Clear the screen to white
 	screen.Fill(color.White)
 	// Draw the maze to the screen
-	DrawMaze(screen)
+	DrawMaze(screen, mazeSize)
 
 	if whichPath == 0 {
 		// Clear the screen to white
 		screen.Fill(color.White)
 
 		// Draw the maze to the screen
-		DrawMaze(screen)
+		DrawMaze(screen, mazeSize)
 
 		// Draw Dijkstra's Path to the screen
 		drawPaths(screen, shortestPath1, "Dijstra")
@@ -57,7 +59,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.Fill(color.White)
 
 		// Draw the maze to the screen
-		DrawMaze(screen)
+		DrawMaze(screen, mazeSize)
 
 		// Draw A*'s Path to the screen
 		drawPaths(screen, shortestPath2, "A Star")
@@ -68,7 +70,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 320, 240
+	return 1920, 1080
 }
 
 func main() {
@@ -78,7 +80,7 @@ func main() {
 
 	fmt.Println("Size of absolute path", len(absolutePath1))
 
-	ebiten.SetWindowSize(1280, 720)
+	ebiten.SetWindowSize(1920, 1080)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
