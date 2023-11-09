@@ -11,7 +11,7 @@ import (
 
 type Game struct{}
 
-var mazeSize = 40
+var mazeSize = 38
 
 var gameGridDFS [][]MazeSquare = DFS(mazeSize)
 
