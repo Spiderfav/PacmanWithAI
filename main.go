@@ -22,7 +22,7 @@ var shortestPath2 = aStar(gameGridDFS, 20, 20, 20*mazeSize, 20*mazeSize)
 var absolutePath1 = absolutePath(shortestPath1)
 
 var absolutePath2 = absolutePath(shortestPath2)
-var whichPath = 0
+var whichPath = 3
 
 func (g *Game) Update() error {
 
@@ -31,6 +31,8 @@ func (g *Game) Update() error {
 
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyB) {
 		whichPath = 1
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
+		whichPath = 3
 	}
 
 	return nil
