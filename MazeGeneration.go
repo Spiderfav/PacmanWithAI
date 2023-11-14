@@ -161,6 +161,7 @@ func markUnvisited(gameGridDFS [][]MazeSquare, size int) {
 		for x := 0; x < size; x++ {
 
 			gameGridDFS[y][x].Visited = false
+			gameGridDFS[y][x].Weight = 0
 
 		}
 
