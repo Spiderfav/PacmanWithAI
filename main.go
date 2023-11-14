@@ -102,7 +102,7 @@ func main() {
 	fmt.Println("Size of Dijkstras:", len(dijkstrasPath))
 	fmt.Println("Size of A*:", len(aStarPath))
 
-	fmt.Println("Size of absolute path", len(dijkstrasPath))
+	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
 
 	ebiten.SetWindowSize(1920, 1080)
 	ebiten.SetWindowTitle("Single Agent Maze!")
