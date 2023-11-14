@@ -11,20 +11,37 @@ import (
 
 type Game struct{}
 
-var mazeSize = 38
+var mazeSizeOriginal = 8
 
-var gameGridDFS [][]MazeSquare = DFS(mazeSize)
+var gameGridDFS [][]MazeSquare = DFS(mazeSizeOriginal)
 
-var shortestPath1 = dijkstras(gameGridDFS, 20, 20, 20*mazeSize, 20*mazeSize)
+var mazeSize = len(gameGridDFS[0])
 
-var shortestPath2 = aStar(gameGridDFS, 20, 20, 20*mazeSize, 20*mazeSize)
+var dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
-var absolutePath1 = absolutePath(shortestPath1)
+var aStarPath = aStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
-var absolutePath2 = absolutePath(shortestPath2)
+var absolutePathDijkstras = absolutePath(dijkstrasPath)
+
+var absolutePathAStar = absolutePath(aStarPath)
+
 var whichPath = 3
 
 func (g *Game) Update() error {
+
+	if inpututil.IsKeyJustPressed(ebiten.Key1) {
+		changeMazeSize(mazeSizeOriginal)
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.Key2) {
+		changeMazeSize(mazeSizeOriginal * 2)
+
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.Key3) {
+		changeMazeSize((mazeSizeOriginal * 2) * 2)
+
+	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyA) {
 		whichPath = 0
@@ -53,8 +70,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawMaze(screen, mazeSize)
 
 		// Draw Dijkstra's Path to the screen
-		drawPaths(screen, shortestPath1, "Dijstra")
-		drawPathsLines(screen, absolutePath1)
+		drawPaths(screen, dijkstrasPath, "Dijstra")
+		drawPathsLines(screen, absolutePathDijkstras)
 
 	} else if whichPath == 1 {
 		// Clear the screen to white
@@ -64,11 +81,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawMaze(screen, mazeSize)
 
 		// Draw A*'s Path to the screen
-		drawPaths(screen, shortestPath2, "A Star")
-		drawPathsLines(screen, absolutePath2)
+		drawPaths(screen, aStarPath, "A Star")
+		drawPathsLines(screen, absolutePathAStar)
 
+	} else if whichPath == 4 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		DrawMaze(screen, mazeSize)
 	}
-
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -77,14 +99,24 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 
-	fmt.Println("Size of Dijkstras:", len(shortestPath1))
-	fmt.Println("Size of A*:", len(shortestPath2))
+	fmt.Println("Size of Dijkstras:", len(dijkstrasPath))
+	fmt.Println("Size of A*:", len(aStarPath))
 
-	fmt.Println("Size of absolute path", len(absolutePath1))
+	fmt.Println("Size of absolute path", len(dijkstrasPath))
 
 	ebiten.SetWindowSize(1920, 1080)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func changeMazeSize(newSize int) {
+	gameGridDFS = DFS(newSize)
+	dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
+	aStarPath = aStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
+	absolutePathDijkstras = absolutePath(dijkstrasPath)
+	absolutePathAStar = absolutePath(aStarPath)
+	mazeSize = newSize
+	whichPath = 4
 }
