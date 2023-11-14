@@ -17,9 +17,14 @@ type MazeSquare struct {
 }
 
 // This function creates a grid of 8*8 MazeSquares, each with pointers to its direct neighbours
-func CreateGrid() [8][8]MazeSquare {
+func CreateGrid(size int) [][]MazeSquare {
 
-	var gameGrid [8][8]MazeSquare
+	// Define the size of the grid
+
+	gameGrid := make([][]MazeSquare, size)
+	for i := range gameGrid {
+		gameGrid[i] = make([]MazeSquare, size)
+	}
 
 	var x, y float32
 
@@ -27,9 +32,9 @@ func CreateGrid() [8][8]MazeSquare {
 
 	// Even though we are using X and Y co-ordinates for the objects, in an array sense, it will be Y and X
 
-	for y = 0; y < 8; y++ {
+	for y = 0; y < float32(size); y++ {
 
-		for x = 0; x < 8; x++ {
+		for x = 0; x < float32(size); x++ {
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
 			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false, 0}

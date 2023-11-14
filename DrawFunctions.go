@@ -43,11 +43,11 @@ func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
 
 // The DrawMaze function takes the screen argument given as the screen to draw to maze to
 // It draws the maze from the GameGridDFS
-func DrawMaze(screen *ebiten.Image) {
+func DrawMaze(screen *ebiten.Image, size int) {
 
 	// For each row and column, it looks at the walls of the block and draws the ones it has
-	for i := 0; i < 8; i++ {
-		for j := 0; j < 8; j++ {
+	for i := 0; i < size; i++ {
+		for j := 0; j < size; j++ {
 			DrawSquare(screen, gameGridDFS[i][j])
 		}
 	}

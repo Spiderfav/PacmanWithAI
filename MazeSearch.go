@@ -62,7 +62,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 }
 
 // This function uses the A* Algorithm to find the shortest path from one node to another in a given maze
-func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
+func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
 	start := time.Now()
 
 	// Storing the original start values
@@ -70,7 +70,7 @@ func aStar(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, f
 	originalStartY := startY
 
 	// Marking every node unvisited
-	markUnvisited(gameGridDFS)
+	markUnvisited(gameGridDFS, len(gameGridDFS[0]))
 
 	var bestPath []MazeSquare
 
@@ -180,7 +180,7 @@ func euclideanDistance(x1 float64, y1 float64, x2 float64, y2 float64) float64 {
 }
 
 // This function uses Dijkstras Algorithm to find the shortest path from one node to another in a given maze
-func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
+func dijkstras(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, finishY int) []MazeSquare {
 	start := time.Now()
 
 	// Storing the original start values
@@ -188,7 +188,7 @@ func dijkstras(gameGridDFS *[8][8]MazeSquare, startX int, startY int, finishX in
 	originalStartY := startY
 
 	// Marking every node unvisited
-	markUnvisited(gameGridDFS)
+	markUnvisited(gameGridDFS, len(gameGridDFS[0]))
 
 	var pathTaken []MazeSquare
 
