@@ -4,6 +4,7 @@ import (
 	"math/rand"
 )
 
+// This function uses randomized DFS to generate a maze
 func DFS(size int) [][]MazeSquare {
 
 	var gameGrid = CreateGrid(size)
@@ -161,9 +162,17 @@ func markUnvisited(gameGridDFS [][]MazeSquare, size int) {
 		for x := 0; x < size; x++ {
 
 			gameGridDFS[y][x].Visited = false
+			gameGridDFS[y][x].Weight = 0
 
 		}
 
 	}
 
+}
+
+func addWeights(gameGridDFS [][]MazeSquare, obstacle int) {
+	//xValue := rand.Intn(len(gameGridDFS[0]))
+	//yvalue := rand.Intn(len(gameGridDFS[0]))
+
+	gameGridDFS[0][1].Weight = obstacle
 }

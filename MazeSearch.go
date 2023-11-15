@@ -7,12 +7,17 @@ import (
 	"time"
 )
 
-func absolutePath(pathTaken []MazeSquare) []MazeSquare {
+// This function, given the path made from one of the maze searching algorithms, provides the final path from start to finish
+func absolutePath(pathTaken []MazeSquare) ([]MazeSquare, int) {
 	var finalPath []MazeSquare
+	var totalWeight int
 
 	currentNode := pathTaken[len(pathTaken)-1]
 	finalPath = append(finalPath, currentNode)
+	totalWeight = totalWeight + currentNode.Weight
 
+	//From the end node to the start, it finds the path the Single-Agent should take
+	// At a given node, it looks at it's neighbours and looks in the next node in the pathTaken and if it is a neighbour then it's added to the finalPath
 	for i := len(pathTaken) - 1; i > 0; i-- {
 
 		if i == 0 {
@@ -25,6 +30,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Left.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Left.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 		}
@@ -32,6 +38,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Right.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Right.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 		}
@@ -40,6 +47,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Down.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Down.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 
@@ -49,6 +57,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Up.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Up.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 
@@ -58,7 +67,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 
 	}
 
-	return finalPath
+	return finalPath, totalWeight
 }
 
 // This function uses the A* Algorithm to find the shortest path from one node to another in a given maze
@@ -71,6 +80,7 @@ func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, fini
 
 	// Marking every node unvisited
 	markUnvisited(gameGridDFS, len(gameGridDFS[0]))
+	addWeights(gameGridDFS, 100)
 
 	var bestPath []MazeSquare
 
@@ -89,7 +99,8 @@ func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, fini
 		// Assigning a new weight to the current node only if it is not the starting point
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[int(originalStartX/20)-1][int(originalStartY/20)-1] {
 			prevWeight += 1
-			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight
+			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight + gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight
+
 		}
 
 		// Mark the current node as visited and add the node to the array of nodes for the path taken
@@ -100,25 +111,25 @@ func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, fini
 		// It calculates the distance from the neighbour nodes to the end node
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]] = tempminDistance
+			choosingNodes[gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Weight)
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]] = tempminDistance
+			choosingNodes[gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Weight)
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]] = tempminDistance
+			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Weight)
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
 			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]] = tempminDistance
+			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Weight)
 
 		}
 
@@ -158,7 +169,8 @@ func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, fini
 
 	elapsed := time.Since(start)
 	fmt.Printf("A* took %s", elapsed)
-	fmt.Println("\nA* Concluded\n")
+	fmt.Println("\nA* Concluded")
+	fmt.Println(" ")
 	// Returns the path that the algorithm took to get from the start to the finish
 	return bestPath
 }
@@ -189,6 +201,7 @@ func dijkstras(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, 
 
 	// Marking every node unvisited
 	markUnvisited(gameGridDFS, len(gameGridDFS[0]))
+	addWeights(gameGridDFS, 100)
 
 	var pathTaken []MazeSquare
 
@@ -207,7 +220,7 @@ func dijkstras(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, 
 		// Assigning a new weight to the current node only if it is not the starting point
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[(originalStartX/20)-1][(originalStartY/20)-1] {
 			prevWeight += 1
-			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight
+			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight + gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight
 		}
 
 		// Mark the current node as visited and add the node to the array of nodes for the path taken
@@ -255,7 +268,8 @@ func dijkstras(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, 
 
 	elapsed := time.Since(start)
 	fmt.Printf("Dijkstra's took %s", elapsed)
-	fmt.Println("\nDijkstra Concluded\n")
+	fmt.Println("\nDijkstra Concluded")
+	fmt.Println(" ")
 
 	// Returns the path that the algorithm took to get from the start to the finish
 	return pathTaken
