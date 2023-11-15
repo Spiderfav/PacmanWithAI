@@ -68,3 +68,5 @@ Week 8:
 
 - Added a way to change between different sized graphs with each maze search algorithm
 - Added a function that can add weights to the graph. Now, as the Randomised DFS graph only produces one graph, it just means that the nodes with weights will be checked last.
+- TODO: New Maze Generation algorithm
+- TODO: Function to convert Maze to Weighted Graph
