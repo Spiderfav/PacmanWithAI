@@ -18,7 +18,7 @@ type MazeSquare struct {
 }
 
 // Thid function counts the walls of a node
-func countWalls(x MazeSquare) {
+func countWalls(x MazeSquare) int {
 	count := 0
 
 	if x.HasLeft {
@@ -37,7 +37,7 @@ func countWalls(x MazeSquare) {
 		count += 1
 	}
 
-	x.NumberOfWalls = count
+	return count
 }
 
 // This function creates a grid of 8*8 MazeSquares, each with pointers to its direct neighbours

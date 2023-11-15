@@ -25,6 +25,8 @@ var absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
 
 var absolutePathAStar, weigthAStar = absolutePath(aStarPath)
 
+var graph = mazeToGraph(gameGridDFS, 20, 20)
+
 var whichPath = 3
 
 func (g *Game) Update() error {
@@ -49,6 +51,8 @@ func (g *Game) Update() error {
 
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
 		whichPath = 3
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyD) {
+		whichPath = 4
 	}
 
 	return nil
@@ -89,6 +93,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		// Draw the maze to the screen
 		DrawMaze(screen, mazeSize)
+		drawPaths(screen, graph, "Nodes", 10)
+
 	}
 }
 
@@ -102,6 +108,7 @@ func main() {
 	fmt.Println("Size of A*:", len(aStarPath))
 
 	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
+	fmt.Println(" ")
 
 	ebiten.SetWindowSize(1920, 1080)
 	ebiten.SetWindowTitle("Single Agent Maze!")
