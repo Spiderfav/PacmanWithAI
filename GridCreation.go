@@ -2,18 +2,42 @@ package main
 
 // The Mazequare Object
 type MazeSquare struct {
-	XCoordinate float32
-	YCoordinate float32
-	Left        *MazeSquare
-	HasLeft     bool
-	Down        *MazeSquare
-	HasDown     bool
-	Right       *MazeSquare
-	HasRight    bool
-	Up          *MazeSquare
-	HasUp       bool
-	Visited     bool
-	Weight      int
+	XCoordinate   float32
+	YCoordinate   float32
+	Left          *MazeSquare
+	HasLeft       bool
+	Down          *MazeSquare
+	HasDown       bool
+	Right         *MazeSquare
+	HasRight      bool
+	Up            *MazeSquare
+	HasUp         bool
+	Visited       bool
+	Weight        int
+	NumberOfWalls int
+}
+
+// Thid function counts the walls of a node
+func countWalls(x MazeSquare) {
+	count := 0
+
+	if x.HasLeft {
+		count += 1
+	}
+
+	if x.HasRight {
+		count += 1
+	}
+
+	if x.HasUp {
+		count += 1
+	}
+
+	if x.HasDown {
+		count += 1
+	}
+
+	x.NumberOfWalls = count
 }
 
 // This function creates a grid of 8*8 MazeSquares, each with pointers to its direct neighbours
@@ -37,7 +61,7 @@ func CreateGrid(size int) [][]MazeSquare {
 		for x = 0; x < float32(size); x++ {
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
-			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false, 0}
+			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false, 0, 4}
 
 			// Setting the game grid values to the MazeSquare object
 			gameGrid[int(y)][int(x)] = square
