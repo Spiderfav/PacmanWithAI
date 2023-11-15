@@ -170,6 +170,7 @@ func markUnvisited(gameGridDFS [][]MazeSquare, size int) {
 
 }
 
+// This functions adds weights to a specific square in the grid
 func addWeights(gameGridDFS [][]MazeSquare, obstacle int) {
 	//xValue := rand.Intn(len(gameGridDFS[0]))
 	//yvalue := rand.Intn(len(gameGridDFS[0]))
