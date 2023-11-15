@@ -4,6 +4,7 @@ import (
 	"math/rand"
 )
 
+// This function uses randomized DFS to generate a maze
 func DFS(size int) [][]MazeSquare {
 
 	var gameGrid = CreateGrid(size)

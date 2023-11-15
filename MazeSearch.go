@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// This function, given the path made from one of the maze searching algorithms, provides the final path from start to finish
 func absolutePath(pathTaken []MazeSquare) ([]MazeSquare, int) {
 	var finalPath []MazeSquare
 	var totalWeight int
@@ -15,6 +16,8 @@ func absolutePath(pathTaken []MazeSquare) ([]MazeSquare, int) {
 	finalPath = append(finalPath, currentNode)
 	totalWeight = totalWeight + currentNode.Weight
 
+	//From the end node to the start, it finds the path the Single-Agent should take
+	// At a given node, it looks at it's neighbours and looks in the next node in the pathTaken and if it is a neighbour then it's added to the finalPath
 	for i := len(pathTaken) - 1; i > 0; i-- {
 
 		if i == 0 {
