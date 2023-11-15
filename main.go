@@ -21,9 +21,9 @@ var dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeS
 
 var aStarPath = aStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
-var absolutePathDijkstras = absolutePath(dijkstrasPath)
+var absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
 
-var absolutePathAStar = absolutePath(aStarPath)
+var absolutePathAStar, weigthAStar = absolutePath(aStarPath)
 
 var whichPath = 3
 
@@ -35,12 +35,10 @@ func (g *Game) Update() error {
 
 	if inpututil.IsKeyJustPressed(ebiten.Key2) {
 		changeMazeSize(mazeSizeOriginal * 2)
-
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.Key3) {
 		changeMazeSize((mazeSizeOriginal * 2) * 2)
-
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyA) {
@@ -48,6 +46,7 @@ func (g *Game) Update() error {
 
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyB) {
 		whichPath = 1
+
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
 		whichPath = 3
 	}
@@ -70,7 +69,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawMaze(screen, mazeSize)
 
 		// Draw Dijkstra's Path to the screen
-		drawPaths(screen, dijkstrasPath, "Dijstra")
+		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
 		drawPathsLines(screen, absolutePathDijkstras)
 
 	} else if whichPath == 1 {
@@ -81,7 +80,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawMaze(screen, mazeSize)
 
 		// Draw A*'s Path to the screen
-		drawPaths(screen, aStarPath, "A Star")
+		drawPaths(screen, aStarPath, "A Star", weigthAStar)
 		drawPathsLines(screen, absolutePathAStar)
 
 	} else if whichPath == 4 {
@@ -115,8 +114,8 @@ func changeMazeSize(newSize int) {
 	gameGridDFS = DFS(newSize)
 	dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
 	aStarPath = aStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
-	absolutePathDijkstras = absolutePath(dijkstrasPath)
-	absolutePathAStar = absolutePath(aStarPath)
+	absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
+	absolutePathAStar, weigthAStar = absolutePath(aStarPath)
 	mazeSize = newSize
 	whichPath = 4
 }

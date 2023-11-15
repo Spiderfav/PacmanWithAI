@@ -7,11 +7,13 @@ import (
 	"time"
 )
 
-func absolutePath(pathTaken []MazeSquare) []MazeSquare {
+func absolutePath(pathTaken []MazeSquare) ([]MazeSquare, int) {
 	var finalPath []MazeSquare
+	var totalWeight int
 
 	currentNode := pathTaken[len(pathTaken)-1]
 	finalPath = append(finalPath, currentNode)
+	totalWeight = totalWeight + currentNode.Weight
 
 	for i := len(pathTaken) - 1; i > 0; i-- {
 
@@ -25,6 +27,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Left.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Left.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 		}
@@ -32,6 +35,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Right.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Right.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 		}
@@ -40,6 +44,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Down.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Down.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 
@@ -49,6 +54,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 			if currentNode.Up.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Up.YCoordinate == pathTaken[i-1].YCoordinate {
 				currentNode = pathTaken[i-1]
 				finalPath = append(finalPath, pathTaken[i-1])
+				totalWeight = totalWeight + currentNode.Weight
 				continue
 			}
 
@@ -58,7 +64,7 @@ func absolutePath(pathTaken []MazeSquare) []MazeSquare {
 
 	}
 
-	return finalPath
+	return finalPath, totalWeight
 }
 
 // This function uses the A* Algorithm to find the shortest path from one node to another in a given maze
@@ -160,7 +166,8 @@ func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, fini
 
 	elapsed := time.Since(start)
 	fmt.Printf("A* took %s", elapsed)
-	fmt.Println("\nA* Concluded\n")
+	fmt.Println("\nA* Concluded")
+	fmt.Println(" ")
 	// Returns the path that the algorithm took to get from the start to the finish
 	return bestPath
 }
@@ -258,7 +265,8 @@ func dijkstras(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, 
 
 	elapsed := time.Since(start)
 	fmt.Printf("Dijkstra's took %s", elapsed)
-	fmt.Println("\nDijkstra Concluded\n")
+	fmt.Println("\nDijkstra Concluded")
+	fmt.Println(" ")
 
 	// Returns the path that the algorithm took to get from the start to the finish
 	return pathTaken
