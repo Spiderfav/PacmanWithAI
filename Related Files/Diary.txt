@@ -60,3 +60,11 @@ Week 7:
     . The revised version for some reason is performing as well as Dijkstras
 
 - Updated the A* function once again to have the correct comparison and the implementation of it now works as expected.
+- Created a function that outputs the best path in each algorithm
+- Created a time function that outputs the time taken for each algorithm to perform
+- Added functionality to output the algorithms to screen without restarting as well as the blank algorithm
+
+Week 8:
+
+- Added a way to change between different sized graphs with each maze search algorithm
+- Added a function that can add weights to the graph. Now, as the Randomised DFS graph only produces one graph, it just means that the nodes with weights will be checked last.
