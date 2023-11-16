@@ -12,20 +12,16 @@ import (
 type Game struct{}
 
 var mazeSizeOriginal = 8
-
 var gameGridDFS [][]MazeSquare = DFS(mazeSizeOriginal)
-
 var mazeSize = len(gameGridDFS[0])
 
 var dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
-
-var aStarPath = aStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
-
 var absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
 
+var aStarPath = aStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 var absolutePathAStar, weigthAStar = absolutePath(aStarPath)
 
-var graph = mazeToGraph(gameGridDFS, 20, 20)
+var graph = mazeToGraph(gameGridDFS, 20, 20, float32(20*mazeSizeOriginal), float32(20*mazeSizeOriginal))
 
 var whichPath = 3
 
@@ -50,9 +46,10 @@ func (g *Game) Update() error {
 		whichPath = 1
 
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
-		whichPath = 3
+		whichPath = 2
+
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyD) {
-		whichPath = 4
+		whichPath = 3
 	}
 
 	return nil
@@ -87,7 +84,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawPaths(screen, aStarPath, "A Star", weigthAStar)
 		drawPathsLines(screen, absolutePathAStar)
 
-	} else if whichPath == 4 {
+	} else if whichPath == 2 {
 		// Clear the screen to white
 		screen.Fill(color.White)
 
@@ -124,5 +121,6 @@ func changeMazeSize(newSize int) {
 	absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
 	absolutePathAStar, weigthAStar = absolutePath(aStarPath)
 	mazeSize = newSize
-	whichPath = 4
+	whichPath = 3
+	graph = mazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
 }
