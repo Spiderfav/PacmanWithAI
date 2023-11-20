@@ -12,7 +12,7 @@ Now I don't exactly know how since my machines are using the access tokens creat
 
 -------------------
 
-This is a simple guide to getting this program to run on your machine.
+# This is a simple guide to getting this program to run on your machine.
 
 1. Make sure you have the latest Golang Version Installed
 
@@ -39,7 +39,7 @@ This is a simple guide to getting this program to run on your machine.
     C - Run's "Maze to Weighted Graph" Algorithm on the Maze
     D - Clear's the screen to the normal maze built
 
-    # NOTE: Clicking on 1-3 multiple times will result in new maze configurations each time!
+    ### NOTE: Clicking on 1-3 multiple times will result in new maze configurations each time!
 
 6. While the maze is being run, the terminal window used to run the maze will also output the time taken for each algorithm to run on the disired maze size.
 
