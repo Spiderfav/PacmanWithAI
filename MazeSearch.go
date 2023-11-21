@@ -79,7 +79,7 @@ func aStar(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, fini
 	originalStartY := startY
 
 	// Marking every node unvisited
-	markUnvisited(gameGridDFS, len(gameGridDFS[0]))
+	markUnvisited(gameGridDFS)
 	addWeights(gameGridDFS, 100)
 
 	var bestPath []MazeSquare
@@ -200,7 +200,7 @@ func dijkstras(gameGridDFS [][]MazeSquare, startX int, startY int, finishX int, 
 	originalStartY := startY
 
 	// Marking every node unvisited
-	markUnvisited(gameGridDFS, len(gameGridDFS[0]))
+	markUnvisited(gameGridDFS)
 	addWeights(gameGridDFS, 100)
 
 	var pathTaken []MazeSquare

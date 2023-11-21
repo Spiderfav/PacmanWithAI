@@ -155,7 +155,9 @@ func chooseDirection(x int, y int, size int, gameGrid [][]MazeSquare) *MazeSquar
 }
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
-func markUnvisited(gameGridDFS [][]MazeSquare, size int) {
+func markUnvisited(gameGridDFS [][]MazeSquare) {
+
+	size := len(gameGridDFS[0])
 
 	for y := 0; y < size; y++ {
 
@@ -163,6 +165,7 @@ func markUnvisited(gameGridDFS [][]MazeSquare, size int) {
 
 			gameGridDFS[y][x].Visited = false
 			gameGridDFS[y][x].Weight = 0
+			gameGridDFS[y][x].NumberOfWalls = countWalls(gameGridDFS[y][x])
 
 		}
 

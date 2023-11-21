@@ -67,6 +67,12 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []MazeSquare) {
 
 }
 
+func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]MazeSquare) {
+	for count := 0; count < len(pathsTaken); count++ {
+		drawPathsLines(screen, pathsTaken[count])
+	}
+}
+
 // This function draws circles with their position in the path
 // It also draws the start node and end node and the total cost
 func drawPaths(screen *ebiten.Image, pathTaken []MazeSquare, algo string, weight int) {
