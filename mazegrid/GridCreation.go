@@ -17,6 +17,11 @@ type MazeSquare struct {
 	NumberOfWalls int
 }
 
+func CreateBlankSquare() MazeSquare {
+	return MazeSquare{20, 20, nil, true, nil, true, nil, true, nil, true, false, 0, 4}
+
+}
+
 // Thid function counts the walls of a node
 func CountWalls(x MazeSquare) int {
 	count := 0
