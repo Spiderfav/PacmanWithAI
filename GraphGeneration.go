@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type TreeNode struct {
 	CurrentNode MazeSquare
 	LeftNode    *MazeSquare
@@ -30,4 +32,17 @@ func mazeToGraph(gameGridDFS [][]MazeSquare, startX float32, startY float32, end
 	}
 
 	return definiteNodes
+}
+
+func allPaths(gameGridDFS [][]MazeSquare, definiteNodes []MazeSquare) [][]MazeSquare {
+	var paths [][]MazeSquare
+
+	for i := 1; i < len(definiteNodes); i++ {
+		fmt.Println("Creating Graph")
+		pathTaken := dijkstras(gameGridDFS, int(definiteNodes[0].XCoordinate), int(definiteNodes[0].YCoordinate), int(definiteNodes[i].XCoordinate), int(definiteNodes[i].YCoordinate))
+		finalPath, _ := absolutePath(pathTaken)
+		paths = append(paths, finalPath)
+	}
+
+	return paths
 }

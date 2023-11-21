@@ -22,6 +22,7 @@ var aStarPath = aStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOrigi
 var absolutePathAStar, weigthAStar = absolutePath(aStarPath)
 
 var graph = mazeToGraph(gameGridDFS, 20, 20, float32(20*mazeSizeOriginal), float32(20*mazeSizeOriginal))
+var graphPaths = allPaths(gameGridDFS, graph)
 
 var whichPath = 3
 
@@ -90,7 +91,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		// Draw the maze to the screen
 		DrawMaze(screen, mazeSize)
-		drawPaths(screen, graph, "Nodes", 10)
+		drawPaths(screen, graph, "Graph Method", 10)
+		drawMultiplePaths(screen, graphPaths)
 
 	}
 }
@@ -123,4 +125,5 @@ func changeMazeSize(newSize int) {
 	mazeSize = newSize
 	whichPath = 3
 	graph = mazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
+	graphPaths = allPaths(gameGridDFS, graph)
 }
