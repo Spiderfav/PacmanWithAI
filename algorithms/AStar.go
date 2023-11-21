@@ -9,7 +9,7 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-// This function uses the A* Algorithm to find the shortest path from one node to another in a given maze
+// AStar uses the A* Algorithm to find the shortest path from one node to another in a given maze
 func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int) []mazegrid.MazeSquare {
 	start := time.Now()
 
@@ -19,12 +19,13 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 	// Marking every node unvisited
 	MarkUnvisited(gameGridDFS)
+	// Adding random weights of total weight 100 in the gamegrid
 	AddWeights(gameGridDFS, 100)
 
-	var bestPath []mazegrid.MazeSquare
+	var bestPath []mazegrid.MazeSquare // Stores the best path found
 
-	prevWeight := 0
-	var nodePrevWeights []int
+	prevWeight := 0           // Stores the previous Node's weight
+	var nodePrevWeights []int // Stores the nodes weight while traversing a path
 
 	var splitNodes []mazegrid.MazeSquare
 
@@ -33,7 +34,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
 
-		choosingNodes := make(map[mazegrid.MazeSquare]float64)
+		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
 
 		// Assigning a new weight to the current node only if it is not the starting point
 		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[int(originalStartX/20)-1][int(originalStartY/20)-1] {
@@ -72,9 +73,9 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 		}
 
-		keys := make([]mazegrid.MazeSquare, 0, len(choosingNodes))
+		keys := make([]mazegrid.MazeSquare, 0, len(choosingNodes)) // Extracting the keys from the node choices
 
-		// The neighbouring nodes are added to a map and then sorted by the distances
+		// The neighbouring nodes are added to a map based on the keys available
 		for key := range choosingNodes {
 			keys = append(keys, key)
 		}
