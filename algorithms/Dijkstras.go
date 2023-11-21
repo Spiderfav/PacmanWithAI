@@ -7,9 +7,10 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-// This function uses Dijkstras Algorithm to find the shortest path from one node to another in a given maze
+// Dijkstras uses Dijkstras Algorithm to find the shortest path from one node to another in a given maze
+// The maze must be built with type mazegrid.Mazesquare
 func Dijkstras(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int) []mazegrid.MazeSquare {
-	start := time.Now()
+	start := time.Now() // This is used to time how long the function took to execute
 
 	// Storing the original start values
 	originalStartX := startX
@@ -17,20 +18,20 @@ func Dijkstras(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, fini
 
 	// Marking every node unvisited
 	MarkUnvisited(gameGridDFS)
+	// Adding random weights of total weight 100 in the gamegrid
 	AddWeights(gameGridDFS, 100)
 
-	var pathTaken []mazegrid.MazeSquare
+	var pathTaken []mazegrid.MazeSquare // Stores the best path found
 
-	prevWeight := 0
-	var nodePrevWeights []int
+	prevWeight := 0           // Stores the previous Node's weight
+	var nodePrevWeights []int // Stores the nodes weight while traversing a path
 
 	var splitNodes []mazegrid.MazeSquare
 
 	// Assigning the first node a weight of 0
 	gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = 0
 
-	// While the end node of the grid has not been visited
-
+	// While the node we want the distance to has not been visited
 	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
 
 		// Assigning a new weight to the current node only if it is not the starting point

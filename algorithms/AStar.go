@@ -10,8 +10,9 @@ import (
 )
 
 // AStar uses the A* Algorithm to find the shortest path from one node to another in a given maze
+// The maze must be built with type mazegrid.Mazesquare
 func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int) []mazegrid.MazeSquare {
-	start := time.Now()
+	start := time.Now() // This is used to time how long the function took to execute
 
 	// Storing the original start values
 	originalStartX := startX
@@ -32,6 +33,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 	// Assigning the first node a weight of 0
 	gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = 0
 
+	// While the node we want the distance to has not been visited
 	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
 
 		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
