@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 )
@@ -20,7 +21,7 @@ var (
 
 // This function draws a given square to the screen
 // It checks if the current node has a given wall, then draws it to the screen
-func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
+func drawSquare(screen *ebiten.Image, squareToDraw mazegrid.MazeSquare) {
 	var strokeWidth float32 = 1
 
 	if squareToDraw.HasDown {
@@ -43,18 +44,18 @@ func DrawSquare(screen *ebiten.Image, squareToDraw MazeSquare) {
 
 // The DrawMaze function takes the screen argument given as the screen to draw to maze to
 // It draws the maze from the GameGridDFS
-func DrawMaze(screen *ebiten.Image, size int) {
+func drawMaze(screen *ebiten.Image, size int) {
 
 	// For each row and column, it looks at the walls of the block and draws the ones it has
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
-			DrawSquare(screen, gameGridDFS[i][j])
+			drawSquare(screen, gameGridDFS[i][j])
 		}
 	}
 }
 
 // This function draws lines for each path taken
-func drawPathsLines(screen *ebiten.Image, pathTaken []MazeSquare) {
+func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
 	prevX := pathTaken[0].XCoordinate + 10
 	prevY := pathTaken[0].YCoordinate + 10
 
@@ -67,7 +68,7 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []MazeSquare) {
 
 }
 
-func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]MazeSquare) {
+func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]mazegrid.MazeSquare) {
 	for count := 0; count < len(pathsTaken); count++ {
 		drawPathsLines(screen, pathsTaken[count])
 	}
@@ -75,7 +76,7 @@ func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]MazeSquare) {
 
 // This function draws circles with their position in the path
 // It also draws the start node and end node and the total cost
-func drawPaths(screen *ebiten.Image, pathTaken []MazeSquare, algo string, weight int) {
+func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo string, weight int) {
 
 	// Here we are defining the font to be used from the general golang fonts
 	tt, err := opentype.Parse(fonts.MPlus1pRegular_ttf)

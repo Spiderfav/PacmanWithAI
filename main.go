@@ -7,22 +7,25 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/generation"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
 type Game struct{}
 
 var mazeSizeOriginal = 8
-var gameGridDFS [][]MazeSquare = DFS(mazeSizeOriginal)
+var gameGridDFS [][]mazegrid.MazeSquare = generation.DFS(mazeSizeOriginal)
 var mazeSize = len(gameGridDFS[0])
 
-var dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
-var absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
+var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
+var absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
 
-var aStarPath = aStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
-var absolutePathAStar, weigthAStar = absolutePath(aStarPath)
+var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
+var absolutePathAStar, weigthAStar = algorithms.AbsolutePath(aStarPath)
 
-var graph = mazeToGraph(gameGridDFS, 20, 20, float32(20*mazeSizeOriginal), float32(20*mazeSizeOriginal))
-var graphPaths = allPaths(gameGridDFS, graph)
+var graph = generation.MazeToGraph(gameGridDFS, 20, 20, float32(20*mazeSizeOriginal), float32(20*mazeSizeOriginal))
+var graphPaths = generation.AllPaths(gameGridDFS, graph)
 
 var whichPath = 3
 
@@ -61,14 +64,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Clear the screen to white
 	screen.Fill(color.White)
 	// Draw the maze to the screen
-	DrawMaze(screen, mazeSize)
+	drawMaze(screen, mazeSize)
 
 	if whichPath == 0 {
 		// Clear the screen to white
 		screen.Fill(color.White)
 
 		// Draw the maze to the screen
-		DrawMaze(screen, mazeSize)
+		drawMaze(screen, mazeSize)
 
 		// Draw Dijkstra's Path to the screen
 		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
@@ -79,7 +82,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.Fill(color.White)
 
 		// Draw the maze to the screen
-		DrawMaze(screen, mazeSize)
+		drawMaze(screen, mazeSize)
 
 		// Draw A*'s Path to the screen
 		drawPaths(screen, aStarPath, "A Star", weigthAStar)
@@ -90,7 +93,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.Fill(color.White)
 
 		// Draw the maze to the screen
-		DrawMaze(screen, mazeSize)
+		drawMaze(screen, mazeSize)
 		drawPaths(screen, graph, "Graph Method", 10)
 		drawMultiplePaths(screen, graphPaths)
 
@@ -117,13 +120,13 @@ func main() {
 }
 
 func changeMazeSize(newSize int) {
-	gameGridDFS = DFS(newSize)
-	dijkstrasPath = dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
-	aStarPath = aStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
-	absolutePathDijkstras, weightDijkstras = absolutePath(dijkstrasPath)
-	absolutePathAStar, weigthAStar = absolutePath(aStarPath)
+	gameGridDFS = generation.DFS(newSize)
+	dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
+	aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
+	absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
+	absolutePathAStar, weigthAStar = algorithms.AbsolutePath(aStarPath)
 	mazeSize = newSize
 	whichPath = 3
-	graph = mazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
-	graphPaths = allPaths(gameGridDFS, graph)
+	graph = generation.MazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
+	graphPaths = generation.AllPaths(gameGridDFS, graph)
 }

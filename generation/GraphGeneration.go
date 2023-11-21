@@ -1,0 +1,53 @@
+package generation
+
+import (
+	"fmt"
+
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
+)
+
+type TreeNode struct {
+	CurrentNode mazegrid.MazeSquare
+	LeftNode    *mazegrid.MazeSquare
+	RightNode   *mazegrid.MazeSquare
+}
+
+func MazeToGraph(gameGridDFS [][]mazegrid.MazeSquare, startX float32, startY float32, endX float32, endY float32) []mazegrid.MazeSquare {
+	algorithms.MarkUnvisited(gameGridDFS)
+	var definiteNodes []mazegrid.MazeSquare
+
+	size := len(gameGridDFS[0])
+
+	for y := 0; y < size; y++ {
+
+		for x := 0; x < size; x++ {
+
+			if (gameGridDFS[y][x].XCoordinate == startX) && (gameGridDFS[y][x].YCoordinate == startY) || (gameGridDFS[y][x].XCoordinate == endX) && (gameGridDFS[y][x].YCoordinate == endY) {
+				definiteNodes = append(definiteNodes, gameGridDFS[y][x])
+				continue
+			}
+
+			if gameGridDFS[y][x].NumberOfWalls == 3 || gameGridDFS[y][x].NumberOfWalls == 1 {
+				definiteNodes = append(definiteNodes, gameGridDFS[y][x])
+			}
+
+		}
+
+	}
+
+	return definiteNodes
+}
+
+func AllPaths(gameGridDFS [][]mazegrid.MazeSquare, definiteNodes []mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
+	var paths [][]mazegrid.MazeSquare
+
+	for i := 1; i < len(definiteNodes); i++ {
+		fmt.Println("Creating Graph")
+		pathTaken := algorithms.Dijkstras(gameGridDFS, int(definiteNodes[0].XCoordinate), int(definiteNodes[0].YCoordinate), int(definiteNodes[i].XCoordinate), int(definiteNodes[i].YCoordinate))
+		finalPath, _ := algorithms.AbsolutePath(pathTaken)
+		paths = append(paths, finalPath)
+	}
+
+	return paths
+}
