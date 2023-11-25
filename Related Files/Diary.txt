@@ -70,3 +70,13 @@ Week 8:
 - Added a function that can add weights to the graph. Now, as the Randomised DFS graph only produces one graph, it just means that the nodes with weights will be checked last.
 - TODO: New Maze Generation algorithm
 - TODO: Function to convert Maze to Weighted Graph
+
+Week 9:
+
+- Seperated various functions and files into their own modules and objects
+- Added more documentation in accordance to the Golang Specification for every function, module and object
+- Added various testing and benchamarking functions including:
+    - AbsolutePath
+    - A*
+    - Dijkstras
+    - Randomised DFS
