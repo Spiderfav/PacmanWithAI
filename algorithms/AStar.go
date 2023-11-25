@@ -52,25 +52,25 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 		// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
 		// It calculates the distance from the neighbour nodes to the end node
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
-			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate), float64(finishX), float64(finishY))
+			tempminDistance := EuclideanDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].YCoordinate), float64(finishX), float64(finishY))
 			choosingNodes[gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Weight)
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
-			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate), float64(finishX), float64(finishY))
+			tempminDistance := EuclideanDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].YCoordinate), float64(finishX), float64(finishY))
 			choosingNodes[gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Weight)
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
-			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate), float64(finishX), float64(finishY))
+			tempminDistance := EuclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].YCoordinate), float64(finishX), float64(finishY))
 			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Weight)
 
 		}
 
 		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
-			tempminDistance := euclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate), float64(finishX), float64(finishY))
+			tempminDistance := EuclideanDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].YCoordinate), float64(finishX), float64(finishY))
 			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Weight)
 
 		}
@@ -118,7 +118,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 }
 
 // This function, given the respective x and y values of two nodes, calculates the euclidean distance between them
-func euclideanDistance(x1 float64, y1 float64, x2 float64, y2 float64) float64 {
+func EuclideanDistance(x1 float64, y1 float64, x2 float64, y2 float64) float64 {
 	// The euclidean distance is calculated by the square root of the dot product of the difference of the two vectors
 	// u = (x1, y1)      v = (x2, y2)     uv = u-v
 	// uv . uv = total
