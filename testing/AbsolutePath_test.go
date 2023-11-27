@@ -26,11 +26,11 @@ func TestStartAndEndDikstras(t *testing.T) {
 	var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathDijkstras, _ = algorithms.AbsolutePath(dijkstrasPath)
 
-	if absolutePathDijkstras[0].XCoordinate != float32(20*mazeSizeOriginal) && absolutePathDijkstras[0].YCoordinate != float32(20*mazeSizeOriginal) {
-		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathDijkstras[0].XCoordinate, absolutePathDijkstras[0].YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
+	if absolutePathDijkstras[0].NodePosition.XCoordinate != float32(20*mazeSizeOriginal) && absolutePathDijkstras[0].NodePosition.YCoordinate != float32(20*mazeSizeOriginal) {
+		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathDijkstras[0].NodePosition.XCoordinate, absolutePathDijkstras[0].NodePosition.YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
-	} else if absolutePathDijkstras[len(absolutePathDijkstras)-1].XCoordinate != float32(20) && absolutePathDijkstras[len(absolutePathDijkstras)-1].YCoordinate != float32(20) {
-		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathDijkstras[0].XCoordinate, absolutePathDijkstras[0].YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
+	} else if absolutePathDijkstras[len(absolutePathDijkstras)-1].NodePosition.XCoordinate != float32(20) && absolutePathDijkstras[len(absolutePathDijkstras)-1].NodePosition.YCoordinate != float32(20) {
+		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathDijkstras[0].NodePosition.XCoordinate, absolutePathDijkstras[0].NodePosition.YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
 	}
 }
@@ -41,11 +41,11 @@ func TestStartAndEndAStar(t *testing.T) {
 	var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathAStar, _ = algorithms.AbsolutePath(aStarPath)
 
-	if absolutePathAStar[0].XCoordinate != float32(20*mazeSizeOriginal) && absolutePathAStar[0].YCoordinate != float32(20*mazeSizeOriginal) {
-		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathAStar[0].XCoordinate, absolutePathAStar[0].YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
+	if absolutePathAStar[0].NodePosition.XCoordinate != float32(20*mazeSizeOriginal) && absolutePathAStar[0].NodePosition.YCoordinate != float32(20*mazeSizeOriginal) {
+		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathAStar[0].NodePosition.XCoordinate, absolutePathAStar[0].NodePosition.YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
-	} else if absolutePathAStar[len(absolutePathAStar)-1].XCoordinate != float32(20) && absolutePathAStar[len(absolutePathAStar)-1].YCoordinate != float32(20) {
-		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathAStar[0].XCoordinate, absolutePathAStar[0].YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
+	} else if absolutePathAStar[len(absolutePathAStar)-1].NodePosition.XCoordinate != float32(20) && absolutePathAStar[len(absolutePathAStar)-1].NodePosition.YCoordinate != float32(20) {
+		t.Errorf("Result was incorrect, got X value: %f, Y value: %f ; Want X: %d, Y: %d.", absolutePathAStar[0].NodePosition.XCoordinate, absolutePathAStar[0].NodePosition.YCoordinate, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 
 	}
 }

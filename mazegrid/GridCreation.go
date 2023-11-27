@@ -1,44 +1,62 @@
 package mazegrid
 
+// The Position object is used for a MazeSquare object
+// It contains the X and Y Coordinates of an MazeSquare object
+type Position struct {
+	XCoordinate float32
+	YCoordinate float32
+}
+
+// The Direction object is used for a MazeSquare object
+// It contains a pointer to all the neightbours of the MazeSquare object
+type Direction struct {
+	Left  *MazeSquare
+	Down  *MazeSquare
+	Right *MazeSquare
+	Up    *MazeSquare
+}
+
+// The HasDirection object is used for a MazeSquare object
+// It contains the walls that the MazeSquare object has
+type HasDirection struct {
+	HasLeft  bool
+	HasDown  bool
+	HasRight bool
+	HasUp    bool
+}
+
 // The Mazequare Object
 type MazeSquare struct {
-	XCoordinate   float32
-	YCoordinate   float32
-	Left          *MazeSquare
-	HasLeft       bool
-	Down          *MazeSquare
-	HasDown       bool
-	Right         *MazeSquare
-	HasRight      bool
-	Up            *MazeSquare
-	HasUp         bool
+	NodePosition  Position
+	Walls         Direction
+	HasWalls      HasDirection
 	Visited       bool
 	Weight        int
 	NumberOfWalls int
 }
 
 func CreateBlankSquare() MazeSquare {
-	return MazeSquare{20, 20, nil, true, nil, true, nil, true, nil, true, false, 0, 4}
+	return MazeSquare{Position{20, 20}, Direction{nil, nil, nil, nil}, HasDirection{true, true, true, true}, false, 0, 4}
 
 }
 
-// Thid function counts the walls of a node
+// This function counts the walls of a node
 func CountWalls(x MazeSquare) int {
 	count := 0
 
-	if x.HasLeft {
+	if x.HasWalls.HasLeft {
 		count += 1
 	}
 
-	if x.HasRight {
+	if x.HasWalls.HasRight {
 		count += 1
 	}
 
-	if x.HasUp {
+	if x.HasWalls.HasUp {
 		count += 1
 	}
 
-	if x.HasDown {
+	if x.HasWalls.HasDown {
 		count += 1
 	}
 
@@ -64,23 +82,28 @@ func CreateGrid(size int) [][]MazeSquare {
 	for y = 0; y < float32(size); y++ {
 
 		for x = 0; x < float32(size); x++ {
+			positionOfNode := Position{squareLengthX * (x + 1), squareLengthY * (y + 1)}
+
+			nodeWalls := Direction{nil, nil, nil, nil}
+
+			nodeHasWalls := HasDirection{true, true, true, true}
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
-			var square = MazeSquare{squareLengthX * (x + 1), squareLengthY * (y + 1), nil, true, nil, true, nil, true, nil, true, false, 0, 4}
+			var square = MazeSquare{positionOfNode, nodeWalls, nodeHasWalls, false, 0, 4}
 
 			// Setting the game grid values to the MazeSquare object
 			gameGrid[int(y)][int(x)] = square
 
 			// If x>0, then we can assign left and right neighbours
 			if x > 0 {
-				gameGrid[int(y)][int(x)].Left = &gameGrid[int(y)][int(x-1)]
-				gameGrid[int(y)][int(x-1)].Right = &gameGrid[int(y)][int(x)]
+				gameGrid[int(y)][int(x)].Walls.Left = &gameGrid[int(y)][int(x-1)]
+				gameGrid[int(y)][int(x-1)].Walls.Right = &gameGrid[int(y)][int(x)]
 			}
 
 			// If y>0, then we can assign up and down neighbours
 			if y > 0 {
-				gameGrid[int(y)][int(x)].Up = &gameGrid[int(y-1)][int(x)]
-				gameGrid[int(y-1)][int(x)].Down = &gameGrid[int(y)][int(x)]
+				gameGrid[int(y)][int(x)].Walls.Up = &gameGrid[int(y-1)][int(x)]
+				gameGrid[int(y-1)][int(x)].Walls.Down = &gameGrid[int(y)][int(x)]
 
 			}
 

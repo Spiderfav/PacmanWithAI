@@ -20,11 +20,11 @@ func TestDijkstrasStartEnd(t *testing.T) {
 	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256)
 	path := algorithms.Dijkstras(gameGridDFS, 20, 20, 5120, 5120)
 
-	if path[0].XCoordinate != 20 || path[0].YCoordinate != 20 {
-		t.Errorf("Result was incorrect, got: %f, want: %s.", path[0].XCoordinate, "20")
+	if path[0].NodePosition.XCoordinate != 20 || path[0].NodePosition.YCoordinate != 20 {
+		t.Errorf("Result was incorrect, got: %f, want: %s.", path[0].NodePosition.XCoordinate, "20")
 
-	} else if (path[len(path)-1].XCoordinate) != 5120 || (path[len(path)-1].YCoordinate) != 5120 {
-		t.Errorf("Result was incorrect, got: %f, want: %s.", path[len(path)-1].XCoordinate, "5120")
+	} else if (path[len(path)-1].NodePosition.XCoordinate) != 5120 || (path[len(path)-1].NodePosition.YCoordinate) != 5120 {
+		t.Errorf("Result was incorrect, got: %f, want: %s.", path[len(path)-1].NodePosition.XCoordinate, "5120")
 	}
 }
 

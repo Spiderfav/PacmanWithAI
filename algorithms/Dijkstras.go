@@ -46,24 +46,24 @@ func Dijkstras(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, fini
 
 		// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
 		// It also stores the current weight at the given node for backtracking (that way the weight is correct)
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
 			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1+1][int(startY/20)-1])
 			nodePrevWeights = append(nodePrevWeights, prevWeight)
 		}
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
 			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1-1][int(startY/20)-1])
 			nodePrevWeights = append(nodePrevWeights, prevWeight)
 
 		}
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
 			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1-1])
 			nodePrevWeights = append(nodePrevWeights, prevWeight)
 
 		}
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
+		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
 			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1+1])
 			nodePrevWeights = append(nodePrevWeights, prevWeight)
 
@@ -77,8 +77,8 @@ func Dijkstras(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, fini
 			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
 			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
 
-			startY = int(nodePopped.XCoordinate)
-			startX = int(nodePopped.YCoordinate)
+			startY = int(nodePopped.NodePosition.XCoordinate)
+			startX = int(nodePopped.NodePosition.YCoordinate)
 		}
 
 	}

@@ -34,13 +34,13 @@ func DFS(size int) [][]mazegrid.MazeSquare {
 		currentAllNodes := 0
 
 		// Marking node as visited
-		gameGrid[int(startNode.YCoordinate/20)-1][int(startNode.XCoordinate/20)-1].Visited = true
+		gameGrid[int(startNode.NodePosition.YCoordinate/20)-1][int(startNode.NodePosition.XCoordinate/20)-1].Visited = true
 
 		// Choose random direction to go in
-		nextNodeNoGrid = chooseDirection(int(startNode.XCoordinate), int(startNode.YCoordinate), size, gameGrid)
+		nextNodeNoGrid = chooseDirection(int(startNode.NodePosition.XCoordinate), int(startNode.NodePosition.YCoordinate), size, gameGrid)
 
 		// Get the node for the direction we want to go in
-		nextNode := gameGrid[int(nextNodeNoGrid.YCoordinate/20)-1][int(nextNodeNoGrid.XCoordinate/20)-1]
+		nextNode := gameGrid[int(nextNodeNoGrid.NodePosition.YCoordinate/20)-1][int(nextNodeNoGrid.NodePosition.XCoordinate/20)-1]
 
 		// If the node we picked has already been visited, pop off the stack until one that hasn't been visited is chosen
 		if nextNode.Visited {
@@ -125,31 +125,31 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare) *
 	switch directionNumber {
 
 	case 0:
-		direction = startNode.Left
+		direction = startNode.Walls.Left
 
-		gameGrid[(y/20)-1][(x/20)-1].HasLeft = false
-		gameGrid[(y/20)-1][((x/20)-1)-1].HasRight = false
+		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasLeft = false
+		gameGrid[(y/20)-1][((x/20)-1)-1].HasWalls.HasRight = false
 
 	case 1:
 
-		direction = startNode.Down
+		direction = startNode.Walls.Down
 
-		gameGrid[(y/20)-1][(x/20)-1].HasDown = false
-		gameGrid[((y/20)-1)+1][(x/20)-1].HasUp = false
+		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasDown = false
+		gameGrid[((y/20)-1)+1][(x/20)-1].HasWalls.HasUp = false
 
 	case 2:
 
-		direction = startNode.Right
+		direction = startNode.Walls.Right
 
-		gameGrid[(y/20)-1][(x/20)-1].HasRight = false
-		gameGrid[(y/20)-1][((x/20)-1)+1].HasLeft = false
+		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasRight = false
+		gameGrid[(y/20)-1][((x/20)-1)+1].HasWalls.HasLeft = false
 
 	case 3:
 
-		direction = startNode.Up
+		direction = startNode.Walls.Up
 
-		gameGrid[(y/20)-1][(x/20)-1].HasUp = false
-		gameGrid[((y/20)-1)-1][(x/20)-1].HasDown = false
+		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasUp = false
+		gameGrid[((y/20)-1)-1][(x/20)-1].HasWalls.HasDown = false
 
 	}
 

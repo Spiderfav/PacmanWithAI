@@ -23,7 +23,7 @@ func MazeToGraph(gameGridDFS [][]mazegrid.MazeSquare, startX float32, startY flo
 
 		for x := 0; x < size; x++ {
 
-			if (gameGridDFS[y][x].XCoordinate == startX) && (gameGridDFS[y][x].YCoordinate == startY) || (gameGridDFS[y][x].XCoordinate == endX) && (gameGridDFS[y][x].YCoordinate == endY) {
+			if (gameGridDFS[y][x].NodePosition.XCoordinate == startX) && (gameGridDFS[y][x].NodePosition.YCoordinate == startY) || (gameGridDFS[y][x].NodePosition.XCoordinate == endX) && (gameGridDFS[y][x].NodePosition.YCoordinate == endY) {
 				definiteNodes = append(definiteNodes, gameGridDFS[y][x])
 				continue
 			}
@@ -44,7 +44,7 @@ func AllPaths(gameGridDFS [][]mazegrid.MazeSquare, definiteNodes []mazegrid.Maze
 
 	for i := 1; i < len(definiteNodes); i++ {
 		fmt.Println("Creating Graph")
-		pathTaken := algorithms.Dijkstras(gameGridDFS, int(definiteNodes[0].XCoordinate), int(definiteNodes[0].YCoordinate), int(definiteNodes[i].XCoordinate), int(definiteNodes[i].YCoordinate))
+		pathTaken := algorithms.Dijkstras(gameGridDFS, int(definiteNodes[0].NodePosition.XCoordinate), int(definiteNodes[0].NodePosition.YCoordinate), int(definiteNodes[i].NodePosition.XCoordinate), int(definiteNodes[i].NodePosition.YCoordinate))
 		finalPath, _ := algorithms.AbsolutePath(pathTaken)
 		paths = append(paths, finalPath)
 	}
