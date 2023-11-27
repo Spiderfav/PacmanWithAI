@@ -28,9 +28,7 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 		// If found, update the current node and add it to the final path while updating the total weight
 		if !currentNode.HasLeft {
 			if currentNode.Left.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Left.YCoordinate == pathTaken[i-1].YCoordinate {
-				currentNode = pathTaken[i-1]
-				finalPath = append(finalPath, pathTaken[i-1])
-				totalWeight = totalWeight + currentNode.Weight
+				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
 		}
@@ -39,18 +37,14 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 
 		if !currentNode.HasRight {
 			if currentNode.Right.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Right.YCoordinate == pathTaken[i-1].YCoordinate {
-				currentNode = pathTaken[i-1]
-				finalPath = append(finalPath, pathTaken[i-1])
-				totalWeight = totalWeight + currentNode.Weight
+				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
 		}
 
 		if !currentNode.HasDown {
 			if currentNode.Down.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Down.YCoordinate == pathTaken[i-1].YCoordinate {
-				currentNode = pathTaken[i-1]
-				finalPath = append(finalPath, pathTaken[i-1])
-				totalWeight = totalWeight + currentNode.Weight
+				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
 
@@ -58,9 +52,7 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 
 		if !currentNode.HasUp {
 			if currentNode.Up.XCoordinate == pathTaken[i-1].XCoordinate && currentNode.Up.YCoordinate == pathTaken[i-1].YCoordinate {
-				currentNode = pathTaken[i-1]
-				finalPath = append(finalPath, pathTaken[i-1])
-				totalWeight = totalWeight + currentNode.Weight
+				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
 
@@ -70,4 +62,14 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 	}
 
 	return finalPath, totalWeight // Return the final path and its total weight
+}
+
+// appendNode takes the position of the node, the path taken and the final path
+// It returns the node to take next, the updated path and the weight of the node
+func appendNode(i int, pathTaken []mazegrid.MazeSquare, finalPath []mazegrid.MazeSquare, totalWeight int) (mazegrid.MazeSquare, []mazegrid.MazeSquare, int) {
+	currentNode := pathTaken[i]
+	finalPath = append(finalPath, pathTaken[i])
+	totalWeight = totalWeight + currentNode.Weight
+
+	return currentNode, finalPath, totalWeight
 }
