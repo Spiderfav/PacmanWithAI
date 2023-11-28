@@ -54,6 +54,9 @@ func (g *Game) Update() error {
 
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		whichPath = 3
+
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyE) {
+		whichPath = 4
 	}
 
 	return nil
@@ -96,6 +99,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawMaze(screen, mazeSize)
 		drawPaths(screen, graph, "Graph Method", 10)
 		drawMultiplePaths(screen, graphPaths)
+
+	} else if whichPath == 4 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw Solution Path to the screen
+		drawPathsLines(screen, absolutePathAStar)
 
 	}
 }
