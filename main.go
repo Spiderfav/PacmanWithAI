@@ -15,7 +15,8 @@ import (
 type Game struct{}
 
 var mazeSizeOriginal = 8
-var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+var oldGameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
+var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
 var mazeSize = len(gameGridDFS[0])
 
 var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
@@ -133,7 +134,9 @@ func main() {
 }
 
 func changeMazeSize(newSize int) {
-	gameGridDFS = algorithms.DFS(newSize)
+	oldGameGridDFS = algorithms.DFS(newSize, nil)
+	algorithms.MarkUnvisited(oldGameGridDFS)
+	gameGridDFS = algorithms.DFS(newSize, oldGameGridDFS)
 	dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
 	aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
 	absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)

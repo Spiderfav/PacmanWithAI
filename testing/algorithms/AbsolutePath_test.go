@@ -21,7 +21,7 @@ func TestOneNode(t *testing.T) {
 }
 
 func TestStartAndEndDikstras(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathDijkstras, _ = algorithms.AbsolutePath(dijkstrasPath)
@@ -36,7 +36,7 @@ func TestStartAndEndDikstras(t *testing.T) {
 }
 
 func TestStartAndEndAStar(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathAStar, _ = algorithms.AbsolutePath(aStarPath)
@@ -51,7 +51,7 @@ func TestStartAndEndAStar(t *testing.T) {
 }
 
 func TestSmallPathDijkstras(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
@@ -69,7 +69,7 @@ func TestSmallPathDijkstras(t *testing.T) {
 
 func TestMediumPathDijkstras(t *testing.T) {
 	mazeSizeOriginal = mazeSizeOriginal * 2
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
@@ -88,7 +88,7 @@ func TestMediumPathDijkstras(t *testing.T) {
 func TestLargePathDijkstras(t *testing.T) {
 	mazeSizeOriginal = mazeSizeOriginal * mazeSizeOriginal
 
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
@@ -106,7 +106,7 @@ func TestLargePathDijkstras(t *testing.T) {
 
 func TestSmallPathAStar(t *testing.T) {
 	mazeSizeOriginal = 4
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathAStar, weightAStar = algorithms.AbsolutePath(aStarPath)
@@ -124,7 +124,7 @@ func TestSmallPathAStar(t *testing.T) {
 
 func TestMediumPathAStar(t *testing.T) {
 	mazeSizeOriginal = mazeSizeOriginal * 2
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathAStar, weightAStar = algorithms.AbsolutePath(aStarPath)
@@ -143,7 +143,7 @@ func TestMediumPathAStar(t *testing.T) {
 func TestLargePathAStar(t *testing.T) {
 	mazeSizeOriginal = mazeSizeOriginal * mazeSizeOriginal
 
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 	var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	var absolutePathAStar, weightAStar = algorithms.AbsolutePath(aStarPath)
@@ -161,7 +161,7 @@ func TestLargePathAStar(t *testing.T) {
 
 func BenchmarkAbsolutePathDijkstra(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 		var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 		algorithms.AbsolutePath(dijkstrasPath)
@@ -170,7 +170,7 @@ func BenchmarkAbsolutePathDijkstra(b *testing.B) {
 
 func BenchmarkAbsolutePathAStar(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 
 		var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 		algorithms.AbsolutePath(aStarPath)

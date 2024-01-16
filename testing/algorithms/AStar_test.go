@@ -16,7 +16,7 @@ func TestEuclidean(t *testing.T) {
 }
 
 func TestAStarSize(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256, nil)
 	path := algorithms.AStar(gameGridDFS, 20, 20, 256, 256)
 
 	if len(path) == 0 {
@@ -25,7 +25,7 @@ func TestAStarSize(t *testing.T) {
 }
 
 func TestAStarStartEnd(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256, nil)
 	path := algorithms.AStar(gameGridDFS, 20, 20, 5120, 5120)
 
 	if path[0].NodePosition.XCoordinate != 20 || path[0].NodePosition.YCoordinate != 20 {
@@ -45,7 +45,7 @@ func BenchmarkEuclidean(b *testing.B) {
 func BenchmarkAStar(b *testing.B) {
 	var gridSize = 1028
 	for i := 0; i < b.N; i++ {
-		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(gridSize)
+		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(gridSize, nil)
 		algorithms.AStar(gameGridDFS, 20, 20, 20*gridSize, 20*gridSize)
 	}
 }
