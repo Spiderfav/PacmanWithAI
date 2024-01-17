@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -9,9 +10,32 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/generation"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
 )
 
-type Game struct{}
+const (
+	screenWidth  = 1920
+	screenHeight = 1080
+)
+
+type Game struct {
+	button      *Button
+	buttonBack  *Button
+	displayText string
+	fontFace    font.Face
+}
+
+// MouseStrokeSource is a StrokeSource implementation of mouse.
+type MouseStrokeSource struct{}
+
+func (m *MouseStrokeSource) Position() (int, int) {
+	return ebiten.CursorPosition()
+}
+
+func (m *MouseStrokeSource) IsJustReleased() bool {
+	return inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft)
+}
 
 var mazeSizeOriginal = 8
 var oldGameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
@@ -29,7 +53,35 @@ var graphPaths = generation.AllPaths(gameGridDFS, graph)
 
 var whichPath = 3
 
+var typeOfMaze = 0
+
+// Add a Button struct
+type Button struct {
+	image         *ebiten.Image
+	x, y          int
+	width, height int
+	enabled       bool
+}
+
+// In returns true if mouse's (x, y) is in the button, and false otherwise.
+func (b *Button) In(x, y int) bool {
+	return x >= b.x && x < b.x+b.width && y >= b.y && y < b.y+b.height
+}
+
 func (g *Game) Update() error {
+	// Check if the button is clicked
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		if g.button.In(x, y) {
+			g.displayText = "Back"
+			typeOfMaze = 1
+			return nil
+		} else if g.buttonBack.In(x, y) {
+			g.displayText = "Show Maze"
+			typeOfMaze = 0
+			return nil
+		}
+	}
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {
 		changeMazeSize(mazeSizeOriginal)
@@ -56,6 +108,7 @@ func (g *Game) Update() error {
 		whichPath = 3
 
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyE) {
+
 		whichPath = 4
 	}
 
@@ -63,26 +116,53 @@ func (g *Game) Update() error {
 }
 
 // This function is called every second to update what is drawn on the screen
+
 func (g *Game) Draw(screen *ebiten.Image) {
-	OldMazeSystem(screen, whichPath)
+
+	fmt.Println("Type of Maze", typeOfMaze)
+
+	switch typeOfMaze {
+	case 0:
+		mainMenu(screen, g)
+	case 1:
+		OldMazeSystem(screen, whichPath, g)
+	}
+
 }
 
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 1920, 1080
+func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
+	return screenWidth, screenHeight
 }
 
-func main() {
+func NewGame() *Game {
 
-	fmt.Println("Size of Dijkstras:", len(dijkstrasPath))
-	fmt.Println("Size of A*:", len(aStarPath))
+	// Initialize the button
+	buttonImage := ebiten.NewImage(100, 30)      // Set the size of the button
+	buttonImage.Fill(color.RGBA{0, 255, 0, 250}) // Fill with a color
+	button := &Button{
+		image:   buttonImage,
+		x:       500, // Position of the button
+		y:       500,
+		width:   100,
+		height:  30,
+		enabled: true,
+	}
 
-	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
-	fmt.Println(" ")
-	changeMazeSize(mazeSizeOriginal)
-	ebiten.SetWindowSize(1920, 1080)
-	ebiten.SetWindowTitle("Single Agent Maze!")
-	if err := ebiten.RunGame(&Game{}); err != nil {
-		log.Fatal(err)
+	buttonBack := &Button{
+		image:   buttonImage,
+		x:       500, // Position of the button
+		y:       500,
+		width:   100,
+		height:  30,
+		enabled: true,
+	}
+
+	// Initialize the game.
+	return &Game{
+		button:      button,
+		buttonBack:  buttonBack,
+		displayText: "Show Maze",
+		fontFace:    basicfont.Face7x13,
 	}
 }
 
@@ -98,4 +178,19 @@ func changeMazeSize(newSize int) {
 	whichPath = 3
 	graph = generation.MazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
 	graphPaths = generation.AllPaths(gameGridDFS, graph)
+}
+
+func main() {
+
+	fmt.Println("Size of Dijkstras:", len(dijkstrasPath))
+	fmt.Println("Size of A*:", len(aStarPath))
+
+	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
+	fmt.Println(" ")
+	changeMazeSize(mazeSizeOriginal)
+	ebiten.SetWindowSize(screenWidth, screenHeight)
+	ebiten.SetWindowTitle("Single Agent Maze!")
+	if err := ebiten.RunGame(NewGame()); err != nil {
+		log.Fatal(err)
+	}
 }

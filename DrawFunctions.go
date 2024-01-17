@@ -105,12 +105,39 @@ func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo strin
 	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
 
 }
+func mainMenu(screen *ebiten.Image, g *Game) {
+	// Clear the screen to white
+	screen.Fill(color.White)
 
-func OldMazeSystem(screen *ebiten.Image, whichPath int) {
+	text.Draw(screen, "Pacman Game", g.fontFace, (screenWidth / 2), (screenHeight / 2), color.Black)
+
+	if g.button != nil && g.button.enabled {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.button.x), float64(g.button.y))
+		screen.DrawImage(g.button.image, op)
+	}
+
+	if g.displayText != "" {
+		text.Draw(screen, g.displayText, g.fontFace, g.button.x, g.button.y+20, color.Black)
+	}
+
+}
+
+func OldMazeSystem(screen *ebiten.Image, whichPath int, g *Game) {
 	// Clear the screen to white
 	screen.Fill(color.White)
 	// Draw the maze to the screen
 	drawMaze(screen, mazeSize)
+
+	if g.buttonBack != nil && g.buttonBack.enabled {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
+		screen.DrawImage(g.buttonBack.image, op)
+	}
+
+	if g.displayText != "" {
+		text.Draw(screen, g.displayText, g.fontFace, g.button.x, g.button.y+20, color.Black)
+	}
 
 	if whichPath == 0 {
 		// Clear the screen to white
