@@ -105,3 +105,53 @@ func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo strin
 	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
 
 }
+
+func OldMazeSystem(screen *ebiten.Image, whichPath int) {
+	// Clear the screen to white
+	screen.Fill(color.White)
+	// Draw the maze to the screen
+	drawMaze(screen, mazeSize)
+
+	if whichPath == 0 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw Dijkstra's Path to the screen
+		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
+		drawPathsLines(screen, absolutePathDijkstras)
+
+	} else if whichPath == 1 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw A*'s Path to the screen
+		drawPaths(screen, aStarPath, "A Star", weigthAStar)
+		drawPathsLines(screen, absolutePathAStar)
+
+	} else if whichPath == 2 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+		drawPaths(screen, graph, "Graph Method", 10)
+		drawMultiplePaths(screen, graphPaths)
+
+	} else if whichPath == 4 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw Solution Path to the screen
+		drawPathsLines(screen, absolutePathAStar)
+
+	}
+}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -65,53 +64,7 @@ func (g *Game) Update() error {
 
 // This function is called every second to update what is drawn on the screen
 func (g *Game) Draw(screen *ebiten.Image) {
-	// Clear the screen to white
-	screen.Fill(color.White)
-	// Draw the maze to the screen
-	drawMaze(screen, mazeSize)
-
-	if whichPath == 0 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
-
-		// Draw Dijkstra's Path to the screen
-		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
-		drawPathsLines(screen, absolutePathDijkstras)
-
-	} else if whichPath == 1 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
-
-		// Draw A*'s Path to the screen
-		drawPaths(screen, aStarPath, "A Star", weigthAStar)
-		drawPathsLines(screen, absolutePathAStar)
-
-	} else if whichPath == 2 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
-		drawPaths(screen, graph, "Graph Method", 10)
-		drawMultiplePaths(screen, graphPaths)
-
-	} else if whichPath == 4 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
-
-		// Draw Solution Path to the screen
-		drawPathsLines(screen, absolutePathAStar)
-
-	}
+	OldMazeSystem(screen, whichPath)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -125,7 +78,7 @@ func main() {
 
 	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
 	fmt.Println(" ")
-
+	changeMazeSize(mazeSizeOriginal)
 	ebiten.SetWindowSize(1920, 1080)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(&Game{}); err != nil {
