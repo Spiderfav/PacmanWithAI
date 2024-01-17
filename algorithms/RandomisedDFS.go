@@ -12,6 +12,7 @@ func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
 
 	if oldDFS == nil {
 		gameGrid = mazegrid.CreateGrid(size)
+
 	} else {
 		gameGrid = oldDFS
 	}
