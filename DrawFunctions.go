@@ -113,26 +113,53 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 	for i := 0; i < 3; i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttons[i].x), float64(g.buttons[i].y))
+		op.GeoM.Translate(float64(g.buttonsMenu[i].x), float64(g.buttonsMenu[i].y))
 
-		screen.DrawImage(g.buttons[i].image, op)
+		screen.DrawImage(g.buttonsMenu[i].image, op)
 
-		text.Draw(screen, g.buttons[i].message, g.fontFace, g.buttons[i].x+10, g.buttons[i].y+20, color.Black)
+		text.Draw(screen, g.buttonsMenu[i].message, g.fontFace, g.buttonsMenu[i].x+10, g.buttonsMenu[i].y+20, color.Black)
 	}
 
 }
 
-func OldMazeSystem(screen *ebiten.Image, whichPath int, g *Game) {
-	// Clear the screen to white
-	screen.Fill(color.White)
-	// Draw the maze to the screen
-	drawMaze(screen, mazeSize)
+func sizeMenu(screen *ebiten.Image, g *Game) {
+
+	for i := 0; i < len(g.buttonsSize); i++ {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.buttonsSize[i].x), float64(g.buttonsSize[i].y))
+
+		screen.DrawImage(g.buttonsSize[i].image, op)
+
+		text.Draw(screen, g.buttonsSize[i].message, g.fontFace, g.buttonsSize[i].x+10, g.buttonsSize[i].y+20, color.Black)
+	}
+}
+
+func algoMenu(screen *ebiten.Image, g *Game) {
+
+	for i := 0; i < len(g.buttonsAlgo); i++ {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.buttonsAlgo[i].x), float64(g.buttonsAlgo[i].y))
+
+		screen.DrawImage(g.buttonsAlgo[i].image, op)
+
+		text.Draw(screen, g.buttonsAlgo[i].message, g.fontFace, g.buttonsAlgo[i].x+10, g.buttonsAlgo[i].y+20, color.Black)
+	}
+}
+
+func backButton(screen *ebiten.Image, g *Game) {
 
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
 	screen.DrawImage(g.buttonBack.image, op)
 
-	text.Draw(screen, g.buttonBack.message, g.fontFace, g.buttons[0].x+10, g.buttons[0].y+20, color.Black)
+	text.Draw(screen, g.buttonBack.message, g.fontFace, g.buttonBack.x+10, g.buttonBack.y+20, color.Black)
+}
+
+func OldMazeSystem(screen *ebiten.Image, g *Game) {
+	// Clear the screen to white
+	screen.Fill(color.White)
+	// Draw the maze to the screen
+	drawMaze(screen, mazeSize)
 
 	if whichPath == 0 {
 		// Clear the screen to white

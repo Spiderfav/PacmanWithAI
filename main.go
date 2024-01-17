@@ -28,10 +28,16 @@ type Button struct {
 	enabled       bool
 }
 
+// In returns true if mouse's (x, y) is in the button, and false otherwise.
+func (b *Button) In(x, y int) bool {
+	return x >= b.x && x < b.x+b.width && y >= b.y && y < b.y+b.height
+}
+
 type Game struct {
-	buttons     [3]*Button
+	buttonsMenu []*Button
+	buttonsSize []*Button
+	buttonsAlgo []*Button
 	buttonBack  *Button
-	displayText string
 	fontFace    font.Face
 }
 
@@ -64,25 +70,49 @@ var whichPath = 3
 
 var typeOfMaze = 0
 
-// In returns true if mouse's (x, y) is in the button, and false otherwise.
-func (b *Button) In(x, y int) bool {
-	return x >= b.x && x < b.x+b.width && y >= b.y && y < b.y+b.height
-}
-
 func (g *Game) Update() error {
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if g.buttons[0].In(x, y) && g.buttons[0].enabled {
+		if g.buttonsMenu[0].In(x, y) && g.buttonsMenu[0].enabled {
 			typeOfMaze = 1
 			g.buttonBack.enabled = true
-			g.buttons[0].enabled = false
+			changeStateButtons(g.buttonsSize[:], true)
+			changeStateButtons(g.buttonsAlgo[:], true)
+			changeStateButtons(g.buttonsMenu[:], false)
 			return nil
+
 		} else if g.buttonBack.In(x, y) && g.buttonBack.enabled {
 			typeOfMaze = 0
 			g.buttonBack.enabled = false
-			g.buttons[0].enabled = true
+			changeStateButtons(g.buttonsSize[:], false)
+			changeStateButtons(g.buttonsAlgo[:], false)
+			changeStateButtons(g.buttonsMenu[:], true)
 			return nil
+
+		} else if g.buttonsSize[0].In(x, y) && g.buttonsSize[0].enabled {
+			changeMazeSize(mazeSizeOriginal)
+
+		} else if g.buttonsSize[1].In(x, y) && g.buttonsSize[1].enabled {
+			changeMazeSize(mazeSizeOriginal * 2)
+
+		} else if g.buttonsSize[2].In(x, y) && g.buttonsSize[2].enabled {
+			changeMazeSize((mazeSizeOriginal * 2) * 2)
+
+		} else if g.buttonsAlgo[0].In(x, y) && g.buttonsAlgo[0].enabled {
+			whichPath = 1
+
+		} else if g.buttonsAlgo[1].In(x, y) && g.buttonsAlgo[1].enabled {
+			whichPath = 0
+
+		} else if g.buttonsAlgo[2].In(x, y) && g.buttonsAlgo[2].enabled {
+			whichPath = 2
+
+		} else if g.buttonsAlgo[3].In(x, y) && g.buttonsAlgo[1].enabled {
+			whichPath = 4
+
+		} else if g.buttonsAlgo[4].In(x, y) && g.buttonsAlgo[2].enabled {
+			whichPath = 3
 		}
 	}
 
@@ -99,18 +129,23 @@ func (g *Game) Update() error {
 			changeMazeSize((mazeSizeOriginal * 2) * 2)
 		}
 
+		// Dijkstras
 		if inpututil.IsKeyJustPressed(ebiten.KeyA) {
 			whichPath = 0
 
+			// A*
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyB) {
 			whichPath = 1
 
+			// Graph
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
 			whichPath = 2
 
+			// Maze Only
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyD) {
 			whichPath = 3
 
+			// Shortest Path
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyE) {
 
 			whichPath = 4
@@ -128,7 +163,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	case 0:
 		mainMenu(screen, g)
 	case 1:
-		OldMazeSystem(screen, whichPath, g)
+		OldMazeSystem(screen, g)
+		backButton(screen, g)
+		sizeMenu(screen, g)
+		algoMenu(screen, g)
 	}
 
 }
@@ -137,53 +175,17 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
-func makeMainMenuButtons() [3]*Button {
-	// Initialize the button
-	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
-	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
-
-	button := &Button{
-		image:   buttonImage,
-		x:       (screenWidth / 2) - 50, // Position of the button
-		y:       (screenHeight / 2),
-		width:   100,
-		height:  30,
-		message: "Start Game",
-		enabled: true,
-	}
-
-	buttonImport := &Button{
-		image:   buttonImage,
-		x:       (screenWidth / 2) - 50, // Position of the button
-		y:       (screenHeight / 2) + 50,
-		width:   100,
-		height:  30,
-		message: "Import Map",
-		enabled: true,
-	}
-
-	buttonReset := &Button{
-		image:   buttonImage,
-		x:       (screenWidth / 2) - 50, // Position of the button
-		y:       (screenHeight / 2) + 100,
-		width:   100,
-		height:  30,
-		message: "Reset Map",
-		enabled: true,
-	}
-
-	var menuButtons = [3]*Button{button, buttonImport, buttonReset}
-
-	return menuButtons
-}
-
 func NewGame() *Game {
 
 	// Initialize the button
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
 
-	buttons := makeMainMenuButtons()
+	buttonsMenu := makeMainMenuButtons()
+
+	buttonsSize := gameSizeButtons()
+
+	buttonsAlgo := gameAlgoButtons()
 
 	buttonBack := &Button{
 		image:   buttonImage,
@@ -197,9 +199,10 @@ func NewGame() *Game {
 
 	// Initialize the game.
 	return &Game{
-		buttons:     buttons,
+		buttonsMenu: buttonsMenu,
+		buttonsSize: buttonsSize,
+		buttonsAlgo: buttonsAlgo,
 		buttonBack:  buttonBack,
-		displayText: "Show Maze",
 		fontFace:    basicfont.Face7x13,
 	}
 }
