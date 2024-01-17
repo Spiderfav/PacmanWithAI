@@ -72,13 +72,17 @@ func (g *Game) Update() error {
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if g.button.In(x, y) {
+		if g.button.In(x, y) && g.button.enabled {
 			g.displayText = "Back"
 			typeOfMaze = 1
+			g.buttonBack.enabled = true
+			g.button.enabled = false
 			return nil
-		} else if g.buttonBack.In(x, y) {
+		} else if g.buttonBack.In(x, y) && g.buttonBack.enabled {
 			g.displayText = "Show Maze"
 			typeOfMaze = 0
+			g.buttonBack.enabled = false
+			g.button.enabled = true
 			return nil
 		}
 	}
@@ -154,7 +158,7 @@ func NewGame() *Game {
 		y:       500,
 		width:   100,
 		height:  30,
-		enabled: true,
+		enabled: false,
 	}
 
 	// Initialize the game.
