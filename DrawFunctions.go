@@ -109,16 +109,15 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 	// Clear the screen to white
 	screen.Fill(color.White)
 
-	text.Draw(screen, "Pacman Game", g.fontFace, (screenWidth / 2), (screenHeight / 2), color.Black)
+	text.Draw(screen, "Pacman Game", g.fontFace, (screenWidth/2)-40, (screenHeight/2)-100, color.Black)
 
-	if g.button != nil && g.button.enabled {
+	for i := 0; i < 3; i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.button.x), float64(g.button.y))
-		screen.DrawImage(g.button.image, op)
-	}
+		op.GeoM.Translate(float64(g.buttons[i].x), float64(g.buttons[i].y))
 
-	if g.displayText != "" {
-		text.Draw(screen, g.displayText, g.fontFace, g.button.x, g.button.y+20, color.Black)
+		screen.DrawImage(g.buttons[i].image, op)
+
+		text.Draw(screen, g.buttons[i].message, g.fontFace, g.buttons[i].x+10, g.buttons[i].y+20, color.Black)
 	}
 
 }
@@ -129,15 +128,11 @@ func OldMazeSystem(screen *ebiten.Image, whichPath int, g *Game) {
 	// Draw the maze to the screen
 	drawMaze(screen, mazeSize)
 
-	if g.buttonBack != nil && g.buttonBack.enabled {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
-		screen.DrawImage(g.buttonBack.image, op)
-	}
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
+	screen.DrawImage(g.buttonBack.image, op)
 
-	if g.displayText != "" {
-		text.Draw(screen, g.displayText, g.fontFace, g.button.x, g.button.y+20, color.Black)
-	}
+	text.Draw(screen, g.buttonBack.message, g.fontFace, g.buttons[0].x+10, g.buttons[0].y+20, color.Black)
 
 	if whichPath == 0 {
 		// Clear the screen to white
