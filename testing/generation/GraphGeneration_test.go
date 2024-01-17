@@ -8,7 +8,7 @@ import (
 )
 
 func TestCreateGraph(t *testing.T) {
-	dfsGrid := algorithms.DFS(180)
+	dfsGrid := algorithms.DFS(180, nil)
 	graph := generation.MazeToGraph(dfsGrid, 20, 20, 20*180, 20*180)
 
 	if graph[0].NodePosition.XCoordinate != 20 {
@@ -26,7 +26,7 @@ func TestCreateGraph(t *testing.T) {
 }
 
 func BenchmarkMazeToGraph(b *testing.B) {
-	dfsGrid := algorithms.DFS(180)
+	dfsGrid := algorithms.DFS(180, nil)
 	for i := 0; i < b.N; i++ {
 		generation.MazeToGraph(dfsGrid, 20, 20, 20*180, 20*180)
 	}

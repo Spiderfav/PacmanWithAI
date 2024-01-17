@@ -7,9 +7,14 @@ import (
 )
 
 // This function uses randomized DFS to generate a maze
-func DFS(size int) [][]mazegrid.MazeSquare {
+func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
+	var gameGrid [][]mazegrid.MazeSquare
 
-	var gameGrid = mazegrid.CreateGrid(size)
+	if oldDFS == nil {
+		gameGrid = mazegrid.CreateGrid(size)
+	} else {
+		gameGrid = oldDFS
+	}
 
 	size = size - 1
 

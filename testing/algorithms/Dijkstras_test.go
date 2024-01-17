@@ -8,7 +8,7 @@ import (
 )
 
 func TestDijkstras(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256, nil)
 	path := algorithms.Dijkstras(gameGridDFS, 20, 20, 256, 256)
 
 	if len(path) == 0 {
@@ -17,7 +17,7 @@ func TestDijkstras(t *testing.T) {
 }
 
 func TestDijkstrasStartEnd(t *testing.T) {
-	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256)
+	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256, nil)
 	path := algorithms.Dijkstras(gameGridDFS, 20, 20, 5120, 5120)
 
 	if path[0].NodePosition.XCoordinate != 20 || path[0].NodePosition.YCoordinate != 20 {
@@ -30,7 +30,7 @@ func TestDijkstrasStartEnd(t *testing.T) {
 
 func BenchmarkDijkstras(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal)
+		var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 		algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
 	}
 }

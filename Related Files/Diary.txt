@@ -1,3 +1,4 @@
+------ Term 1 ------
 Week 1:
 
 - During this week, I spent most of the time just researching all the techologies I needed to use for my project. These included the algorithms I am going to use as well as the technology needed to complete this project. 
@@ -80,3 +81,12 @@ Week 9:
     - A*
     - Dijkstras
     - Randomised DFS
+
+------ Term 2 ------
+
+Week 1:
+
+- Changed the maze algorithm such that multiple paths can be made
+- Added a main menu when a user launches the program
+- Added buttons to change the size of the maze
+- Added buttons to change the algorithm applied to the maze

@@ -105,3 +105,102 @@ func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo strin
 	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
 
 }
+func mainMenu(screen *ebiten.Image, g *Game) {
+	// Clear the screen to white
+	screen.Fill(color.White)
+
+	text.Draw(screen, "Pacman Game", g.fontFace, (screenWidth/2)-40, (screenHeight/2)-100, color.Black)
+
+	for i := 0; i < 3; i++ {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.buttonsMenu[i].x), float64(g.buttonsMenu[i].y))
+
+		screen.DrawImage(g.buttonsMenu[i].image, op)
+
+		text.Draw(screen, g.buttonsMenu[i].message, g.fontFace, g.buttonsMenu[i].x+10, g.buttonsMenu[i].y+20, color.Black)
+	}
+
+}
+
+func sizeMenu(screen *ebiten.Image, g *Game) {
+
+	for i := 0; i < len(g.buttonsSize); i++ {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.buttonsSize[i].x), float64(g.buttonsSize[i].y))
+
+		screen.DrawImage(g.buttonsSize[i].image, op)
+
+		text.Draw(screen, g.buttonsSize[i].message, g.fontFace, g.buttonsSize[i].x+10, g.buttonsSize[i].y+20, color.Black)
+	}
+}
+
+func algoMenu(screen *ebiten.Image, g *Game) {
+
+	for i := 0; i < len(g.buttonsAlgo); i++ {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(g.buttonsAlgo[i].x), float64(g.buttonsAlgo[i].y))
+
+		screen.DrawImage(g.buttonsAlgo[i].image, op)
+
+		text.Draw(screen, g.buttonsAlgo[i].message, g.fontFace, g.buttonsAlgo[i].x+10, g.buttonsAlgo[i].y+20, color.Black)
+	}
+}
+
+func backButton(screen *ebiten.Image, g *Game) {
+
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
+	screen.DrawImage(g.buttonBack.image, op)
+
+	text.Draw(screen, g.buttonBack.message, g.fontFace, g.buttonBack.x+10, g.buttonBack.y+20, color.Black)
+}
+
+func OldMazeSystem(screen *ebiten.Image, g *Game) {
+	// Clear the screen to white
+	screen.Fill(color.White)
+	// Draw the maze to the screen
+	drawMaze(screen, mazeSize)
+
+	if whichPath == 0 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw Dijkstra's Path to the screen
+		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
+		drawPathsLines(screen, absolutePathDijkstras)
+
+	} else if whichPath == 1 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw A*'s Path to the screen
+		drawPaths(screen, aStarPath, "A Star", weigthAStar)
+		drawPathsLines(screen, absolutePathAStar)
+
+	} else if whichPath == 2 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+		drawPaths(screen, graph, "Graph Method", 10)
+		drawMultiplePaths(screen, graphPaths)
+
+	} else if whichPath == 4 {
+		// Clear the screen to white
+		screen.Fill(color.White)
+
+		// Draw the maze to the screen
+		drawMaze(screen, mazeSize)
+
+		// Draw Solution Path to the screen
+		drawPathsLines(screen, absolutePathAStar)
+
+	}
+}
