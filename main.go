@@ -118,16 +118,21 @@ func (g *Game) Update() error {
 
 	if g.buttonBack.enabled {
 		if inpututil.IsKeyJustPressed(ebiten.Key1) {
-			changeMazeSize(mazeSizeOriginal)
+			p := []int{1, 2, 3, 4}
+
+			saveToFile(p)
+
 		}
 
 		if inpututil.IsKeyJustPressed(ebiten.Key2) {
-			changeMazeSize(mazeSizeOriginal * 2)
+			grid := loadFromFile()
+
+			fmt.Println(grid)
 		}
 
-		if inpututil.IsKeyJustPressed(ebiten.Key3) {
-			changeMazeSize((mazeSizeOriginal * 2) * 2)
-		}
+		// if inpututil.IsKeyJustPressed(ebiten.Key3) {
+		// 	changeMazeSize((mazeSizeOriginal * 2) * 2)
+		// }
 
 		// Dijkstras
 		if inpututil.IsKeyJustPressed(ebiten.KeyA) {
