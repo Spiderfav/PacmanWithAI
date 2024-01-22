@@ -1,6 +1,7 @@
 package algorithms
 
 import (
+	"fmt"
 	"math/rand"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
@@ -8,6 +9,7 @@ import (
 
 // This function uses randomized DFS to generate a maze
 func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
+
 	var gameGrid [][]mazegrid.MazeSquare
 
 	if oldDFS == nil {
@@ -16,6 +18,8 @@ func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
 	} else {
 		gameGrid = oldDFS
 	}
+
+	DebugMaze(gameGrid)
 
 	size = size - 1
 
@@ -131,28 +135,35 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare) *
 	switch directionNumber {
 
 	case 0:
-		direction = startNode.Walls.Left
+		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Left)
+
+		//time.Sleep(5 * time.Second)
+
+		//direction = &gameGrid[int(startNode.Walls.Left.XCoordinate/20)-1][int(startNode.Walls.Left.YCoordinate/20)-1]
 
 		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasLeft = false
 		gameGrid[(y/20)-1][((x/20)-1)-1].HasWalls.HasRight = false
 
 	case 1:
 
-		direction = startNode.Walls.Down
+		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Down)
+		//direction = &gameGrid[int(startNode.Walls.Down.XCoordinate/20)-1][int(startNode.Walls.Down.YCoordinate/20)-1]
 
 		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasDown = false
 		gameGrid[((y/20)-1)+1][(x/20)-1].HasWalls.HasUp = false
 
 	case 2:
 
-		direction = startNode.Walls.Right
+		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Right)
+		//direction = &gameGrid[int(startNode.Walls.Right.XCoordinate/20)-1][int(startNode.Walls.Right.YCoordinate/20)-1]
 
 		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasRight = false
 		gameGrid[(y/20)-1][((x/20)-1)+1].HasWalls.HasLeft = false
 
 	case 3:
 
-		direction = startNode.Walls.Up
+		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Up)
+		//direction = &gameGrid[int(startNode.Walls.Up.XCoordinate/20)-1][int(startNode.Walls.Up.YCoordinate/20)-1]
 
 		gameGrid[(y/20)-1][(x/20)-1].HasWalls.HasUp = false
 		gameGrid[((y/20)-1)-1][(x/20)-1].HasWalls.HasDown = false
@@ -160,4 +171,16 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare) *
 	}
 
 	return direction
+}
+
+func DebugMaze(m [][]mazegrid.MazeSquare) {
+	for j := 0; j < len(m[0]); j++ {
+
+		for i := 0; i < len(m[0]); i++ {
+			fmt.Println("Node: ", m[j][i])
+
+		}
+
+		fmt.Println(" ")
+	}
 }

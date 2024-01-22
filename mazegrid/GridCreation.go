@@ -10,10 +10,10 @@ type Position struct {
 // The Direction object is used for a MazeSquare object
 // It contains a pointer to all the neightbours of the MazeSquare object
 type Direction struct {
-	Left  *MazeSquare
-	Down  *MazeSquare
-	Right *MazeSquare
-	Up    *MazeSquare
+	Left  Position
+	Down  Position
+	Right Position
+	Up    Position
 }
 
 // The HasDirection object is used for a MazeSquare object
@@ -36,12 +36,19 @@ type MazeSquare struct {
 }
 
 func CreateBlankSquare() MazeSquare {
-	return MazeSquare{Position{20, 20}, Direction{nil, nil, nil, nil}, HasDirection{true, true, true, true}, false, 0, 4}
+	return MazeSquare{Position{20, 20}, Direction{}, HasDirection{true, true, true, true}, false, 0, 4}
 
 }
 
+func PosToNode(x [][]MazeSquare, p Position) *MazeSquare {
+	yCoord := int(p.YCoordinate/20) - 1
+	xCoord := int(p.XCoordinate/20) - 1
+
+	return &x[yCoord][xCoord]
+}
+
 // This function counts the walls of a node
-func CountWalls(x MazeSquare) int {
+func (x MazeSquare) CountWalls() int {
 	count := 0
 
 	if x.HasWalls.HasLeft {
@@ -82,9 +89,11 @@ func CreateGrid(size int) [][]MazeSquare {
 	for y = 0; y < float32(size); y++ {
 
 		for x = 0; x < float32(size); x++ {
+
+			// + 1 is used to get an actual X and Y value for the starting point as X could be 0
 			positionOfNode := Position{squareLengthX * (x + 1), squareLengthY * (y + 1)}
 
-			nodeWalls := Direction{nil, nil, nil, nil}
+			nodeWalls := Direction{}
 
 			nodeHasWalls := HasDirection{true, true, true, true}
 
@@ -96,14 +105,14 @@ func CreateGrid(size int) [][]MazeSquare {
 
 			// If x>0, then we can assign left and right neighbours
 			if x > 0 {
-				gameGrid[int(y)][int(x)].Walls.Left = &gameGrid[int(y)][int(x-1)]
-				gameGrid[int(y)][int(x-1)].Walls.Right = &gameGrid[int(y)][int(x)]
+				gameGrid[int(y)][int(x)].Walls.Left = gameGrid[int(y)][int(x-1)].NodePosition
+				gameGrid[int(y)][int(x-1)].Walls.Right = gameGrid[int(y)][int(x)].NodePosition
 			}
 
 			// If y>0, then we can assign up and down neighbours
 			if y > 0 {
-				gameGrid[int(y)][int(x)].Walls.Up = &gameGrid[int(y-1)][int(x)]
-				gameGrid[int(y-1)][int(x)].Walls.Down = &gameGrid[int(y)][int(x)]
+				gameGrid[int(y)][int(x)].Walls.Up = gameGrid[int(y-1)][int(x)].NodePosition
+				gameGrid[int(y-1)][int(x)].Walls.Down = gameGrid[int(y)][int(x)].NodePosition
 
 			}
 

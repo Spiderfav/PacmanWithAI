@@ -130,10 +130,6 @@ func (g *Game) Update() error {
 			fmt.Println(grid)
 		}
 
-		// if inpututil.IsKeyJustPressed(ebiten.Key3) {
-		// 	changeMazeSize((mazeSizeOriginal * 2) * 2)
-		// }
-
 		// Dijkstras
 		if inpututil.IsKeyJustPressed(ebiten.KeyA) {
 			whichPath = 0
@@ -220,10 +216,10 @@ func changeMazeSize(newSize int) {
 	aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
 	absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
 	absolutePathAStar, weigthAStar = algorithms.AbsolutePath(aStarPath)
-	mazeSize = newSize
-	whichPath = 3
 	graph = generation.MazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
 	graphPaths = generation.AllPaths(gameGridDFS, graph)
+	mazeSize = newSize
+	whichPath = 3
 }
 
 func main() {

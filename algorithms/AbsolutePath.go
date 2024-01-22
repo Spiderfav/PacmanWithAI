@@ -27,7 +27,8 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 		// Check each direction of the current node to identify the next node in the path
 		// If found, update the current node and add it to the final path while updating the total weight
 		if !currentNode.HasWalls.HasLeft {
-			if currentNode.Walls.Left.NodePosition.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Left.NodePosition.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
+
+			if currentNode.Walls.Left.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Left.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
 				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
@@ -36,14 +37,14 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 		// Similar checks are performed for other directions (Right, Down, Up)
 
 		if !currentNode.HasWalls.HasRight {
-			if currentNode.Walls.Right.NodePosition.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Right.NodePosition.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
+			if currentNode.Walls.Right.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Right.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
 				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
 		}
 
 		if !currentNode.HasWalls.HasDown {
-			if currentNode.Walls.Down.NodePosition.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Down.NodePosition.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
+			if currentNode.Walls.Down.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Down.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
 				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
@@ -51,7 +52,7 @@ func AbsolutePath(pathTaken []mazegrid.MazeSquare) ([]mazegrid.MazeSquare, int) 
 		}
 
 		if !currentNode.HasWalls.HasUp {
-			if currentNode.Walls.Up.NodePosition.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Up.NodePosition.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
+			if currentNode.Walls.Up.XCoordinate == pathTaken[i-1].NodePosition.XCoordinate && currentNode.Walls.Up.YCoordinate == pathTaken[i-1].NodePosition.YCoordinate {
 				currentNode, finalPath, totalWeight = appendNode(i-1, pathTaken, finalPath, totalWeight)
 				continue
 			}
