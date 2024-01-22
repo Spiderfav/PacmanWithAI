@@ -81,7 +81,7 @@ func gameSizeButtons() []*Button {
 	buttonSaveMap := &Button{
 		image:   buttonImage,
 		x:       (screenWidth / 2) - 200, // Position of the button
-		y:       (screenHeight / 2) + 150,
+		y:       (screenHeight / 2) + 200,
 		width:   100,
 		height:  30,
 		message: "Save Map",
