@@ -4,9 +4,11 @@ import (
 	"encoding/gob"
 	"log"
 	"os"
+
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-func saveToFile(gameGrid []int) {
+func saveToFile(gameGrid [][]mazegrid.MazeSquare) {
 	file, err := os.Create("gameGridDFS.gob")
 	if err != nil {
 		log.Fatalf("Failed to create file: %v", err)
@@ -20,9 +22,9 @@ func saveToFile(gameGrid []int) {
 	}
 }
 
-func loadFromFile() []int {
+func loadFromFile() [][]mazegrid.MazeSquare {
 
-	var gameGrid []int
+	var gameGrid [][]mazegrid.MazeSquare
 
 	file, err := os.Open("gameGridDFS.gob")
 	if err != nil {

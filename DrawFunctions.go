@@ -90,7 +90,7 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 	text.Draw(screen, "Pacman Game", g.fontFace, (screenWidth/2)-40, (screenHeight/2)-100, color.Black)
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < len(g.buttonsMenu); i++ {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(float64(g.buttonsMenu[i].x), float64(g.buttonsMenu[i].y))
 

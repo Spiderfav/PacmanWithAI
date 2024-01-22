@@ -74,60 +74,71 @@ func (g *Game) Update() error {
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if g.buttonsMenu[0].In(x, y) && g.buttonsMenu[0].enabled {
-			typeOfMaze = 1
-			g.buttonBack.enabled = true
-			changeStateButtons(g.buttonsSize[:], true)
-			changeStateButtons(g.buttonsAlgo[:], true)
-			changeStateButtons(g.buttonsMenu[:], false)
-			return nil
+		if g.buttonsMenu[0].enabled {
+			if g.buttonsMenu[0].In(x, y) {
+				typeOfMaze = 1
+				g.buttonBack.enabled = true
+				changeStateButtons(g.buttonsSize[:], true)
+				changeStateButtons(g.buttonsAlgo[:], true)
+				changeStateButtons(g.buttonsMenu[:], false)
+				return nil
 
-		} else if g.buttonBack.In(x, y) && g.buttonBack.enabled {
-			typeOfMaze = 0
-			g.buttonBack.enabled = false
-			changeStateButtons(g.buttonsSize[:], false)
-			changeStateButtons(g.buttonsAlgo[:], false)
-			changeStateButtons(g.buttonsMenu[:], true)
-			return nil
+			} else if g.buttonsMenu[1].In(x, y) {
+				gameGridDFS = loadFromFile()
+				mazeSize = len(gameGridDFS[0])
+				changeMazeSize(0, true)
+			}
 
-		} else if g.buttonsSize[0].In(x, y) && g.buttonsSize[0].enabled {
-			changeMazeSize(mazeSizeOriginal)
+		} else if g.buttonBack.enabled {
 
-		} else if g.buttonsSize[1].In(x, y) && g.buttonsSize[1].enabled {
-			changeMazeSize(mazeSizeOriginal * 2)
+			if g.buttonBack.In(x, y) {
+				typeOfMaze = 0
+				g.buttonBack.enabled = false
+				changeStateButtons(g.buttonsSize[:], false)
+				changeStateButtons(g.buttonsAlgo[:], false)
+				changeStateButtons(g.buttonsMenu[:], true)
+				return nil
 
-		} else if g.buttonsSize[2].In(x, y) && g.buttonsSize[2].enabled {
-			changeMazeSize((mazeSizeOriginal * 2) * 2)
+			} else if g.buttonsSize[0].In(x, y) {
+				changeMazeSize(mazeSizeOriginal, false)
 
-		} else if g.buttonsAlgo[0].In(x, y) && g.buttonsAlgo[0].enabled {
-			whichPath = 1
+			} else if g.buttonsSize[1].In(x, y) {
+				changeMazeSize(mazeSizeOriginal*2, false)
 
-		} else if g.buttonsAlgo[1].In(x, y) && g.buttonsAlgo[1].enabled {
-			whichPath = 0
+			} else if g.buttonsSize[2].In(x, y) {
+				changeMazeSize((mazeSizeOriginal*2)*2, false)
 
-		} else if g.buttonsAlgo[2].In(x, y) && g.buttonsAlgo[2].enabled {
-			whichPath = 2
+			} else if g.buttonsSize[3].In(x, y) {
+				saveToFile(gameGridDFS)
 
-		} else if g.buttonsAlgo[3].In(x, y) && g.buttonsAlgo[1].enabled {
-			whichPath = 4
+			} else if g.buttonsAlgo[0].In(x, y) {
+				whichPath = 1
 
-		} else if g.buttonsAlgo[4].In(x, y) && g.buttonsAlgo[2].enabled {
-			whichPath = 3
+			} else if g.buttonsAlgo[1].In(x, y) {
+				whichPath = 0
+
+			} else if g.buttonsAlgo[2].In(x, y) {
+				whichPath = 2
+
+			} else if g.buttonsAlgo[3].In(x, y) {
+				whichPath = 4
+
+			} else if g.buttonsAlgo[4].In(x, y) {
+				whichPath = 3
+			}
+
 		}
 	}
 
 	if g.buttonBack.enabled {
 		if inpututil.IsKeyJustPressed(ebiten.Key1) {
-			p := []int{1, 2, 3, 4}
-
-			saveToFile(p)
+			saveToFile(gameGridDFS)
 
 		}
 
 		if inpututil.IsKeyJustPressed(ebiten.Key2) {
-			grid := loadFromFile()
+			gameGridDFS = loadFromFile()
 
-			fmt.Println(grid)
 		}
 
 		// Dijkstras
@@ -208,10 +219,17 @@ func NewGame() *Game {
 	}
 }
 
-func changeMazeSize(newSize int) {
-	oldGameGridDFS = algorithms.DFS(newSize, nil)
-	algorithms.MarkUnvisited(oldGameGridDFS)
-	gameGridDFS = algorithms.DFS(newSize, oldGameGridDFS)
+func changeMazeSize(newSize int, loadedMaze bool) {
+
+	if !loadedMaze {
+		oldGameGridDFS = algorithms.DFS(newSize, nil)
+		algorithms.MarkUnvisited(oldGameGridDFS)
+		gameGridDFS = algorithms.DFS(newSize, oldGameGridDFS)
+
+	} else {
+		newSize = mazeSize
+	}
+
 	dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
 	aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
 	absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
@@ -229,7 +247,7 @@ func main() {
 
 	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
 	fmt.Println(" ")
-	changeMazeSize(mazeSizeOriginal)
+	changeMazeSize(mazeSizeOriginal, false)
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(NewGame()); err != nil {

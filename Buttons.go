@@ -6,9 +6,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+var buttonImage = ebiten.NewImage(100, 30) // Set the size of the button
+
 func makeMainMenuButtons() []*Button {
 	// Initialize the button
-	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
 
 	button := &Button{
@@ -31,17 +32,7 @@ func makeMainMenuButtons() []*Button {
 		enabled: true,
 	}
 
-	buttonReset := &Button{
-		image:   buttonImage,
-		x:       (screenWidth / 2) - 50, // Position of the button
-		y:       (screenHeight / 2) + 100,
-		width:   100,
-		height:  30,
-		message: "Reset Map",
-		enabled: true,
-	}
-
-	var menuButtons = []*Button{button, buttonImport, buttonReset}
+	var menuButtons = []*Button{button, buttonImport}
 
 	return menuButtons
 }
@@ -55,7 +46,6 @@ func changeStateButtons(arrButtons []*Button, state bool) {
 
 func gameSizeButtons() []*Button {
 	// Initialize the button
-	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
 
 	buttonSmall := &Button{
@@ -88,14 +78,23 @@ func gameSizeButtons() []*Button {
 		enabled: true,
 	}
 
-	var sizeButtons = []*Button{buttonSmall, buttonMedium, buttonLarge}
+	buttonSaveMap := &Button{
+		image:   buttonImage,
+		x:       (screenWidth / 2) - 200, // Position of the button
+		y:       (screenHeight / 2) + 150,
+		width:   100,
+		height:  30,
+		message: "Save Map",
+		enabled: true,
+	}
+
+	var sizeButtons = []*Button{buttonSmall, buttonMedium, buttonLarge, buttonSaveMap}
 
 	return sizeButtons
 }
 
 func gameAlgoButtons() []*Button {
 	// Initialize the button
-	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
 
 	buttonAStar := &Button{
