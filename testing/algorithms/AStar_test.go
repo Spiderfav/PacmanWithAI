@@ -8,7 +8,7 @@ import (
 )
 
 func TestEuclidean(t *testing.T) {
-	distance := algorithms.EuclideanDistance(0, 0, 2, 0)
+	distance := algorithms.HeuristicsDistance(0, 0, 2, 0)
 
 	if distance != 2 {
 		t.Errorf("Result was incorrect, got: %f, want: %s.", distance, "2")
@@ -38,7 +38,7 @@ func TestAStarStartEnd(t *testing.T) {
 
 func BenchmarkEuclidean(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		algorithms.EuclideanDistance(2, 2, 4, 4)
+		algorithms.HeuristicsDistance(2, 2, 4, 4)
 	}
 }
 

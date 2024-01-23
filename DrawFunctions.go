@@ -2,21 +2,13 @@ package main
 
 import (
 	"image/color"
-	"log"
 	"strconv"
 
-	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/opentype"
-)
-
-// Defining the normal font for use in the program
-var (
-	mplusNormalFont font.Face
+	"golang.org/x/image/font/basicfont"
 )
 
 // This function draws a given square to the screen
@@ -78,31 +70,18 @@ func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]mazegrid.MazeSquare)
 // It also draws the start node and end node and the total cost
 func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo string, weight int) {
 
-	// Here we are defining the font to be used from the general golang fonts
-	tt, err := opentype.Parse(fonts.MPlus1pRegular_ttf)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	const dpi = 72
-	mplusNormalFont, _ = opentype.NewFace(tt, &opentype.FaceOptions{
-		Size:    8,
-		DPI:     dpi,
-		Hinting: font.HintingVertical,
-	})
-
 	// For every node searched by the algorithms, draw a circle with their postion
 	for i := 0; i < len(pathTaken); i++ {
 		vector.DrawFilledCircle(screen, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 2, color.RGBA{255, 0, 0, 250}, true)
-		text.Draw(screen, strconv.Itoa(i), mplusNormalFont, int(pathTaken[i].NodePosition.XCoordinate)+10, int(pathTaken[i].NodePosition.YCoordinate)+10, color.RGBA{255, 0, 255, 250})
+		text.Draw(screen, strconv.Itoa(i), basicfont.Face7x13, int(pathTaken[i].NodePosition.XCoordinate)+10, int(pathTaken[i].NodePosition.YCoordinate)+10, color.RGBA{255, 0, 255, 250})
 
 	}
 
-	text.Draw(screen, "Path cost to desired node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].Weight)), mplusNormalFont, 10, 10, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "Start node is "+strconv.Itoa(int(pathTaken[0].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[0].NodePosition.YCoordinate)), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+40, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "End node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.YCoordinate)), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+50, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "Algorithm Used: "+algo, mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+60, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), mplusNormalFont, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
+	text.Draw(screen, "Path cost to desired node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].Weight)), basicfont.Face7x13, 10, 10, color.RGBA{0, 0, 0, 250})
+	text.Draw(screen, "Start node is "+strconv.Itoa(int(pathTaken[0].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[0].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+40, color.RGBA{0, 0, 0, 250})
+	text.Draw(screen, "End node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+50, color.RGBA{0, 0, 0, 250})
+	text.Draw(screen, "Algorithm Used: "+algo, basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+60, color.RGBA{0, 0, 0, 250})
+	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
 
 }
 func mainMenu(screen *ebiten.Image, g *Game) {
@@ -111,7 +90,7 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 	text.Draw(screen, "Pacman Game", g.fontFace, (screenWidth/2)-40, (screenHeight/2)-100, color.Black)
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < len(g.buttonsMenu); i++ {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(float64(g.buttonsMenu[i].x), float64(g.buttonsMenu[i].y))
 

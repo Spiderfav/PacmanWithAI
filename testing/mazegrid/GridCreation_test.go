@@ -17,9 +17,9 @@ func TestCreateBlankSquare(t *testing.T) {
 
 func TestCountWalls(t *testing.T) {
 	blankSquare := mazegrid.CreateBlankSquare()
-	squareTest := mazegrid.MazeSquare{NodePosition: mazegrid.Position{XCoordinate: 20, YCoordinate: 20}, Walls: mazegrid.Direction{Left: &blankSquare, Down: nil, Right: nil, Up: nil}, HasWalls: mazegrid.HasDirection{HasLeft: false, HasDown: true, HasRight: true, HasUp: true}, Visited: false, Weight: 0, NumberOfWalls: 4}
+	squareTest := mazegrid.MazeSquare{NodePosition: mazegrid.Position{XCoordinate: 20, YCoordinate: 20}, Walls: mazegrid.Direction{}, HasWalls: mazegrid.HasDirection{HasLeft: false, HasDown: true, HasRight: true, HasUp: true}, Visited: false, Weight: 0, NumberOfWalls: 4}
 
-	if mazegrid.CountWalls(squareTest) == 4 {
+	if squareTest.CountWalls() == 4 {
 		t.Errorf("Result was incorrect, got start node X Coordinate: %d, want: %s.", blankSquare.NumberOfWalls, "3")
 
 	}

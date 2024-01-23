@@ -10,16 +10,16 @@ import (
 func TestCountWalls(t *testing.T) {
 	node := mazegrid.CreateBlankSquare()
 
-	if mazegrid.CountWalls(node) != 4 {
-		t.Errorf("Result was incorrect, got: %d, want: %s.", mazegrid.CountWalls(node), "4")
+	if node.CountWalls() != 4 {
+		t.Errorf("Result was incorrect, got: %d, want: %s.", node.CountWalls(), "4")
 	}
 }
 
 func TestDFS(t *testing.T) {
 	var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(256, nil)
 
-	if mazegrid.CountWalls(gameGridDFS[0][0]) == 0 {
-		t.Errorf("Result was incorrect, got: %d, want: %s.", mazegrid.CountWalls(gameGridDFS[0][0]), ">= 2")
+	if gameGridDFS[0][0].CountWalls() == 0 {
+		t.Errorf("Result was incorrect, got: %d, want: %s.", gameGridDFS[0][0].CountWalls(), ">= 2")
 	}
 }
 
