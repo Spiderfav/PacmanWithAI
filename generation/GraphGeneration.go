@@ -28,7 +28,7 @@ func MazeToGraph(gameGridDFS [][]mazegrid.MazeSquare, startX float32, startY flo
 				continue
 			}
 
-			if gameGridDFS[y][x].NumberOfWalls == 3 || gameGridDFS[y][x].NumberOfWalls == 1 {
+			if gameGridDFS[y][x].CountWalls() == 3 || gameGridDFS[y][x].CountWalls() == 1 {
 				definiteNodes = append(definiteNodes, gameGridDFS[y][x])
 			}
 

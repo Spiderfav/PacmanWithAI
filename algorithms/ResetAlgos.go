@@ -14,7 +14,6 @@ func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {
 
 			gameGridDFS[y][x].Visited = false
 			gameGridDFS[y][x].Weight = 0
-			gameGridDFS[y][x].NumberOfWalls = gameGridDFS[y][x].CountWalls()
 
 		}
 
