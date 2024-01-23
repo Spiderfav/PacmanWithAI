@@ -29,4 +29,6 @@ func AddWeights(gameGridDFS [][]mazegrid.MazeSquare, obstacle int) {
 	//yvalue := rand.Intn(len(gameGridDFS[0]))
 
 	gameGridDFS[0][1].Weight = obstacle
+	gameGridDFS[0][1].ContainsObject = true
+
 }
