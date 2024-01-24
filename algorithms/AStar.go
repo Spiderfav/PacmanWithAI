@@ -20,8 +20,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 	// Marking every node unvisited
 	MarkUnvisited(gameGridDFS)
-	// Adding random weights of total weight 100 in the gamegrid
-	AddWeights(gameGridDFS, 100)
 
 	var bestPath []mazegrid.MazeSquare // Stores the best path found
 
