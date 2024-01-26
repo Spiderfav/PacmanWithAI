@@ -1,6 +1,10 @@
 package algorithms
 
-import "gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
+import (
+	"math/rand"
+
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
+)
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
 // It iterates through a [][]Mazesquare and changes the status of visited, weight and walls to the default.
@@ -14,7 +18,6 @@ func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {
 
 			gameGridDFS[y][x].Visited = false
 			gameGridDFS[y][x].Weight = 0
-			gameGridDFS[y][x].NumberOfWalls = gameGridDFS[y][x].CountWalls()
 
 		}
 
@@ -22,12 +25,17 @@ func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {
 
 }
 
-// TODO: Change the function so that a specific X and Y value can be given and weight added to the given MazeSquare
-
 // This functions adds weights to a specific square in the grid
 func AddWeights(gameGridDFS [][]mazegrid.MazeSquare, obstacle int) {
-	//xValue := rand.Intn(len(gameGridDFS[0]))
-	//yvalue := rand.Intn(len(gameGridDFS[0]))
 
-	gameGridDFS[0][1].Weight = obstacle
+	numberOfObjects := rand.Intn(len(gameGridDFS[0]))
+
+	for i := 0; i <= numberOfObjects; i++ {
+		xValue := rand.Intn(len(gameGridDFS[0]) - 1)
+		yvalue := rand.Intn(len(gameGridDFS[0]) - 1)
+
+		gameGridDFS[xValue][yvalue].Weight = obstacle
+		gameGridDFS[xValue][yvalue].ContainsObject = true
+	}
+
 }

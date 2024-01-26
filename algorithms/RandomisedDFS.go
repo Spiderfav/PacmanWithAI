@@ -1,7 +1,6 @@
 package algorithms
 
 import (
-	"fmt"
 	"math/rand"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
@@ -18,8 +17,6 @@ func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
 	} else {
 		gameGrid = oldDFS
 	}
-
-	DebugMaze(gameGrid)
 
 	size = size - 1
 
@@ -75,6 +72,9 @@ func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
 		// Appending node to stack
 		stack = append(stack, startNode)
 	}
+
+	// Adding random weights of total weight 100 in the gamegrid
+	AddWeights(gameGrid, 100)
 
 	return gameGrid
 
@@ -171,16 +171,4 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare) *
 	}
 
 	return direction
-}
-
-func DebugMaze(m [][]mazegrid.MazeSquare) {
-	for j := 0; j < len(m[0]); j++ {
-
-		for i := 0; i < len(m[0]); i++ {
-			fmt.Println("Node: ", m[j][i])
-
-		}
-
-		fmt.Println(" ")
-	}
 }

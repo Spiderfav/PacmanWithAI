@@ -16,6 +16,10 @@ import (
 func drawSquare(screen *ebiten.Image, squareToDraw mazegrid.MazeSquare) {
 	var strokeWidth float32 = 1
 
+	if squareToDraw.ContainsObject {
+		vector.DrawFilledCircle(screen, squareToDraw.NodePosition.XCoordinate+10, squareToDraw.NodePosition.YCoordinate+10, 2, color.RGBA{255, 100, 0, 250}, true)
+	}
+
 	if squareToDraw.HasWalls.HasDown {
 		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+20, squareToDraw.NodePosition.XCoordinate+20, squareToDraw.NodePosition.YCoordinate+20, strokeWidth, color.Black, false)
 	}

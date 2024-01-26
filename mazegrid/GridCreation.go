@@ -27,16 +27,16 @@ type HasDirection struct {
 
 // The Mazequare Object
 type MazeSquare struct {
-	NodePosition  Position
-	Walls         Direction
-	HasWalls      HasDirection
-	Visited       bool
-	Weight        int
-	NumberOfWalls int
+	NodePosition   Position
+	Walls          Direction
+	HasWalls       HasDirection
+	Visited        bool
+	Weight         int
+	ContainsObject bool
 }
 
 func CreateBlankSquare() MazeSquare {
-	return MazeSquare{Position{20, 20}, Direction{}, HasDirection{true, true, true, true}, false, 0, 4}
+	return MazeSquare{Position{20, 20}, Direction{}, HasDirection{true, true, true, true}, false, 0, false}
 
 }
 
@@ -98,7 +98,7 @@ func CreateGrid(size int) [][]MazeSquare {
 			nodeHasWalls := HasDirection{true, true, true, true}
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
-			var square = MazeSquare{positionOfNode, nodeWalls, nodeHasWalls, false, 0, 4}
+			var square = MazeSquare{positionOfNode, nodeWalls, nodeHasWalls, false, 0, false}
 
 			// Setting the game grid values to the MazeSquare object
 			gameGrid[int(y)][int(x)] = square

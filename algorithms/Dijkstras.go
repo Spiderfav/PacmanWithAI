@@ -18,8 +18,6 @@ func Dijkstras(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, fini
 
 	// Marking every node unvisited
 	MarkUnvisited(gameGridDFS)
-	// Adding random weights of total weight 100 in the gamegrid
-	AddWeights(gameGridDFS, 100)
 
 	var pathTaken []mazegrid.MazeSquare // Stores the best path found
 
