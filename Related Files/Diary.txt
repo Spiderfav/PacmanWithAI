@@ -90,3 +90,10 @@ Week 1:
 - Added a main menu when a user launches the program
 - Added buttons to change the size of the maze
 - Added buttons to change the algorithm applied to the maze
+
+Week 2:
+
+- Changed the way MazeSquares are defined to be smaller in size
+- Created a way to save and load of mazes for the program
+- Created a method to randomly add weights to the maze
+- Created a method to show the weights on the graph.
