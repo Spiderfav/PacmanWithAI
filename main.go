@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/generation"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -19,37 +20,12 @@ const (
 	screenHeight = 1080
 )
 
-// Add a Button struct
-type Button struct {
-	image         *ebiten.Image
-	x, y          int
-	width, height int
-	message       string
-	enabled       bool
-}
-
-// In returns true if mouse's (x, y) is in the button, and false otherwise.
-func (b *Button) In(x, y int) bool {
-	return x >= b.x && x < b.x+b.width && y >= b.y && y < b.y+b.height
-}
-
 type Game struct {
-	buttonsMenu []*Button
-	buttonsSize []*Button
-	buttonsAlgo []*Button
-	buttonBack  *Button
+	buttonsMenu []*input.Button
+	buttonsSize []*input.Button
+	buttonsAlgo []*input.Button
+	buttonBack  *input.Button
 	fontFace    font.Face
-}
-
-// MouseStrokeSource is a StrokeSource implementation of mouse.
-type MouseStrokeSource struct{}
-
-func (m *MouseStrokeSource) Position() (int, int) {
-	return ebiten.CursorPosition()
-}
-
-func (m *MouseStrokeSource) IsJustReleased() bool {
-	return inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft)
 }
 
 var mazeSizeOriginal = 8
@@ -74,13 +50,13 @@ func (g *Game) Update() error {
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if g.buttonsMenu[0].enabled {
+		if g.buttonsMenu[0].Enabled {
 			if g.buttonsMenu[0].In(x, y) {
 				typeOfMaze = 1
-				g.buttonBack.enabled = true
-				changeStateButtons(g.buttonsSize[:], true)
-				changeStateButtons(g.buttonsAlgo[:], true)
-				changeStateButtons(g.buttonsMenu[:], false)
+				g.buttonBack.Enabled = true
+				input.ChangeStateButtons(g.buttonsSize[:], true)
+				input.ChangeStateButtons(g.buttonsAlgo[:], true)
+				input.ChangeStateButtons(g.buttonsMenu[:], false)
 				return nil
 
 			} else if g.buttonsMenu[1].In(x, y) {
@@ -89,14 +65,14 @@ func (g *Game) Update() error {
 				changeMazeSize(0, true)
 			}
 
-		} else if g.buttonBack.enabled {
+		} else if g.buttonBack.Enabled {
 
 			if g.buttonBack.In(x, y) {
 				typeOfMaze = 0
-				g.buttonBack.enabled = false
-				changeStateButtons(g.buttonsSize[:], false)
-				changeStateButtons(g.buttonsAlgo[:], false)
-				changeStateButtons(g.buttonsMenu[:], true)
+				g.buttonBack.Enabled = false
+				input.ChangeStateButtons(g.buttonsSize[:], false)
+				input.ChangeStateButtons(g.buttonsAlgo[:], false)
+				input.ChangeStateButtons(g.buttonsMenu[:], true)
 				return nil
 
 			} else if g.buttonsSize[0].In(x, y) {
@@ -130,7 +106,7 @@ func (g *Game) Update() error {
 		}
 	}
 
-	if g.buttonBack.enabled {
+	if g.buttonBack.Enabled {
 		if inpututil.IsKeyJustPressed(ebiten.Key1) {
 			saveToFile(gameGridDFS)
 
@@ -193,20 +169,20 @@ func NewGame() *Game {
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
 
-	buttonsMenu := makeMainMenuButtons()
+	buttonsMenu := input.MakeMainMenuButtons(screenWidth, screenHeight)
 
-	buttonsSize := gameSizeButtons()
+	buttonsSize := input.GameSizeButtons(screenWidth, screenHeight)
 
-	buttonsAlgo := gameAlgoButtons()
+	buttonsAlgo := input.GameAlgoButtons(screenWidth, screenHeight)
 
-	buttonBack := &Button{
-		image:   buttonImage,
-		x:       (screenWidth / 2) - 50, // Position of the button
-		y:       (screenHeight / 2),
-		width:   100,
-		height:  30,
-		message: "Main Menu",
-		enabled: false,
+	buttonBack := &input.Button{
+		Image:   buttonImage,
+		X:       (screenWidth / 2) - 50, // Position of the button
+		Y:       (screenHeight / 2),
+		Width:   100,
+		Height:  30,
+		Message: "Main Menu",
+		Enabled: false,
 	}
 
 	// Initialize the game.

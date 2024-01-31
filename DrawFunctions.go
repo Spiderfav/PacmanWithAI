@@ -96,11 +96,11 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 	for i := 0; i < len(g.buttonsMenu); i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsMenu[i].x), float64(g.buttonsMenu[i].y))
+		op.GeoM.Translate(float64(g.buttonsMenu[i].X), float64(g.buttonsMenu[i].Y))
 
-		screen.DrawImage(g.buttonsMenu[i].image, op)
+		screen.DrawImage(g.buttonsMenu[i].Image, op)
 
-		text.Draw(screen, g.buttonsMenu[i].message, g.fontFace, g.buttonsMenu[i].x+10, g.buttonsMenu[i].y+20, color.Black)
+		text.Draw(screen, g.buttonsMenu[i].Message, g.fontFace, g.buttonsMenu[i].X+10, g.buttonsMenu[i].Y+20, color.Black)
 	}
 
 }
@@ -109,11 +109,11 @@ func sizeMenu(screen *ebiten.Image, g *Game) {
 
 	for i := 0; i < len(g.buttonsSize); i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsSize[i].x), float64(g.buttonsSize[i].y))
+		op.GeoM.Translate(float64(g.buttonsSize[i].X), float64(g.buttonsSize[i].Y))
 
-		screen.DrawImage(g.buttonsSize[i].image, op)
+		screen.DrawImage(g.buttonsSize[i].Image, op)
 
-		text.Draw(screen, g.buttonsSize[i].message, g.fontFace, g.buttonsSize[i].x+10, g.buttonsSize[i].y+20, color.Black)
+		text.Draw(screen, g.buttonsSize[i].Message, g.fontFace, g.buttonsSize[i].X+10, g.buttonsSize[i].Y+20, color.Black)
 	}
 }
 
@@ -121,21 +121,21 @@ func algoMenu(screen *ebiten.Image, g *Game) {
 
 	for i := 0; i < len(g.buttonsAlgo); i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsAlgo[i].x), float64(g.buttonsAlgo[i].y))
+		op.GeoM.Translate(float64(g.buttonsAlgo[i].X), float64(g.buttonsAlgo[i].Y))
 
-		screen.DrawImage(g.buttonsAlgo[i].image, op)
+		screen.DrawImage(g.buttonsAlgo[i].Image, op)
 
-		text.Draw(screen, g.buttonsAlgo[i].message, g.fontFace, g.buttonsAlgo[i].x+10, g.buttonsAlgo[i].y+20, color.Black)
+		text.Draw(screen, g.buttonsAlgo[i].Message, g.fontFace, g.buttonsAlgo[i].Y+10, g.buttonsAlgo[i].Y+20, color.Black)
 	}
 }
 
 func backButton(screen *ebiten.Image, g *Game) {
 
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
-	screen.DrawImage(g.buttonBack.image, op)
+	op.GeoM.Translate(float64(g.buttonBack.X), float64(g.buttonBack.Y))
+	screen.DrawImage(g.buttonBack.Image, op)
 
-	text.Draw(screen, g.buttonBack.message, g.fontFace, g.buttonBack.x+10, g.buttonBack.y+20, color.Black)
+	text.Draw(screen, g.buttonBack.Message, g.fontFace, g.buttonBack.X+10, g.buttonBack.Y+20, color.Black)
 }
 
 func OldMazeSystem(screen *ebiten.Image, g *Game) {
