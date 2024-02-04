@@ -7,7 +7,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
+	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 )
 
@@ -105,27 +107,15 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 }
 
-func sizeMenu(screen *ebiten.Image, g *Game) {
+func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 
-	for i := 0; i < len(g.buttonsSize); i++ {
+	for i := 0; i < len(arr); i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsSize[i].X), float64(g.buttonsSize[i].Y))
+		op.GeoM.Translate(float64(arr[i].X), float64(arr[i].Y))
 
-		screen.DrawImage(g.buttonsSize[i].Image, op)
+		screen.DrawImage(arr[i].Image, op)
 
-		text.Draw(screen, g.buttonsSize[i].Message, g.fontFace, g.buttonsSize[i].X+10, g.buttonsSize[i].Y+20, color.Black)
-	}
-}
-
-func algoMenu(screen *ebiten.Image, g *Game) {
-
-	for i := 0; i < len(g.buttonsAlgo); i++ {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsAlgo[i].X), float64(g.buttonsAlgo[i].Y))
-
-		screen.DrawImage(g.buttonsAlgo[i].Image, op)
-
-		text.Draw(screen, g.buttonsAlgo[i].Message, g.fontFace, g.buttonsAlgo[i].Y+10, g.buttonsAlgo[i].Y+20, color.Black)
+		text.Draw(screen, arr[i].Message, font, arr[i].X+10, arr[i].Y+20, color.Black)
 	}
 }
 
