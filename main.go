@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/characters"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/generation"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
@@ -26,6 +28,9 @@ type Game struct {
 	buttonsAlgo []*input.Button
 	buttonBack  *input.Button
 	fontFace    font.Face
+	Ghosts      characters.NPC
+	Player      characters.Player
+	count       int
 }
 
 var mazeSizeOriginal = 8
@@ -47,6 +52,8 @@ var whichPath = 3
 var typeOfMaze = 0
 
 func (g *Game) Update() error {
+	g.count++
+
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
@@ -147,14 +154,23 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(-float64(g.Ghosts.Atributes.FrameWidth)/2, -float64(g.Ghosts.Atributes.FrameHeight)/2)
+	op.GeoM.Translate(screenWidth/2, screenHeight/2)
+	i := (g.count / 5) % g.Ghosts.Atributes.FrameCount
+	sx, sy := g.Ghosts.Atributes.FrameOX+i*g.Ghosts.Atributes.FrameWidth, g.Ghosts.Atributes.FrameOY
+
 	switch typeOfMaze {
 	case 0:
 		mainMenu(screen, g)
+
 	case 1:
 		OldMazeSystem(screen, g)
 		backButton(screen, g)
-		sizeMenu(screen, g)
-		algoMenu(screen, g)
+		drawMenu(screen, g.buttonsSize, g.fontFace)
+		drawMenu(screen, g.buttonsAlgo, g.fontFace)
+		screen.DrawImage(g.Ghosts.Atributes.Sprite.SubImage(image.Rect(sx, sy, sx+g.Ghosts.Atributes.FrameWidth, sy+g.Ghosts.Atributes.FrameHeight)).(*ebiten.Image), op)
+
 	}
 
 }
@@ -164,7 +180,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func NewGame() *Game {
-
+	ghost1 := characters.CreateGhost()
 	// Initialize the button
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
@@ -192,6 +208,7 @@ func NewGame() *Game {
 		buttonsAlgo: buttonsAlgo,
 		buttonBack:  buttonBack,
 		fontFace:    basicfont.Face7x13,
+		Ghosts:      ghost1,
 	}
 }
 
