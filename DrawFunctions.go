@@ -119,6 +119,14 @@ func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 	}
 }
 
+func gameMenu(screen *ebiten.Image, g *Game) {
+	OldMazeSystem(screen, g)
+	backButton(screen, g)
+	drawMenu(screen, g.buttonsSize, g.fontFace)
+	drawMenu(screen, g.buttonsAlgo, g.fontFace)
+
+}
+
 func backButton(screen *ebiten.Image, g *Game) {
 
 	op := &ebiten.DrawImageOptions{}

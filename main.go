@@ -165,10 +165,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		mainMenu(screen, g)
 
 	case 1:
-		OldMazeSystem(screen, g)
-		backButton(screen, g)
-		drawMenu(screen, g.buttonsSize, g.fontFace)
-		drawMenu(screen, g.buttonsAlgo, g.fontFace)
+		gameMenu(screen, g)
 		screen.DrawImage(g.Ghosts.Atributes.Sprite.SubImage(image.Rect(sx, sy, sx+g.Ghosts.Atributes.FrameWidth, sy+g.Ghosts.Atributes.FrameHeight)).(*ebiten.Image), op)
 
 	}
