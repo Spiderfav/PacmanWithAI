@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 
@@ -154,19 +153,15 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(-float64(g.Ghosts.Atributes.FrameWidth)/2, -float64(g.Ghosts.Atributes.FrameHeight)/2)
-	op.GeoM.Translate(screenWidth/2, screenHeight/2)
-	i := (g.count / 5) % g.Ghosts.Atributes.FrameCount
-	sx, sy := g.Ghosts.Atributes.FrameOX+i*g.Ghosts.Atributes.FrameWidth, g.Ghosts.Atributes.FrameOY
-
 	switch typeOfMaze {
 	case 0:
 		mainMenu(screen, g)
 
 	case 1:
+
 		gameMenu(screen, g)
-		screen.DrawImage(g.Ghosts.Atributes.Sprite.SubImage(image.Rect(sx, sy, sx+g.Ghosts.Atributes.FrameWidth, sy+g.Ghosts.Atributes.FrameHeight)).(*ebiten.Image), op)
+
+		drawGhost(screen, g)
 
 	}
 
