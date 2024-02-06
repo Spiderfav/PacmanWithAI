@@ -1,39 +1,50 @@
 package characters
 
 import (
-	"bytes"
-	"image"
 	_ "image/png"
-	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/examples/resources/images"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-// This method means type NPC implements the interface Character,
+// This method means type NPC implements the interface CharacterFunctions,
 // but I don't need to explicitly declare that it does so.
 type NPC struct {
-	Atributes CharacterAtributes
+	Attributes *Character
 }
 
-func CreateGhost() NPC {
-	// Decode an image from the image file's byte slice.
-	img, _, err := image.Decode(bytes.NewReader(images.Runner_png))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	n := NPC{CharacterAtributes{ebiten.NewImageFromImage(img), mazegrid.Position{}, 0, 0, 32, 32, 32, 8}}
-	return n
-
+func (npc *NPC) Init(pos mazegrid.Position) {
+	npc.Attributes.Init(pos)
 }
 
-func (n NPC) GetPosition() mazegrid.Position {
-	return n.Atributes.Position
-
+func (npc *NPC) GetPosition() mazegrid.Position {
+	return npc.Attributes.GetPosition()
 }
 
-func (n NPC) SetPosition(newPos mazegrid.Position) {
-	n.Atributes.Position = newPos
+func (npc *NPC) SetPosition(pos mazegrid.Position) {
+	npc.Attributes.SetPosition(pos)
+}
+
+func (npc *NPC) GetAlgo() int {
+	return npc.Attributes.GetAlgo()
+}
+
+func (npc *NPC) GetFrameProperties() FrameProperties {
+	return npc.Attributes.GetFrameProperties()
+}
+
+func (npc *NPC) SetFrameProperties(fp FrameProperties) {
+	npc.Attributes.SetFrameProperties(fp)
+}
+
+func (npc *NPC) UpdateCount() {
+	npc.Attributes.Count += 1
+}
+
+func (npc *NPC) GetCount() int {
+	return npc.Attributes.GetCount()
+}
+
+func (npc *NPC) GetSprite() *ebiten.Image {
+	return npc.Attributes.GetSprite()
 }

@@ -27,12 +27,12 @@ type Game struct {
 	buttonsAlgo []*input.Button
 	buttonBack  *input.Button
 	fontFace    font.Face
-	Ghosts      characters.NPC
-	Player      characters.Player
-	count       int
+	Ghosts      characters.Character
+	Player      characters.Character
 }
 
-var mazeSizeOriginal = 8
+const mazeSizeOriginal = 8
+
 var oldGameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
 var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
 var mazeSize = len(gameGridDFS[0])
@@ -51,7 +51,7 @@ var whichPath = 3
 var typeOfMaze = 0
 
 func (g *Game) Update() error {
-	g.count++
+	g.Ghosts.UpdateCount()
 
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -68,7 +68,7 @@ func (g *Game) Update() error {
 			} else if g.buttonsMenu[1].In(x, y) {
 				gameGridDFS = loadFromFile()
 				mazeSize = len(gameGridDFS[0])
-				changeMazeSize(0, true)
+				changeMazeSize(0, true, g)
 			}
 
 		} else if g.buttonBack.Enabled {
@@ -82,67 +82,38 @@ func (g *Game) Update() error {
 				return nil
 
 			} else if g.buttonsSize[0].In(x, y) {
-				changeMazeSize(mazeSizeOriginal, false)
+				changeMazeSize(mazeSizeOriginal, false, g)
 
 			} else if g.buttonsSize[1].In(x, y) {
-				changeMazeSize(mazeSizeOriginal*2, false)
+				changeMazeSize(mazeSizeOriginal*2, false, g)
 
 			} else if g.buttonsSize[2].In(x, y) {
-				changeMazeSize((mazeSizeOriginal*2)*2, false)
+				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
 				saveToFile(gameGridDFS)
 
+				// A*
 			} else if g.buttonsAlgo[0].In(x, y) {
 				whichPath = 1
 
+				// Dijkstras
 			} else if g.buttonsAlgo[1].In(x, y) {
 				whichPath = 0
 
+				// Graph
 			} else if g.buttonsAlgo[2].In(x, y) {
 				whichPath = 2
 
+				// Shortest Path
 			} else if g.buttonsAlgo[3].In(x, y) {
 				whichPath = 4
 
+				// Maze Only
 			} else if g.buttonsAlgo[4].In(x, y) {
 				whichPath = 3
 			}
 
-		}
-	}
-
-	if g.buttonBack.Enabled {
-		if inpututil.IsKeyJustPressed(ebiten.Key1) {
-			saveToFile(gameGridDFS)
-
-		}
-
-		if inpututil.IsKeyJustPressed(ebiten.Key2) {
-			gameGridDFS = loadFromFile()
-
-		}
-
-		// Dijkstras
-		if inpututil.IsKeyJustPressed(ebiten.KeyA) {
-			whichPath = 0
-
-			// A*
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyB) {
-			whichPath = 1
-
-			// Graph
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyC) {
-			whichPath = 2
-
-			// Maze Only
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyD) {
-			whichPath = 3
-
-			// Shortest Path
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyE) {
-
-			whichPath = 4
 		}
 	}
 
@@ -160,8 +131,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	case 1:
 
 		gameMenu(screen, g)
-
-		drawGhost(screen, g)
+		drawSprite(screen, g.Ghosts)
 
 	}
 
@@ -172,7 +142,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func NewGame() *Game {
-	ghost1 := characters.CreateGhost()
+
+	ghost := characters.Character{}
+	ghost.Init(gameGridDFS[mazeSize/2][mazeSize/2].NodePosition)
 	// Initialize the button
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
@@ -200,11 +172,16 @@ func NewGame() *Game {
 		buttonsAlgo: buttonsAlgo,
 		buttonBack:  buttonBack,
 		fontFace:    basicfont.Face7x13,
-		Ghosts:      ghost1,
+		Ghosts:      ghost,
 	}
 }
 
-func changeMazeSize(newSize int, loadedMaze bool) {
+func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
+	if g != nil {
+		ghost := characters.Character{}
+		ghost.Init(gameGridDFS[mazeSize/2][mazeSize/2].NodePosition)
+		g.Ghosts = ghost
+	}
 
 	if !loadedMaze {
 		oldGameGridDFS = algorithms.DFS(newSize, nil)
@@ -232,7 +209,7 @@ func main() {
 
 	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
 	fmt.Println(" ")
-	changeMazeSize(mazeSizeOriginal, false)
+	changeMazeSize(mazeSizeOriginal, false, nil)
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(NewGame()); err != nil {

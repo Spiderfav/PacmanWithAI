@@ -8,6 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/characters"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 	"golang.org/x/image/font"
@@ -119,15 +120,17 @@ func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 		text.Draw(screen, arr[i].Message, font, arr[i].X+10, arr[i].Y+20, color.Black)
 	}
 }
-func drawGhost(screen *ebiten.Image, g *Game) {
+
+func drawSprite(screen *ebiten.Image, char characters.Character) {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(-float64(g.Ghosts.Atributes.FrameWidth)/2, -float64(g.Ghosts.Atributes.FrameHeight)/2)
-	op.GeoM.Translate(float64((screenWidth/2)+g.count), float64((screenHeight/2)+g.count))
-	i := (g.count / 5) % g.Ghosts.Atributes.FrameCount
-	sx, sy := g.Ghosts.Atributes.FrameOX+i*g.Ghosts.Atributes.FrameWidth, g.Ghosts.Atributes.FrameOY
-	screen.DrawImage(g.Ghosts.Atributes.Sprite.SubImage(image.Rect(sx, sy, sx+g.Ghosts.Atributes.FrameWidth, sy+g.Ghosts.Atributes.FrameHeight)).(*ebiten.Image), op)
+	//op.GeoM.Translate(-float64(g.Ghosts.Atributes.FrameWidth)/2, -float64(g.Ghosts.Atributes.FrameHeight)/2)
+	op.GeoM.Translate(float64(char.GetPosition().XCoordinate), float64((char.GetPosition().YCoordinate)))
+	i := (char.GetCount() / 5) % char.GetFrameProperties().FrameCount
+	sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
+	screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
 
 }
+
 func gameMenu(screen *ebiten.Image, g *Game) {
 	OldMazeSystem(screen, g)
 	backButton(screen, g)
