@@ -51,18 +51,18 @@ func drawMaze(screen *ebiten.Image, g *Game) {
 }
 
 // This function draws lines for each path taken
-// func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
-// 	prevX := pathTaken[0].NodePosition.XCoordinate + 10
-// 	prevY := pathTaken[0].NodePosition.YCoordinate + 10
+func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
+	prevX := pathTaken[0].NodePosition.XCoordinate + 10
+	prevY := pathTaken[0].NodePosition.YCoordinate + 10
 
-// 	for i := 1; i < len(pathTaken); i++ {
-// 		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 1, color.RGBA{0, 255, 0, 250}, false)
-// 		prevX = pathTaken[i].NodePosition.XCoordinate + 10
-// 		prevY = pathTaken[i].NodePosition.YCoordinate + 10
+	for i := 1; i < len(pathTaken); i++ {
+		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 1, color.RGBA{0, 255, 0, 250}, false)
+		prevX = pathTaken[i].NodePosition.XCoordinate + 10
+		prevY = pathTaken[i].NodePosition.YCoordinate + 10
 
-// 	}
+	}
 
-// }
+}
 
 // func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]mazegrid.MazeSquare) {
 // 	for count := 0; count < len(pathsTaken); count++ {

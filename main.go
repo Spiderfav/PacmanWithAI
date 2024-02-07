@@ -129,6 +129,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		gameMenu(screen, g)
 		characters.DrawSprite(screen, g.Ghosts.Attributes)
 		characters.DrawSprite(screen, g.Player)
+		drawPathsLines(screen, g.Ghosts.Path)
 
 	}
 
@@ -139,7 +140,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func NewGame() *Game {
-	gameGridDFS := algorithms.DFS(mazeSizeOriginal, algorithms.DFS(mazeSizeOriginal, nil))
+	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil)
+	algorithms.MarkUnvisited(oldGameGridDFS)
+	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
 	maze := Maze{mazeSizeOriginal, gameGridDFS}
 
 	pacman := characters.Character{}
