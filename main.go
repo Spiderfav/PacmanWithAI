@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"log"
 
@@ -9,12 +8,16 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/characters"
-	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/generation"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 )
+
+type Maze struct {
+	Size int
+	Grid [][]mazegrid.MazeSquare
+}
 
 const (
 	screenWidth  = 1920
@@ -22,33 +25,21 @@ const (
 )
 
 type Game struct {
+	Maze        Maze
 	buttonsMenu []*input.Button
 	buttonsSize []*input.Button
 	buttonsAlgo []*input.Button
 	buttonBack  *input.Button
 	fontFace    font.Face
-	Ghosts      characters.Character
+	Ghosts      characters.NPC
 	Player      characters.Character
 }
 
 const mazeSizeOriginal = 8
 
-var oldGameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, nil)
-var gameGridDFS [][]mazegrid.MazeSquare = algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
-var mazeSize = len(gameGridDFS[0])
+// var whichPath = 3
 
-var dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
-var absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
-
-var aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*mazeSizeOriginal, 20*mazeSizeOriginal)
-var absolutePathAStar, weigthAStar = algorithms.AbsolutePath(aStarPath)
-
-var graph = generation.MazeToGraph(gameGridDFS, 20, 20, float32(20*mazeSizeOriginal), float32(20*mazeSizeOriginal))
-var graphPaths = generation.AllPaths(gameGridDFS, graph)
-
-var whichPath = 3
-
-var typeOfMaze = 0
+var menuOrGame = 0
 
 func (g *Game) Update() error {
 	g.Ghosts.UpdateCount()
@@ -58,7 +49,7 @@ func (g *Game) Update() error {
 		x, y := ebiten.CursorPosition()
 		if g.buttonsMenu[0].Enabled {
 			if g.buttonsMenu[0].In(x, y) {
-				typeOfMaze = 1
+				menuOrGame = 1
 				g.buttonBack.Enabled = true
 				input.ChangeStateButtons(g.buttonsSize[:], true)
 				input.ChangeStateButtons(g.buttonsAlgo[:], true)
@@ -66,15 +57,15 @@ func (g *Game) Update() error {
 				return nil
 
 			} else if g.buttonsMenu[1].In(x, y) {
-				gameGridDFS = loadFromFile()
-				mazeSize = len(gameGridDFS[0])
+				g.Maze.Grid = loadFromFile()
+				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
 			}
 
 		} else if g.buttonBack.Enabled {
 
 			if g.buttonBack.In(x, y) {
-				typeOfMaze = 0
+				menuOrGame = 0
 				g.buttonBack.Enabled = false
 				input.ChangeStateButtons(g.buttonsSize[:], false)
 				input.ChangeStateButtons(g.buttonsAlgo[:], false)
@@ -91,27 +82,30 @@ func (g *Game) Update() error {
 				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
-				saveToFile(gameGridDFS)
+				saveToFile(g.Maze.Grid)
 
 				// A*
-			} else if g.buttonsAlgo[0].In(x, y) {
-				whichPath = 1
+				// } else if g.buttonsAlgo[0].In(x, y) {
+				// 	// Change the ghost's algorithm
+				// 	//TO-DO: Reset function for Ghosts
+				// 	whichPath = 1
 
-				// Dijkstras
-			} else if g.buttonsAlgo[1].In(x, y) {
-				whichPath = 0
+				// 	// Dijkstras
+				// } else if g.buttonsAlgo[1].In(x, y) {
+				// 	whichPath = 0
 
-				// Graph
-			} else if g.buttonsAlgo[2].In(x, y) {
-				whichPath = 2
+				// 	// Graph
+				// } else if g.buttonsAlgo[2].In(x, y) {
+				// 	whichPath = 2
 
-				// Shortest Path
-			} else if g.buttonsAlgo[3].In(x, y) {
-				whichPath = 4
+				// 	// Shortest Path
+				// } else if g.buttonsAlgo[3].In(x, y) {
+				// 	whichPath = 4
 
-				// Maze Only
-			} else if g.buttonsAlgo[4].In(x, y) {
-				whichPath = 3
+				// 	// Maze Only
+				// } else if g.buttonsAlgo[4].In(x, y) {
+				// 	whichPath = 3
+				// }
 			}
 
 		}
@@ -124,14 +118,14 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	switch typeOfMaze {
+	switch menuOrGame {
 	case 0:
 		mainMenu(screen, g)
 
 	case 1:
 
 		gameMenu(screen, g)
-		drawSprite(screen, g.Ghosts)
+		characters.DrawSprite(screen, g.Ghosts.Attributes)
 
 	}
 
@@ -142,9 +136,15 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func NewGame() *Game {
+	gameGridDFS := algorithms.DFS(mazeSizeOriginal, algorithms.DFS(mazeSizeOriginal, nil))
+	maze := Maze{mazeSizeOriginal, gameGridDFS}
 
-	ghost := characters.Character{}
-	ghost.Init(gameGridDFS[mazeSize/2][mazeSize/2].NodePosition)
+	pacman := characters.Character{}
+	pacman.Init(gameGridDFS[0][0].NodePosition)
+
+	ghost := characters.NPC{}
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, algorithms.DijkstraAlgo, pacman.GetPosition(), gameGridDFS)
+
 	// Initialize the button
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
@@ -173,43 +173,30 @@ func NewGame() *Game {
 		buttonBack:  buttonBack,
 		fontFace:    basicfont.Face7x13,
 		Ghosts:      ghost,
+		Maze:        maze,
+		Player:      pacman,
 	}
 }
 
 func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
-	if g != nil {
-		ghost := characters.Character{}
-		ghost.Init(gameGridDFS[mazeSize/2][mazeSize/2].NodePosition)
-		g.Ghosts = ghost
-	}
 
 	if !loadedMaze {
-		oldGameGridDFS = algorithms.DFS(newSize, nil)
+		oldGameGridDFS := algorithms.DFS(newSize, nil)
 		algorithms.MarkUnvisited(oldGameGridDFS)
-		gameGridDFS = algorithms.DFS(newSize, oldGameGridDFS)
+		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS)
+		g.Maze.Size = newSize
 
-	} else {
-		newSize = mazeSize
 	}
 
-	dijkstrasPath = algorithms.Dijkstras(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
-	aStarPath = algorithms.AStar(gameGridDFS, 20, 20, 20*newSize, 20*newSize)
-	absolutePathDijkstras, weightDijkstras = algorithms.AbsolutePath(dijkstrasPath)
-	absolutePathAStar, weigthAStar = algorithms.AbsolutePath(aStarPath)
-	graph = generation.MazeToGraph(gameGridDFS, 20, 20, float32(20*newSize), float32(20*newSize))
-	graphPaths = generation.AllPaths(gameGridDFS, graph)
-	mazeSize = newSize
-	whichPath = 3
+	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
+
+	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), g.Maze.Grid)
+
+	// whichPath = 3
 }
 
 func main() {
 
-	fmt.Println("Size of Dijkstras:", len(dijkstrasPath))
-	fmt.Println("Size of A*:", len(aStarPath))
-
-	fmt.Println("Size of absolute path", len(absolutePathDijkstras))
-	fmt.Println(" ")
-	changeMazeSize(mazeSizeOriginal, false, nil)
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Single Agent Maze!")
 	if err := ebiten.RunGame(NewGame()); err != nil {
