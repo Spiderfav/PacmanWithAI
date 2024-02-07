@@ -155,45 +155,30 @@ func OldMazeSystem(screen *ebiten.Image, g *Game) {
 	drawMaze(screen, mazeSize)
 
 	if whichPath == 0 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
 
 		// Draw Dijkstra's Path to the screen
 		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
 		drawPathsLines(screen, absolutePathDijkstras)
+		return
 
 	} else if whichPath == 1 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
 
 		// Draw A*'s Path to the screen
 		drawPaths(screen, aStarPath, "A Star", weigthAStar)
 		drawPathsLines(screen, absolutePathAStar)
+		return
 
 	} else if whichPath == 2 {
-		// Clear the screen to white
-		screen.Fill(color.White)
 
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
 		drawPaths(screen, graph, "Graph Method", 10)
 		drawMultiplePaths(screen, graphPaths)
+		return
 
 	} else if whichPath == 4 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
 
 		// Draw Solution Path to the screen
 		drawPathsLines(screen, absolutePathAStar)
+		return
 
 	}
 }
