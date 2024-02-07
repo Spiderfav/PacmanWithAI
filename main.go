@@ -44,6 +44,9 @@ var menuOrGame = 0
 func (g *Game) Update() error {
 	g.Ghosts.UpdateCount()
 
+	if menuOrGame == 1 {
+		g.Ghosts.Move(g.Player.GetPosition(), g.Maze.Grid)
+	}
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
@@ -123,9 +126,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		mainMenu(screen, g)
 
 	case 1:
-
 		gameMenu(screen, g)
 		characters.DrawSprite(screen, g.Ghosts.Attributes)
+		characters.DrawSprite(screen, g.Player)
 
 	}
 

@@ -1,7 +1,9 @@
 package characters
 
 import (
+	"fmt"
 	_ "image/png"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
@@ -12,12 +14,14 @@ type NPC struct {
 	Attributes Character
 	Algo       algorithms.Algorithm
 	Path       []mazegrid.MazeSquare
+	hasMutex   bool
 }
 
 func (npc *NPC) Init(pos mazegrid.Position, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.Init(pos)
 	npc.Algo = algo
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
+	npc.hasMutex = true
 
 }
 
@@ -26,7 +30,10 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 }
 
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+	fmt.Println("Pos before:", npc.Attributes.Position)
 	npc.Attributes.SetPosition(pos)
+	fmt.Println("Pos after:", npc.Attributes.Position)
+
 	npc.calculatePath(pos, enemyPos, grid)
 }
 
@@ -51,6 +58,14 @@ func (npc *NPC) GetFrameProperties() FrameProperties {
 	return npc.Attributes.GetFrameProperties()
 }
 
+func (npc *NPC) Move(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+	if npc.hasMutex {
+		npc.hasMutex = false
+		go npc.wait(enemyPos, grid)
+
+	}
+}
+
 func (npc *NPC) SetFrameProperties(fp FrameProperties) {
 	npc.Attributes.SetFrameProperties(fp)
 }
@@ -65,4 +80,13 @@ func (npc *NPC) GetCount() int {
 
 func (npc *NPC) GetSprite() *ebiten.Image {
 	return npc.Attributes.GetSprite()
+}
+
+func (npc *NPC) wait(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+	for range time.Tick(time.Second * 2) {
+		npc.UpdatePosition(npc.Path[len(npc.Path)-2].NodePosition, enemyPos, grid)
+
+	}
+
+	npc.hasMutex = true
 }
