@@ -21,25 +21,20 @@ type FrameProperties struct {
 type Character struct {
 	Sprite   *ebiten.Image
 	Position mazegrid.Position
-	Algo     int
 	FrameProperties
 	Count int
 }
 
-func (c *Character) Init(pos mazegrid.Position) {
+func (c *Character) Init(startPos mazegrid.Position) {
 
 	c.Sprite = ebiten.NewImageFromImage(c.setSprite())
-	c.Position = pos
-	c.Algo = 0
+	c.Position = startPos
 	c.FrameOX = 0
 	c.FrameOY = 32
 	c.FrameWidth = 32
 	c.FrameHeight = 32
 	c.FrameCount = 8
-}
 
-func (c *Character) GetAlgo() int {
-	return c.Algo
 }
 
 func (c *Character) GetPosition() mazegrid.Position {
@@ -77,4 +72,13 @@ func (c *Character) setSprite() image.Image {
 		log.Fatal(err)
 	}
 	return img
+}
+
+func DrawSprite(screen *ebiten.Image, char Character) {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(char.GetPosition().XCoordinate), float64((char.GetPosition().YCoordinate)))
+	i := (char.GetCount() / 5) % char.GetFrameProperties().FrameCount
+	sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
+	screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
+
 }
