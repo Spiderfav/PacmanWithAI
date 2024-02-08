@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"image/color"
 	"log"
 
@@ -195,6 +196,12 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 	}
 
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
+
+	if g.Ghosts.CancelFunc != nil {
+		g.Ghosts.CancelFunc()
+	}
+
+	g.Ghosts.Ctx, g.Ghosts.CancelFunc = context.WithCancel(context.Background())
 
 	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), g.Maze.Grid)
 

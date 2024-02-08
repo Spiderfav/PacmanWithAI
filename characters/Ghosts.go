@@ -1,6 +1,7 @@
 package characters
 
 import (
+	"context"
 	"fmt"
 	_ "image/png"
 	"time"
@@ -15,6 +16,8 @@ type NPC struct {
 	Algo       algorithms.Algorithm
 	Path       []mazegrid.MazeSquare
 	hasMutex   bool
+	Ctx        context.Context
+	CancelFunc context.CancelFunc
 }
 
 func (npc *NPC) Init(pos mazegrid.Position, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
@@ -23,6 +26,15 @@ func (npc *NPC) Init(pos mazegrid.Position, algo algorithms.Algorithm, enemyPos 
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 	npc.hasMutex = true
 
+	npc.Ctx, npc.CancelFunc = context.WithCancel(context.Background())
+
+}
+
+func (npc *NPC) CancelContext() {
+	if npc.CancelFunc != nil {
+		npc.CancelFunc()
+		npc.CancelFunc = nil
+	}
 }
 
 func (npc *NPC) GetPosition() mazegrid.Position {
@@ -85,12 +97,19 @@ func (npc *NPC) GetSprite() *ebiten.Image {
 }
 
 func (npc *NPC) wait(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+	ticker := time.NewTicker(time.Second * 2)
+	defer ticker.Stop()
 
-	for range time.Tick(time.Second * 2) {
-
-		npc.UpdatePosition(npc.Path[len(npc.Path)-2].NodePosition, enemyPos, grid)
-
+	for {
+		select {
+		case <-npc.Ctx.Done():
+			npc.hasMutex = true
+			return // Exit the loop if context is cancelled
+		case <-ticker.C:
+			npc.UpdatePosition(npc.Path[len(npc.Path)-2].NodePosition, enemyPos, grid)
+			npc.hasMutex = true
+			return
+		}
 	}
 
-	npc.hasMutex = true
 }
