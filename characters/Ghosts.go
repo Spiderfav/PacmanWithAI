@@ -34,6 +34,8 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 	npc.Attributes.SetPosition(pos)
 	fmt.Println("Pos after:", npc.Attributes.Position)
 
+	fmt.Println("Path to take:", npc.Path)
+	fmt.Println("Pos of path to to take:", npc.Path[len(npc.Path)-2])
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 }
 
@@ -45,10 +47,10 @@ func (npc *NPC) calculatePath(pos mazegrid.Position, enemyPos mazegrid.Position,
 	var path []mazegrid.MazeSquare
 	switch npc.Algo {
 	case algorithms.DijkstraAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(pos.XCoordinate), int(pos.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate)))
+		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(pos.YCoordinate), int(pos.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
 
 	case algorithms.AStarAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(pos.XCoordinate), int(pos.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate)))
+		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(pos.YCoordinate), int(pos.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
 	}
 
 	return path
@@ -83,7 +85,9 @@ func (npc *NPC) GetSprite() *ebiten.Image {
 }
 
 func (npc *NPC) wait(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+
 	for range time.Tick(time.Second * 2) {
+
 		npc.UpdatePosition(npc.Path[len(npc.Path)-2].NodePosition, enemyPos, grid)
 
 	}

@@ -3,10 +3,12 @@ package characters
 import (
 	"bytes"
 	"image"
+	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/images"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -75,10 +77,12 @@ func (c *Character) setSprite() image.Image {
 }
 
 func DrawSprite(screen *ebiten.Image, char Character) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(char.GetPosition().XCoordinate), float64((char.GetPosition().YCoordinate)))
-	i := (char.GetCount() / 5) % char.GetFrameProperties().FrameCount
-	sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
-	screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
+	// op := &ebiten.DrawImageOptions{}
+	// op.GeoM.Translate(float64(char.GetPosition().XCoordinate+10), float64((char.GetPosition().YCoordinate + 10)))
+	// i := (char.GetCount() / 5) % char.GetFrameProperties().FrameCount
+	// sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
+	// screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
+
+	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+10, char.GetPosition().YCoordinate+10, 2, color.Black, true)
 
 }
