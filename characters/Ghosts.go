@@ -42,12 +42,12 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 }
 
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
-	fmt.Println("Pos before:", npc.Attributes.Position)
+	//fmt.Println("Pos before:", npc.Attributes.Position)
 	npc.Attributes.SetPosition(pos)
-	fmt.Println("Pos after:", npc.Attributes.Position)
+	//fmt.Println("Pos after:", npc.Attributes.Position)
 
-	fmt.Println("Path to take:", npc.Path)
-	fmt.Println("Pos of path to to take:", npc.Path[len(npc.Path)-2])
+	// fmt.Println("Path to take:", npc.Path)
+	// fmt.Println("Pos of path to to take:", npc.Path[len(npc.Path)-2])
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 }
 
@@ -97,7 +97,7 @@ func (npc *NPC) GetSprite() *ebiten.Image {
 }
 
 func (npc *NPC) wait(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * 700)
 	defer ticker.Stop()
 
 	for {
@@ -106,7 +106,17 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
 			npc.hasMutex = true
 			return // Exit the loop if context is cancelled
 		case <-ticker.C:
-			npc.UpdatePosition(npc.Path[len(npc.Path)-2].NodePosition, enemyPos, grid)
+			nextNode := len(npc.Path) - 2
+
+			fmt.Println("Node value:", nextNode)
+
+			if nextNode < 0 {
+				nextNode = 0
+			}
+
+			fmt.Println("Node value After:", nextNode)
+
+			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, grid)
 			npc.hasMutex = true
 			return
 		}
