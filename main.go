@@ -47,6 +47,10 @@ func (g *Game) Update() error {
 
 	if menuOrGame == 1 {
 		g.Ghosts.Move(g.Player.GetPosition(), g.Maze.Grid)
+
+		if g.Ghosts.GetPosition() == g.Player.GetPosition() {
+			changeMazeSize(g.Maze.Size, false, g)
+		}
 	}
 	// Check if the button is clicked
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
