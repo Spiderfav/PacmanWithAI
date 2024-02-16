@@ -97,7 +97,7 @@ func (npc *NPC) GetSprite() *ebiten.Image {
 }
 
 func (npc *NPC) wait(enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
-	ticker := time.NewTicker(time.Millisecond * 700)
+	ticker := time.NewTicker(time.Millisecond * 500)
 	defer ticker.Stop()
 
 	for {

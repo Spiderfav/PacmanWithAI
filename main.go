@@ -33,7 +33,7 @@ type Game struct {
 	buttonBack  *input.Button
 	fontFace    font.Face
 	Ghosts      characters.NPC
-	Player      characters.Character
+	Player      characters.Player
 }
 
 const mazeSizeOriginal = 8
@@ -46,6 +46,20 @@ func (g *Game) Update() error {
 	g.Ghosts.UpdateCount()
 
 	if menuOrGame == 1 {
+		if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+			g.Player.Move(characters.Up, g.Maze.Grid)
+
+		} else if inpututil.IsKeyJustPressed(ebiten.KeyS) || inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+			g.Player.Move(characters.Down, g.Maze.Grid)
+
+		} else if inpututil.IsKeyJustPressed(ebiten.KeyA) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+			g.Player.Move(characters.Left, g.Maze.Grid)
+
+		} else if inpututil.IsKeyJustPressed(ebiten.KeyD) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+			g.Player.Move(characters.Right, g.Maze.Grid)
+
+		}
+
 		g.Ghosts.Move(g.Player.GetPosition(), g.Maze.Grid)
 
 		if g.Ghosts.GetPosition() == g.Player.GetPosition() {
@@ -92,29 +106,30 @@ func (g *Game) Update() error {
 			} else if g.buttonsSize[3].In(x, y) {
 				saveToFile(g.Maze.Grid)
 
-				// A*
-				// } else if g.buttonsAlgo[0].In(x, y) {
-				// 	// Change the ghost's algorithm
-				// 	//TO-DO: Reset function for Ghosts
-				// 	whichPath = 1
-
-				// 	// Dijkstras
-				// } else if g.buttonsAlgo[1].In(x, y) {
-				// 	whichPath = 0
-
-				// 	// Graph
-				// } else if g.buttonsAlgo[2].In(x, y) {
-				// 	whichPath = 2
-
-				// 	// Shortest Path
-				// } else if g.buttonsAlgo[3].In(x, y) {
-				// 	whichPath = 4
-
-				// 	// Maze Only
-				// } else if g.buttonsAlgo[4].In(x, y) {
-				// 	whichPath = 3
-				// }
 			}
+
+			// A*
+			// } else if g.buttonsAlgo[0].In(x, y) {
+			// 	// Change the ghost's algorithm
+			// 	//TO-DO: Reset function for Ghosts
+			// 	whichPath = 1
+
+			// 	// Dijkstras
+			// } else if g.buttonsAlgo[1].In(x, y) {
+			// 	whichPath = 0
+
+			// 	// Graph
+			// } else if g.buttonsAlgo[2].In(x, y) {
+			// 	whichPath = 2
+
+			// 	// Shortest Path
+			// } else if g.buttonsAlgo[3].In(x, y) {
+			// 	whichPath = 4
+
+			// 	// Maze Only
+			// } else if g.buttonsAlgo[4].In(x, y) {
+			// 	whichPath = 3
+			// }
 
 		}
 	}
@@ -133,7 +148,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	case 1:
 		gameMenu(screen, g)
 		characters.DrawSprite(screen, g.Ghosts.Attributes)
-		characters.DrawSprite(screen, g.Player)
+		characters.DrawSprite(screen, g.Player.Attributes)
 		drawPathsLines(screen, g.Ghosts.Path)
 
 	}
@@ -150,7 +165,7 @@ func NewGame() *Game {
 	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
 	maze := Maze{mazeSizeOriginal, gameGridDFS}
 
-	pacman := characters.Character{}
+	pacman := characters.Player{}
 	pacman.Init(gameGridDFS[0][0].NodePosition)
 
 	ghost := characters.NPC{}
