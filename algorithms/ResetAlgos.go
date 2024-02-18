@@ -6,6 +6,14 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
+type Algorithm = int
+
+const (
+	DijkstraAlgo Algorithm = 0
+	AStarAlgo    Algorithm = 1
+	RandomAlgo   Algorithm = 2
+)
+
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
 // It iterates through a [][]Mazesquare and changes the status of visited, weight and walls to the default.
 func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {

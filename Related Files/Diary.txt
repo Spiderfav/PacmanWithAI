@@ -97,3 +97,13 @@ Week 2:
 - Created a way to save and load of mazes for the program
 - Created a method to randomly add weights to the maze
 - Created a method to show the weights on the graph.
+
+Weeks 3 and 4:
+
+- Created Ghosts and Character behaviours
+- Updated Ghosts to independatly follow Pacman
+- Simplified maze code and draw code to be less taxing on CPU
+- Created functions to draw the Ghosts and Pacman to screen
+- Commented out unused draw functions
+- Added async function to draw sprites
+- Added context to Ghosts to be able to be started and stopped each time maze size changes

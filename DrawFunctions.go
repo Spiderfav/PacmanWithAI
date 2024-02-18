@@ -2,13 +2,13 @@ package main
 
 import (
 	"image/color"
-	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
-	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/font"
 )
 
 // This function draws a given square to the screen
@@ -40,12 +40,12 @@ func drawSquare(screen *ebiten.Image, squareToDraw mazegrid.MazeSquare) {
 
 // The DrawMaze function takes the screen argument given as the screen to draw to maze to
 // It draws the maze from the GameGridDFS
-func drawMaze(screen *ebiten.Image, size int) {
+func drawMaze(screen *ebiten.Image, g *Game) {
 
 	// For each row and column, it looks at the walls of the block and draws the ones it has
-	for i := 0; i < size; i++ {
-		for j := 0; j < size; j++ {
-			drawSquare(screen, gameGridDFS[i][j])
+	for i := 0; i < g.Maze.Size; i++ {
+		for j := 0; j < g.Maze.Size; j++ {
+			drawSquare(screen, g.Maze.Grid[i][j])
 		}
 	}
 }
@@ -64,30 +64,31 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
 
 }
 
-func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]mazegrid.MazeSquare) {
-	for count := 0; count < len(pathsTaken); count++ {
-		drawPathsLines(screen, pathsTaken[count])
-	}
-}
+// func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]mazegrid.MazeSquare) {
+// 	for count := 0; count < len(pathsTaken); count++ {
+// 		drawPathsLines(screen, pathsTaken[count])
+// 	}
+// }
 
 // This function draws circles with their position in the path
 // It also draws the start node and end node and the total cost
-func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo string, weight int) {
+// func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo string, weight int) {
 
-	// For every node searched by the algorithms, draw a circle with their postion
-	for i := 0; i < len(pathTaken); i++ {
-		vector.DrawFilledCircle(screen, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 2, color.RGBA{255, 0, 0, 250}, true)
-		text.Draw(screen, strconv.Itoa(i), basicfont.Face7x13, int(pathTaken[i].NodePosition.XCoordinate)+10, int(pathTaken[i].NodePosition.YCoordinate)+10, color.RGBA{255, 0, 255, 250})
+// 	// For every node searched by the algorithms, draw a circle with their postion
+// 	for i := 0; i < len(pathTaken); i++ {
+// 		vector.DrawFilledCircle(screen, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 2, color.RGBA{255, 0, 0, 250}, true)
+// 		text.Draw(screen, strconv.Itoa(i), basicfont.Face7x13, int(pathTaken[i].NodePosition.XCoordinate)+10, int(pathTaken[i].NodePosition.YCoordinate)+10, color.RGBA{255, 0, 255, 250})
 
-	}
+// 	}
 
-	text.Draw(screen, "Path cost to desired node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].Weight)), basicfont.Face7x13, 10, 10, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "Start node is "+strconv.Itoa(int(pathTaken[0].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[0].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+40, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "End node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+50, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "Algorithm Used: "+algo, basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+60, color.RGBA{0, 0, 0, 250})
-	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
+// 	text.Draw(screen, "Path cost to desired node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].Weight)), basicfont.Face7x13, 10, 10, color.RGBA{0, 0, 0, 250})
+// 	text.Draw(screen, "Start node is "+strconv.Itoa(int(pathTaken[0].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[0].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+40, color.RGBA{0, 0, 0, 250})
+// 	text.Draw(screen, "End node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+50, color.RGBA{0, 0, 0, 250})
+// 	text.Draw(screen, "Algorithm Used: "+algo, basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+60, color.RGBA{0, 0, 0, 250})
+// 	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
 
-}
+// }
+
 func mainMenu(screen *ebiten.Image, g *Game) {
 	// Clear the screen to white
 	screen.Fill(color.White)
@@ -96,94 +97,79 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 	for i := 0; i < len(g.buttonsMenu); i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsMenu[i].x), float64(g.buttonsMenu[i].y))
+		op.GeoM.Translate(float64(g.buttonsMenu[i].X), float64(g.buttonsMenu[i].Y))
 
-		screen.DrawImage(g.buttonsMenu[i].image, op)
+		screen.DrawImage(g.buttonsMenu[i].Image, op)
 
-		text.Draw(screen, g.buttonsMenu[i].message, g.fontFace, g.buttonsMenu[i].x+10, g.buttonsMenu[i].y+20, color.Black)
+		text.Draw(screen, g.buttonsMenu[i].Message, g.fontFace, g.buttonsMenu[i].X+10, g.buttonsMenu[i].Y+20, color.Black)
 	}
 
 }
 
-func sizeMenu(screen *ebiten.Image, g *Game) {
+func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 
-	for i := 0; i < len(g.buttonsSize); i++ {
+	for i := 0; i < len(arr); i++ {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsSize[i].x), float64(g.buttonsSize[i].y))
+		op.GeoM.Translate(float64(arr[i].X), float64(arr[i].Y))
 
-		screen.DrawImage(g.buttonsSize[i].image, op)
+		screen.DrawImage(arr[i].Image, op)
 
-		text.Draw(screen, g.buttonsSize[i].message, g.fontFace, g.buttonsSize[i].x+10, g.buttonsSize[i].y+20, color.Black)
+		text.Draw(screen, arr[i].Message, font, arr[i].X+10, arr[i].Y+20, color.Black)
 	}
 }
 
-func algoMenu(screen *ebiten.Image, g *Game) {
+func gameMenu(screen *ebiten.Image, g *Game) {
+	// 	// Clear the screen to white
+	screen.Fill(color.White)
+	// 	// Draw the maze to the screen
+	drawMaze(screen, g)
+	//OldMazeSystem(screen, g)
+	backButton(screen, g)
+	drawMenu(screen, g.buttonsSize, g.fontFace)
+	drawMenu(screen, g.buttonsAlgo, g.fontFace)
 
-	for i := 0; i < len(g.buttonsAlgo); i++ {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(g.buttonsAlgo[i].x), float64(g.buttonsAlgo[i].y))
-
-		screen.DrawImage(g.buttonsAlgo[i].image, op)
-
-		text.Draw(screen, g.buttonsAlgo[i].message, g.fontFace, g.buttonsAlgo[i].x+10, g.buttonsAlgo[i].y+20, color.Black)
-	}
 }
 
 func backButton(screen *ebiten.Image, g *Game) {
 
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(g.buttonBack.x), float64(g.buttonBack.y))
-	screen.DrawImage(g.buttonBack.image, op)
+	op.GeoM.Translate(float64(g.buttonBack.X), float64(g.buttonBack.Y))
+	screen.DrawImage(g.buttonBack.Image, op)
 
-	text.Draw(screen, g.buttonBack.message, g.fontFace, g.buttonBack.x+10, g.buttonBack.y+20, color.Black)
+	text.Draw(screen, g.buttonBack.Message, g.fontFace, g.buttonBack.X+10, g.buttonBack.Y+20, color.Black)
 }
 
-func OldMazeSystem(screen *ebiten.Image, g *Game) {
-	// Clear the screen to white
-	screen.Fill(color.White)
-	// Draw the maze to the screen
-	drawMaze(screen, mazeSize)
+// func OldMazeSystem(screen *ebiten.Image, g *Game) {
+// 	// Clear the screen to white
+// 	screen.Fill(color.White)
+// 	// Draw the maze to the screen
+// 	drawMaze(screen, mazeSize)
 
-	if whichPath == 0 {
-		// Clear the screen to white
-		screen.Fill(color.White)
+// 	if whichPath == 0 {
 
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
+// 		// Draw Dijkstra's Path to the screen
+// 		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
+// 		drawPathsLines(screen, absolutePathDijkstras)
+// 		return
 
-		// Draw Dijkstra's Path to the screen
-		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
-		drawPathsLines(screen, absolutePathDijkstras)
+// 	} else if whichPath == 1 {
 
-	} else if whichPath == 1 {
-		// Clear the screen to white
-		screen.Fill(color.White)
+// 		// Draw A*'s Path to the screen
+// 		drawPaths(screen, aStarPath, "A Star", weigthAStar)
+// 		drawPathsLines(screen, absolutePathAStar)
+// 		return
 
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
+// 	} else if whichPath == 2 {
 
-		// Draw A*'s Path to the screen
-		drawPaths(screen, aStarPath, "A Star", weigthAStar)
-		drawPathsLines(screen, absolutePathAStar)
+// 		drawPaths(screen, graph, "Graph Method", 10)
+// 		drawMultiplePaths(screen, graphPaths)
+// 		return
 
-	} else if whichPath == 2 {
-		// Clear the screen to white
-		screen.Fill(color.White)
+// 	} else if whichPath == 4 {
 
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
-		drawPaths(screen, graph, "Graph Method", 10)
-		drawMultiplePaths(screen, graphPaths)
+// 		// Draw Solution Path to the screen
+// 		drawPathsLines(screen, absolutePathAStar)
+// 		return
 
-	} else if whichPath == 4 {
-		// Clear the screen to white
-		screen.Fill(color.White)
-
-		// Draw the maze to the screen
-		drawMaze(screen, mazeSize)
-
-		// Draw Solution Path to the screen
-		drawPathsLines(screen, absolutePathAStar)
-
-	}
-}
+// 	}
+// }
