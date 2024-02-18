@@ -1,6 +1,8 @@
 package characters
 
 import (
+	"image/color"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
@@ -18,8 +20,8 @@ type Player struct {
 	Attributes Character
 }
 
-func (p *Player) Init(startPos mazegrid.Position) {
-	p.Attributes.Init(startPos)
+func (p *Player) Init(startPos mazegrid.Position, colour color.Color) {
+	p.Attributes.Init(startPos, colour)
 
 }
 

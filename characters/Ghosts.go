@@ -3,6 +3,7 @@ package characters
 import (
 	"context"
 	"fmt"
+	"image/color"
 	_ "image/png"
 	"time"
 
@@ -20,8 +21,8 @@ type NPC struct {
 	CancelFunc context.CancelFunc
 }
 
-func (npc *NPC) Init(pos mazegrid.Position, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
-	npc.Attributes.Init(pos)
+func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+	npc.Attributes.Init(pos, colour)
 	npc.Algo = algo
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 	npc.hasMutex = true

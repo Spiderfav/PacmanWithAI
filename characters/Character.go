@@ -24,10 +24,11 @@ type Character struct {
 	Sprite   *ebiten.Image
 	Position mazegrid.Position
 	FrameProperties
-	Count int
+	Count  int
+	Colour color.Color
 }
 
-func (c *Character) Init(startPos mazegrid.Position) {
+func (c *Character) Init(startPos mazegrid.Position, colour color.Color) {
 
 	c.Sprite = ebiten.NewImageFromImage(c.setSprite())
 	c.Position = startPos
@@ -36,6 +37,7 @@ func (c *Character) Init(startPos mazegrid.Position) {
 	c.FrameWidth = 32
 	c.FrameHeight = 32
 	c.FrameCount = 8
+	c.Colour = colour
 
 }
 
@@ -83,6 +85,6 @@ func DrawSprite(screen *ebiten.Image, char Character) {
 	// sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
 	// screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
 
-	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+10, char.GetPosition().YCoordinate+10, 2, color.Black, true)
+	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+10, char.GetPosition().YCoordinate+10, 2, char.Colour, true)
 
 }
