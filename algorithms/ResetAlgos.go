@@ -11,7 +11,8 @@ type Algorithm = int
 const (
 	DijkstraAlgo Algorithm = 0
 	AStarAlgo    Algorithm = 1
-	RandomAlgo   Algorithm = 2
+	ReflexAlgo   Algorithm = 2
+	RandomAlgo   Algorithm = 3
 )
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
