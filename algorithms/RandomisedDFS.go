@@ -73,8 +73,8 @@ func DFS(size int, oldDFS [][]mazegrid.MazeSquare) [][]mazegrid.MazeSquare {
 		stack = append(stack, startNode)
 	}
 
-	// Adding random weights of total weight 100 in the gamegrid
-	AddWeights(gameGrid, 100)
+	// Adding random weights in the gamegrid (They are considered pellots)
+	AddWeights(gameGrid)
 
 	return gameGrid
 
