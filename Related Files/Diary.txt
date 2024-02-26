@@ -107,3 +107,16 @@ Weeks 3 and 4:
 - Commented out unused draw functions
 - Added async function to draw sprites
 - Added context to Ghosts to be able to be started and stopped each time maze size changes
+
+Week 5:
+
+- Changed the draw functions to show the path of the ghost taking on screen
+- Begun updating the A* function to simplify code, however, the work had to be scrapped as it was not working properly
+    I will need to change the code later on, but I will do it when all the functionality has been made
+
+Week 6:
+
+- Created the reflex agent
+- Added pellots for pacman to collect
+- Added score for pacman depending on pellots
+- Allowed the ghosts to spawn depending on the maze size
