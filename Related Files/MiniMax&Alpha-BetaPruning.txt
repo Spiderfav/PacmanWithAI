@@ -1,3 +1,5 @@
+Position = Evaluation of current pos in maze
+
 //MiniMax with no pruning 
 function minimax(currentPos, depthToSearchTo, maximizingPlayer){
     if the depthToSearchTo == 0 or the game is over in this currentPos
@@ -67,7 +69,7 @@ minimax(currentPos,3,-inf,+inf,true)
 // Static Evaluation Functions
 
 For Ghosts:
-    - Distance to the nearest pellot to Pacman
+    - Distance to the nearest pellot to Pacman from Ghost
     - Number of pellots left in the map
 
 For Pacman:
