@@ -1,6 +1,7 @@
 package algorithms
 
 import (
+	"math"
 	"math/rand"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
@@ -22,6 +23,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 	if nearestPellotDistance <= 100 {
 
 		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(nearestPellotPos.XCoordinate), int(nearestPellotPos.YCoordinate))
+
 	}
 
 	randomX := rand.Intn(len(gameGridDFS) - 1)
@@ -36,7 +38,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 func nearestPellot(ghostPos mazegrid.Position, pellots []mazegrid.Position) (mazegrid.Position, float64) {
 
 	nearestPellotPos := mazegrid.Position{}
-	nearestPellotDistance := 0.0
+	nearestPellotDistance := math.Inf(1)
 
 	for i := 0; i < len(pellots); i++ {
 
@@ -46,7 +48,6 @@ func nearestPellot(ghostPos mazegrid.Position, pellots []mazegrid.Position) (maz
 			nearestPellotPos = pellots[i]
 			nearestPellotDistance = distance
 		}
-
 	}
 
 	return nearestPellotPos, nearestPellotDistance

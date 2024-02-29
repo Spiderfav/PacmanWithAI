@@ -25,10 +25,10 @@ type NPC struct {
 func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.Init(pos, colour)
 	npc.Algo = algo
+	npc.Pellots = algorithms.GetPellotsPos(grid)
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 	npc.hasMutex = true
 
-	npc.Pellots = algorithms.GetPellotsPos(grid)
 	npc.Ctx, npc.CancelFunc = context.WithCancel(context.Background())
 
 }
@@ -69,6 +69,7 @@ func (npc *NPC) calculatePath(pos mazegrid.Position, enemyPos mazegrid.Position,
 		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(pos.YCoordinate), int(pos.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
 
 	case algorithms.ReflexAlgo:
+		fmt.Println(npc.Pellots)
 		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, pos, enemyPos, npc.Pellots))
 	}
 
