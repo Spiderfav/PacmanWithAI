@@ -19,11 +19,13 @@ type NPC struct {
 	hasMutex   bool
 	Ctx        context.Context
 	CancelFunc context.CancelFunc
+	Pellots    []mazegrid.Position
 }
 
 func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.Init(pos, colour)
 	npc.Algo = algo
+	npc.Pellots = algorithms.GetPellotsPos(grid)
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 	npc.hasMutex = true
 
@@ -50,6 +52,7 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 	// fmt.Println("Path to take:", npc.Path)
 	// fmt.Println("Pos of path to to take:", npc.Path[len(npc.Path)-2])
 	npc.Path = npc.calculatePath(pos, enemyPos, grid)
+	npc.Pellots = algorithms.GetPellotsPos(grid)
 }
 
 func (npc *NPC) GetAlgo() int {
@@ -64,6 +67,9 @@ func (npc *NPC) calculatePath(pos mazegrid.Position, enemyPos mazegrid.Position,
 
 	case algorithms.AStarAlgo:
 		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(pos.YCoordinate), int(pos.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
+
+	case algorithms.ReflexAlgo:
+		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, pos, npc.Pellots))
 	}
 
 	return path

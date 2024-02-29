@@ -169,7 +169,7 @@ func NewGame() *Game {
 	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{200, 200, 0, 255})
 
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.AStarAlgo, pacman.GetPosition(), gameGridDFS)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS)
 
 	// Initialize the button
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
