@@ -51,8 +51,9 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 
 	// fmt.Println("Path to take:", npc.Path)
 	// fmt.Println("Pos of path to to take:", npc.Path[len(npc.Path)-2])
-	npc.Path = npc.calculatePath(pos, enemyPos, grid)
 	npc.Pellots = algorithms.GetPellotsPos(grid)
+	npc.Path = npc.calculatePath(pos, enemyPos, grid)
+
 }
 
 func (npc *NPC) GetAlgo() int {
