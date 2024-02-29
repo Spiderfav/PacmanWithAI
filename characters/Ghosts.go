@@ -69,8 +69,7 @@ func (npc *NPC) calculatePath(pos mazegrid.Position, enemyPos mazegrid.Position,
 		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(pos.YCoordinate), int(pos.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
 
 	case algorithms.ReflexAlgo:
-		fmt.Println(npc.Pellots)
-		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, pos, enemyPos, npc.Pellots))
+		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, pos, npc.Pellots))
 	}
 
 	return path
