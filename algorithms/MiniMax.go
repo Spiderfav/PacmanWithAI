@@ -1,16 +1,12 @@
 package algorithms
 
 import (
-	"fmt"
 	"math"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
 func MiniMax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool) (int, []mazegrid.Position, []mazegrid.Position) {
-
-	fmt.Println("Pacman Inside: ", pacmanPos)
-	fmt.Println("Ghost Inside: ", ghostPos)
 
 	if depthToSearch == 0 || pacmanPos[len(pacmanPos)-1] == ghostPos[len(ghostPos)-1] {
 		return evalPos(pacmanPos[len(pacmanPos)-1], pacmanPoints, ghostPos[len(ghostPos)-1], pellots, isPacman), pacmanPos, ghostPos
@@ -68,12 +64,12 @@ func evalPos(pacmanPos mazegrid.Position, pacmanPoints int, ghostPos mazegrid.Po
 
 	if !isPacman {
 		totalEval = totalEval + len(pellots)
-		distanceToNearestPacmanPellot := HeuristicsDistance(float64(ghostPos.XCoordinate), float64(ghostPos.YCoordinate), float64(nearestPellotPos.XCoordinate), float64(nearestPellotPos.YCoordinate))
-		totalEval = int((float64(totalEval) + distanceToNearestPacmanPellot) * -1)
+		totalEval = int((float64(totalEval) + nearestPellotDistance) * -1)
 
 	} else {
 		totalEval = totalEval + pacmanPoints
-		totalEval = totalEval + int(nearestPellotDistance)
+		distanceToNearestPacmanPellot := HeuristicsDistance(float64(ghostPos.XCoordinate), float64(ghostPos.YCoordinate), float64(nearestPellotPos.XCoordinate), float64(nearestPellotPos.YCoordinate))
+		totalEval = totalEval + int(distanceToNearestPacmanPellot)
 	}
 
 	return totalEval
@@ -102,4 +98,12 @@ func getPossibleMoves(gameGrid [][]mazegrid.MazeSquare, charPos mazegrid.Positio
 	}
 
 	return possibleMoves
+}
+
+func ReversePath(s []mazegrid.MazeSquare) []mazegrid.MazeSquare {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+
+	return s
 }

@@ -62,6 +62,7 @@ func (g *Game) Update() error {
 
 		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
 
+		// Game Over
 		if g.Ghosts.GetPosition() == g.Player.GetPosition() {
 			changeMazeSize(g.Maze.Size, false, g)
 		}

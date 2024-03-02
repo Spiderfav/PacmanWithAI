@@ -2,7 +2,6 @@ package characters
 
 import (
 	"context"
-	"fmt"
 	"image/color"
 	_ "image/png"
 	"time"
@@ -45,14 +44,10 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 }
 
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
-	//fmt.Println("Pos before:", npc.Attributes.Position)
 	npc.Attributes.SetPosition(pos)
-	//fmt.Println("Pos after:", npc.Attributes.Position)
 
-	// fmt.Println("Path to take:", npc.Path)
-	// fmt.Println("Pos of path to to take:", npc.Path[len(npc.Path)-2])
 	npc.Pellots = algorithms.GetPellotsPos(grid)
-	npc.Path = npc.calculatePath(pos, enemyPoints, grid)
+	npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
 }
 
@@ -73,22 +68,13 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots))
 
 	case algorithms.MiniMaxAlgo:
-		var enemyPosArr []mazegrid.Position
-		enemyPosArr = append(enemyPosArr, enemyPos)
+		enemyPosArr := []mazegrid.Position{enemyPos}
 
-		var ghostPosArr []mazegrid.Position
-		ghostPosArr = append(ghostPosArr, npc.Attributes.Position)
+		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
 
-		fmt.Println("Pacman Before: ", enemyPosArr)
-		fmt.Println("Ghost Before: ", ghostPosArr)
+		_, _, ghostPosArrNew := algorithms.MiniMax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 4, true)
 
-		eval, enemyPosArr, ghostPosArr := algorithms.MiniMax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 3, true)
-
-		fmt.Println("\nPacman After: ", enemyPosArr)
-		fmt.Println("Ghost After: ", ghostPosArr)
-		fmt.Println("Eval: ", eval)
-
-		path = algorithms.PosToNode(grid, ghostPosArr)
+		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew))
 	}
 
 	return path
@@ -134,13 +120,9 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 		case <-ticker.C:
 			nextNode := len(npc.Path) - 2
 
-			fmt.Println("Node value:", nextNode)
-
 			if nextNode < 0 {
 				nextNode = 0
 			}
-
-			fmt.Println("Node value After:", nextNode)
 
 			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, enemyPoints, grid)
 			npc.hasMutex = true
