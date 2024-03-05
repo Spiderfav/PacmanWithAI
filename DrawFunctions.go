@@ -50,7 +50,7 @@ func drawMaze(screen *ebiten.Image, g *Game) {
 	}
 }
 
-// This function draws lines for each path taken
+// This function draws lines to the screen for a given Ghost/Pacman path
 func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
 	prevX := pathTaken[0].NodePosition.XCoordinate + 10
 	prevY := pathTaken[0].NodePosition.YCoordinate + 10
@@ -64,31 +64,7 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
 
 }
 
-// func drawMultiplePaths(screen *ebiten.Image, pathsTaken [][]mazegrid.MazeSquare) {
-// 	for count := 0; count < len(pathsTaken); count++ {
-// 		drawPathsLines(screen, pathsTaken[count])
-// 	}
-// }
-
-// This function draws circles with their position in the path
-// It also draws the start node and end node and the total cost
-// func drawPaths(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare, algo string, weight int) {
-
-// 	// For every node searched by the algorithms, draw a circle with their postion
-// 	for i := 0; i < len(pathTaken); i++ {
-// 		vector.DrawFilledCircle(screen, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 2, color.RGBA{255, 0, 0, 250}, true)
-// 		text.Draw(screen, strconv.Itoa(i), basicfont.Face7x13, int(pathTaken[i].NodePosition.XCoordinate)+10, int(pathTaken[i].NodePosition.YCoordinate)+10, color.RGBA{255, 0, 255, 250})
-
-// 	}
-
-// 	text.Draw(screen, "Path cost to desired node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].Weight)), basicfont.Face7x13, 10, 10, color.RGBA{0, 0, 0, 250})
-// 	text.Draw(screen, "Start node is "+strconv.Itoa(int(pathTaken[0].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[0].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+40, color.RGBA{0, 0, 0, 250})
-// 	text.Draw(screen, "End node is "+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.XCoordinate))+","+strconv.Itoa(int(pathTaken[len(pathTaken)-1].NodePosition.YCoordinate)), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+50, color.RGBA{0, 0, 0, 250})
-// 	text.Draw(screen, "Algorithm Used: "+algo, basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+60, color.RGBA{0, 0, 0, 250})
-// 	text.Draw(screen, "Total Weight: "+strconv.Itoa(weight), basicfont.Face7x13, 10, int(gameGridDFS[len(gameGridDFS)-1][len(gameGridDFS)-1].NodePosition.YCoordinate)+70, color.RGBA{0, 0, 0, 250})
-
-// }
-
+// This function draws all the buttons to the screen for the main menu
 func mainMenu(screen *ebiten.Image, g *Game) {
 	// Clear the screen to white
 	screen.Fill(color.White)
@@ -106,6 +82,7 @@ func mainMenu(screen *ebiten.Image, g *Game) {
 
 }
 
+// This functions, given an array of buttons, draws the buttons to the screen
 func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 
 	for i := 0; i < len(arr); i++ {
@@ -118,6 +95,7 @@ func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 	}
 }
 
+// This function draws the game meny to the screen
 func gameMenu(screen *ebiten.Image, g *Game) {
 	// 	// Clear the screen to white
 	screen.Fill(color.White)
@@ -130,6 +108,7 @@ func gameMenu(screen *ebiten.Image, g *Game) {
 
 }
 
+// This function draws the back button to the screen
 func backButton(screen *ebiten.Image, g *Game) {
 
 	op := &ebiten.DrawImageOptions{}
@@ -138,38 +117,3 @@ func backButton(screen *ebiten.Image, g *Game) {
 
 	text.Draw(screen, g.buttonBack.Message, g.fontFace, g.buttonBack.X+10, g.buttonBack.Y+20, color.Black)
 }
-
-// func OldMazeSystem(screen *ebiten.Image, g *Game) {
-// 	// Clear the screen to white
-// 	screen.Fill(color.White)
-// 	// Draw the maze to the screen
-// 	drawMaze(screen, mazeSize)
-
-// 	if whichPath == 0 {
-
-// 		// Draw Dijkstra's Path to the screen
-// 		drawPaths(screen, dijkstrasPath, "Dijstra", weightDijkstras)
-// 		drawPathsLines(screen, absolutePathDijkstras)
-// 		return
-
-// 	} else if whichPath == 1 {
-
-// 		// Draw A*'s Path to the screen
-// 		drawPaths(screen, aStarPath, "A Star", weigthAStar)
-// 		drawPathsLines(screen, absolutePathAStar)
-// 		return
-
-// 	} else if whichPath == 2 {
-
-// 		drawPaths(screen, graph, "Graph Method", 10)
-// 		drawMultiplePaths(screen, graphPaths)
-// 		return
-
-// 	} else if whichPath == 4 {
-
-// 		// Draw Solution Path to the screen
-// 		drawPathsLines(screen, absolutePathAStar)
-// 		return
-
-// 	}
-// }
