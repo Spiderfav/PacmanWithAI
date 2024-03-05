@@ -6,10 +6,15 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-func MiniMax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool) (int, []mazegrid.Position, []mazegrid.Position) {
+type PruningParams struct {
+	Alpha float64
+	Beta  float64
+}
+
+func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool, usePruning bool) (int, []mazegrid.Position, []mazegrid.Position, PruningParams) {
 
 	if depthToSearch == 0 || pacmanPos[len(pacmanPos)-1] == ghostPos[len(ghostPos)-1] {
-		return evalPos(pacmanPos[len(pacmanPos)-1], pacmanPoints, ghostPos[len(ghostPos)-1], pellots, isPacman), pacmanPos, ghostPos
+		return evalPos(pacmanPos[len(pacmanPos)-1], pacmanPoints, ghostPos[len(ghostPos)-1], pellots, isPacman), pacmanPos, ghostPos, params
 	}
 
 	if isPacman {
@@ -23,16 +28,27 @@ func MiniMax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position, pa
 			copy(tempPacmanPos, pacmanPos)
 			tempPacmanPos = append(tempPacmanPos, element)
 
-			eval, newPacmanPos, newGhostPos := MiniMax(gameGrid, tempPacmanPos, pacmanPoints, ghostPos, pellots, depthToSearch-1, false)
+			eval, newPacmanPos, newGhostPos, _ := MiniMax(gameGrid, params, tempPacmanPos, pacmanPoints, ghostPos, pellots, depthToSearch-1, false, usePruning)
 
 			if float64(eval) > maxEval {
 				maxEval = float64(eval)
 				bestPacmanPos = newPacmanPos
 				ghostPos = newGhostPos
 			}
+
+			if usePruning {
+				if float64(eval) > params.Alpha {
+					params.Alpha = float64(eval)
+				}
+
+				if params.Beta <= params.Alpha {
+					break
+				}
+			}
+
 		}
 
-		return int(maxEval), bestPacmanPos, ghostPos
+		return int(maxEval), bestPacmanPos, ghostPos, params
 
 	} else {
 		minEval := math.Inf(1)
@@ -45,16 +61,28 @@ func MiniMax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position, pa
 			copy(tempGhostPos, ghostPos)
 			tempGhostPos = append(tempGhostPos, element)
 
-			eval, newPacmanPos, newGhostPos := MiniMax(gameGrid, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true)
+			eval, newPacmanPos, newGhostPos, _ := MiniMax(gameGrid, params, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, usePruning)
 
 			if float64(eval) < minEval {
 				minEval = float64(eval)
 				pacmanPos = newPacmanPos
 				bestGhostPos = newGhostPos
+
 			}
+
+			if usePruning {
+				if float64(eval) < params.Alpha {
+					params.Alpha = float64(eval)
+				}
+
+				if params.Alpha <= params.Beta {
+					break
+				}
+			}
+
 		}
 
-		return int(minEval), pacmanPos, bestGhostPos
+		return int(minEval), pacmanPos, bestGhostPos, params
 	}
 }
 

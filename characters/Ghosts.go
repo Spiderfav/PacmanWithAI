@@ -4,6 +4,7 @@ import (
 	"context"
 	"image/color"
 	_ "image/png"
+	"math"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -72,7 +73,9 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
 
-		_, _, ghostPosArrNew := algorithms.MiniMax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 4, true)
+		params := algorithms.PruningParams{Alpha: math.Inf(1), Beta: math.Inf(-1)}
+
+		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, false)
 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew))
 	}
