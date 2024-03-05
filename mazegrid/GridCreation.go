@@ -1,73 +1,18 @@
 package mazegrid
 
-// The Position object is used for a MazeSquare object
-// It contains the X and Y Coordinates of an MazeSquare object
-type Position struct {
-	XCoordinate float32
-	YCoordinate float32
-}
-
-// The Direction object is used for a MazeSquare object
-// It contains a pointer to all the neightbours of the MazeSquare object
-type Direction struct {
-	Left  Position
-	Down  Position
-	Right Position
-	Up    Position
-}
-
-// The HasDirection object is used for a MazeSquare object
-// It contains the walls that the MazeSquare object has
-type HasDirection struct {
-	HasLeft  bool
-	HasDown  bool
-	HasRight bool
-	HasUp    bool
-}
-
-// The Mazequare Object
-type MazeSquare struct {
-	NodePosition   Position
-	Walls          Direction
-	HasWalls       HasDirection
-	Visited        bool
-	Weight         int
-	ContainsObject bool
-}
-
+// This functions creates and returns an empty MazeSquare object
 func CreateBlankSquare() MazeSquare {
 	return MazeSquare{Position{20, 20}, Direction{}, HasDirection{true, true, true, true}, false, 0, false}
 
 }
 
+// Takes 2 parameters: The Game grid, position
+// This function, given the grid and a position, will return the MazeSquare from the game grid of the given position
 func PosToNode(x [][]MazeSquare, p Position) *MazeSquare {
 	yCoord := int(p.YCoordinate/20) - 1
 	xCoord := int(p.XCoordinate/20) - 1
 
 	return &x[yCoord][xCoord]
-}
-
-// This function counts the walls of a node
-func (x MazeSquare) CountWalls() int {
-	count := 0
-
-	if x.HasWalls.HasLeft {
-		count += 1
-	}
-
-	if x.HasWalls.HasRight {
-		count += 1
-	}
-
-	if x.HasWalls.HasUp {
-		count += 1
-	}
-
-	if x.HasWalls.HasDown {
-		count += 1
-	}
-
-	return count
 }
 
 // This function creates a grid of 8*8 MazeSquares, each with pointers to its direct neighbours
