@@ -121,8 +121,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	case 1:
 		gameMenu(screen, g)
-		characters.DrawSprite(screen, g.Ghosts.Attributes)
-		characters.DrawSprite(screen, g.Player.Attributes)
+		DrawSprite(screen, g.Ghosts.Attributes)
+		DrawSprite(screen, g.Player.Attributes)
 		drawPathsLines(screen, g.Ghosts.Path)
 
 	}
