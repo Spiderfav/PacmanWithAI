@@ -1,4 +1,4 @@
-package main
+package file
 
 import (
 	"encoding/gob"
@@ -8,7 +8,8 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-func saveToFile(gameGrid [][]mazegrid.MazeSquare) {
+// This function, given an game grid, will save that game grid to a file
+func SaveToFile(gameGrid [][]mazegrid.MazeSquare) {
 	file, err := os.Create("gameGridDFS.gob")
 	if err != nil {
 		log.Fatalf("Failed to create file: %v", err)
@@ -22,7 +23,8 @@ func saveToFile(gameGrid [][]mazegrid.MazeSquare) {
 	}
 }
 
-func loadFromFile() [][]mazegrid.MazeSquare {
+// This function, will return a game grid by decoding the game grid file
+func LoadFromFile() [][]mazegrid.MazeSquare {
 
 	var gameGrid [][]mazegrid.MazeSquare
 

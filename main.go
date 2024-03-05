@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/characters"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 	"golang.org/x/image/font"
@@ -80,7 +81,7 @@ func (g *Game) Update() error {
 				return nil
 
 			} else if g.buttonsMenu[1].In(x, y) {
-				g.Maze.Grid = loadFromFile()
+				g.Maze.Grid = file.LoadFromFile()
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
 			}
@@ -105,7 +106,7 @@ func (g *Game) Update() error {
 				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
-				saveToFile(g.Maze.Grid)
+				file.SaveToFile(g.Maze.Grid)
 
 			}
 
@@ -209,7 +210,7 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 func main() {
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
-	ebiten.SetWindowTitle("Single Agent Maze!")
+	ebiten.SetWindowTitle("Pacman")
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}
