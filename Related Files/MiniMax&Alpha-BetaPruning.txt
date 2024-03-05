@@ -1,0 +1,77 @@
+Position = Evaluation of current pos in maze
+
+//MiniMax with no pruning 
+function minimax(currentPos, depthToSearchTo, maximizingPlayer){
+    if the depthToSearchTo == 0 or the game is over in this currentPos
+        return the static evaluation of the currentPos
+
+    if current player is the maximizingPlayer{
+        maxEval = -infinity
+
+        for each child(possible moves) of position{
+            eval = minimax(child, depth -1 , false)
+            maxEval = max of (maxEval or eval)
+
+        return maxEval
+        }
+    } else{
+        minEval = + infinity
+        for each child(possible moves) of position{
+            eval = minimax(child, depth -1 , true)
+            minEval = min of (minEval or eval)
+
+        return minEval
+        }
+    }
+}
+
+minimax(currentPos,3,true)
+
+---------------------------------------
+
+//MiniMax with pruning 
+function minimax(currentPos, depthToSearchTo, alpha, beta, maximizingPlayer){
+    if the depthToSearchTo == 0 or the game is over in this currentPos
+        return the static evaluation of the currentPos
+
+    if current player is the maximizingPlayer{
+        maxEval = -infinity
+
+        for each child(possible moves) of position{
+            eval = minimax(child, depth -1 , alpha, beta, false)
+            maxEval = max of (maxEval or eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha{
+                break
+            }
+
+        return maxEval
+        }
+    } else{
+        minEval = + infinity
+        for each child(possible moves) of position{
+            eval = minimax(child, depth -1 , alpha, beta, true)
+            minEval = min of (minEval or eval)
+            beta = min(beta, eval)
+            if alpha <= beta{
+                break   
+            }
+
+        return minEval
+        }
+    }
+}
+
+minimax(currentPos,3,-inf,+inf,true)
+
+--------------------------------------
+
+// Static Evaluation Functions
+
+For Ghosts:
+    - Distance to the nearest pellot to Pacman from Ghost
+    - Number of pellots left in the map
+
+For Pacman:
+    - Distance to the nearest pellot
+    - Number of pellots attained

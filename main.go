@@ -60,8 +60,9 @@ func (g *Game) Update() error {
 
 		}
 
-		g.Ghosts.Move(g.Player.GetPosition(), g.Maze.Grid)
+		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
 
+		// Game Over
 		if g.Ghosts.GetPosition() == g.Player.GetPosition() {
 			changeMazeSize(g.Maze.Size, false, g)
 		}
@@ -108,29 +109,6 @@ func (g *Game) Update() error {
 
 			}
 
-			// A*
-			// } else if g.buttonsAlgo[0].In(x, y) {
-			// 	// Change the ghost's algorithm
-			// 	//TO-DO: Reset function for Ghosts
-			// 	whichPath = 1
-
-			// 	// Dijkstras
-			// } else if g.buttonsAlgo[1].In(x, y) {
-			// 	whichPath = 0
-
-			// 	// Graph
-			// } else if g.buttonsAlgo[2].In(x, y) {
-			// 	whichPath = 2
-
-			// 	// Shortest Path
-			// } else if g.buttonsAlgo[3].In(x, y) {
-			// 	whichPath = 4
-
-			// 	// Maze Only
-			// } else if g.buttonsAlgo[4].In(x, y) {
-			// 	whichPath = 3
-			// }
-
 		}
 	}
 
@@ -169,7 +147,7 @@ func NewGame() *Game {
 	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{200, 200, 0, 255})
 
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.MiniMaxAlgo, pacman.GetPosition(), gameGridDFS)
 
 	// Initialize the button
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
@@ -215,6 +193,7 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 	}
 
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
+	g.Player.ResetPoints()
 
 	if g.Ghosts.CancelFunc != nil {
 		g.Ghosts.CancelFunc()
@@ -222,7 +201,7 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 
 	g.Ghosts.Ctx, g.Ghosts.CancelFunc = context.WithCancel(context.Background())
 
-	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), g.Maze.Grid)
+	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
 
 	// whichPath = 3
 }
