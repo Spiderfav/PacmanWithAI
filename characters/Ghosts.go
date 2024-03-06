@@ -2,6 +2,7 @@ package characters
 
 import (
 	"context"
+	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
@@ -20,6 +21,7 @@ type NPC struct {
 	Ctx        context.Context
 	CancelFunc context.CancelFunc
 	Pellots    []mazegrid.Position
+	Cooldown   int
 }
 
 func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
@@ -28,7 +30,7 @@ func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.
 	npc.Pellots = algorithms.GetPellotsPos(grid)
 	npc.Path = npc.calculatePath(enemyPos, 0, grid)
 	npc.hasMutex = true
-
+	npc.Cooldown = 0
 	npc.Ctx, npc.CancelFunc = context.WithCancel(context.Background())
 
 }
@@ -47,8 +49,17 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.SetPosition(pos)
 
-	npc.Pellots = algorithms.GetPellotsPos(grid)
-	npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+	if npc.Cooldown == 3 || len(npc.Path) < 2 {
+		fmt.Println("Creating new path")
+		npc.Pellots = algorithms.GetPellotsPos(grid)
+		npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+
+		npc.Cooldown = 0
+	} else {
+		fmt.Println("Taking already made path")
+		npc.Path = npc.Path[:len(npc.Path)-1]
+		npc.Cooldown += 1
+	}
 
 }
 
@@ -75,7 +86,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		params := algorithms.PruningParams{Alpha: math.Inf(1), Beta: math.Inf(-1)}
 
-		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, false)
+		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, true)
 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew))
 	}
@@ -127,10 +138,24 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 				nextNode = 0
 			}
 
+			fmt.Println("Current path to take before update: ", justPositions(npc.Path))
 			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, enemyPoints, grid)
+			fmt.Println("Current path to take: ", justPositions(npc.Path))
+			fmt.Println("")
+			fmt.Println("")
 			npc.hasMutex = true
 			return
 		}
 	}
 
+}
+
+func justPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
+	var posArr []mazegrid.Position
+
+	for i := 0; i < len(path); i++ {
+		posArr = append(posArr, path[i].NodePosition)
+	}
+
+	return posArr
 }

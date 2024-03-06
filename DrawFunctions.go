@@ -50,6 +50,9 @@ func drawMaze(screen *ebiten.Image, g *Game) {
 
 // This function draws lines to the screen for a given Ghost/Pacman path
 func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
+	if len(pathTaken) == 0 {
+		return
+	}
 	prevX := pathTaken[0].NodePosition.XCoordinate + 10
 	prevY := pathTaken[0].NodePosition.YCoordinate + 10
 
