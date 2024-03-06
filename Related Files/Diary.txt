@@ -120,3 +120,10 @@ Week 6:
 - Added pellots for pacman to collect
 - Added score for pacman depending on pellots
 - Allowed the ghosts to spawn depending on the maze size
+
+Week 7:
+
+- Created MiniMax agents
+    . Both Pacman and the Ghosts have been implemented
+    . Evaluation functions have been created for each position
+    . Have created way to allow for Alpha-Beta pruning when later implemented

@@ -54,6 +54,10 @@ func (p *Player) GetSprite() *ebiten.Image {
 	return p.Attributes.GetSprite()
 }
 
+func (p *Player) ResetPoints() {
+	p.Points = 0
+}
+
 func (p *Player) GetPoints() int {
 	return p.Points
 }

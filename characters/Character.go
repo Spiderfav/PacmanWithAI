@@ -8,10 +8,10 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/images"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
+// This object is used to store the frame data needed to animate the sprite
 type FrameProperties struct {
 	FrameOX     int
 	FrameOY     int
@@ -28,6 +28,7 @@ type Character struct {
 	Colour color.Color
 }
 
+// Initialises the character given the grid position and a colour
 func (c *Character) Init(startPos mazegrid.Position, colour color.Color) {
 
 	c.Sprite = ebiten.NewImageFromImage(c.setSprite())
@@ -41,34 +42,42 @@ func (c *Character) Init(startPos mazegrid.Position, colour color.Color) {
 
 }
 
+// Function that returns the current position of the character
 func (c *Character) GetPosition() mazegrid.Position {
 	return c.Position
 }
 
+// Function that sets a new position for the character
 func (c *Character) SetPosition(p mazegrid.Position) {
 	c.Position = p
 }
 
+// Function that returns the frame properties of the character
 func (c *Character) GetFrameProperties() FrameProperties {
 	return c.FrameProperties
 }
 
+// Function that sets the frame properties of the character
 func (c *Character) SetFrameProperties(fp FrameProperties) {
 	c.FrameProperties = fp
 }
 
+// Function that updates the counter for the sprite
 func (c *Character) UpdateCount() {
 	c.Count += 1
 }
 
+// Function that returns the counter for the sprite of the character
 func (c *Character) GetCount() int {
 	return c.Count
 }
 
+// Function that returns the sprite of the character
 func (c *Character) GetSprite() *ebiten.Image {
 	return c.Sprite
 }
 
+// Functions that sets the sprite of the character
 func (c *Character) setSprite() image.Image {
 	// Decode an image from the image file's byte slice.
 	img, _, err := image.Decode(bytes.NewReader(images.Runner_png))
@@ -76,15 +85,4 @@ func (c *Character) setSprite() image.Image {
 		log.Fatal(err)
 	}
 	return img
-}
-
-func DrawSprite(screen *ebiten.Image, char Character) {
-	// op := &ebiten.DrawImageOptions{}
-	// op.GeoM.Translate(float64(char.GetPosition().XCoordinate+10), float64((char.GetPosition().YCoordinate + 10)))
-	// i := (char.GetCount() / 5) % char.GetFrameProperties().FrameCount
-	// sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
-	// screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
-
-	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+10, char.GetPosition().YCoordinate+10, 2, char.Colour, true)
-
 }

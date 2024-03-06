@@ -9,16 +9,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/characters"
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/input"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 )
-
-type Maze struct {
-	Size int
-	Grid [][]mazegrid.MazeSquare
-}
 
 const (
 	screenWidth  = 1920
@@ -26,7 +22,7 @@ const (
 )
 
 type Game struct {
-	Maze        Maze
+	Maze        mazegrid.Maze
 	buttonsMenu []*input.Button
 	buttonsSize []*input.Button
 	buttonsAlgo []*input.Button
@@ -38,14 +34,14 @@ type Game struct {
 
 const mazeSizeOriginal = 8
 
-// var whichPath = 3
-
 var menuOrGame = 0
 
+// This function updated the game logic 60 times a second
 func (g *Game) Update() error {
 	g.Ghosts.UpdateCount()
 
 	if menuOrGame == 1 {
+		// Checking if the player is moving and if so, moving the player
 		if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 			g.Player.Move(characters.Up, g.Maze.Grid)
 
@@ -60,13 +56,15 @@ func (g *Game) Update() error {
 
 		}
 
-		g.Ghosts.Move(g.Player.GetPosition(), g.Maze.Grid)
+		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
 
+		// Game Over
 		if g.Ghosts.GetPosition() == g.Player.GetPosition() {
 			changeMazeSize(g.Maze.Size, false, g)
 		}
 	}
-	// Check if the button is clicked
+
+	// Check if the mouse button is clicked on a given button
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		if g.buttonsMenu[0].Enabled {
@@ -79,7 +77,7 @@ func (g *Game) Update() error {
 				return nil
 
 			} else if g.buttonsMenu[1].In(x, y) {
-				g.Maze.Grid = loadFromFile()
+				g.Maze.Grid = file.LoadFromFile()
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
 			}
@@ -104,32 +102,9 @@ func (g *Game) Update() error {
 				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
-				saveToFile(g.Maze.Grid)
+				file.SaveToFile(g.Maze.Grid)
 
 			}
-
-			// A*
-			// } else if g.buttonsAlgo[0].In(x, y) {
-			// 	// Change the ghost's algorithm
-			// 	//TO-DO: Reset function for Ghosts
-			// 	whichPath = 1
-
-			// 	// Dijkstras
-			// } else if g.buttonsAlgo[1].In(x, y) {
-			// 	whichPath = 0
-
-			// 	// Graph
-			// } else if g.buttonsAlgo[2].In(x, y) {
-			// 	whichPath = 2
-
-			// 	// Shortest Path
-			// } else if g.buttonsAlgo[3].In(x, y) {
-			// 	whichPath = 4
-
-			// 	// Maze Only
-			// } else if g.buttonsAlgo[4].In(x, y) {
-			// 	whichPath = 3
-			// }
 
 		}
 	}
@@ -138,7 +113,6 @@ func (g *Game) Update() error {
 }
 
 // This function is called every second to update what is drawn on the screen
-
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	switch menuOrGame {
@@ -147,31 +121,37 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	case 1:
 		gameMenu(screen, g)
-		characters.DrawSprite(screen, g.Ghosts.Attributes)
-		characters.DrawSprite(screen, g.Player.Attributes)
+		DrawSprite(screen, g.Ghosts.Attributes)
+		DrawSprite(screen, g.Player.Attributes)
 		drawPathsLines(screen, g.Ghosts.Path)
 
 	}
 
 }
 
+// This function dictates the size of the window for the game
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
+// This function is called by the game object to create the game environment
 func NewGame() *Game {
+
+	// Creating the maze by aplying DFS twice
 	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil)
 	algorithms.MarkUnvisited(oldGameGridDFS)
 	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
-	maze := Maze{mazeSizeOriginal, gameGridDFS}
+	maze := mazegrid.Maze{Size: mazeSizeOriginal, Grid: gameGridDFS}
 
+	// Creating the player object
 	pacman := characters.Player{}
 	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{200, 200, 0, 255})
 
+	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.MiniMaxAlgo, pacman.GetPosition(), gameGridDFS)
 
-	// Initialize the button
+	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
 
@@ -204,33 +184,40 @@ func NewGame() *Game {
 	}
 }
 
+// Takes 3 parameters: The new maze size, a boolean flag for if we are loading a maze from the file and the game object
+// This function, will check if we are loading the maze and if so, loads the given maze or, updates the game to the new maze size
 func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 
+	// If maze isn't being loaded
 	if !loadedMaze {
+		// Create new maze with the given size
 		oldGameGridDFS := algorithms.DFS(newSize, nil)
 		algorithms.MarkUnvisited(oldGameGridDFS)
 		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS)
+		// Set new game size to be the given size
 		g.Maze.Size = newSize
 
 	}
 
+	// Reset the player and the Ghosts position to their original start
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
+	g.Player.ResetPoints()
 
 	if g.Ghosts.CancelFunc != nil {
 		g.Ghosts.CancelFunc()
 	}
 
+	// Cancel any ghosts undergoing movement
 	g.Ghosts.Ctx, g.Ghosts.CancelFunc = context.WithCancel(context.Background())
 
-	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), g.Maze.Grid)
+	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
 
-	// whichPath = 3
 }
 
 func main() {
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
-	ebiten.SetWindowTitle("Single Agent Maze!")
+	ebiten.SetWindowTitle("Pacman")
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

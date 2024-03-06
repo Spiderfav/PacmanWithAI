@@ -8,6 +8,7 @@ import (
 
 var buttonImage = ebiten.NewImage(100, 30) // Set the size of the button
 
+// This function, takes in the current screen dimensions and returns the main menu buttons for the given screen size
 func MakeMainMenuButtons(screenWidth, screenHeight int) []*Button {
 	// Initialize the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
@@ -37,6 +38,7 @@ func MakeMainMenuButtons(screenWidth, screenHeight int) []*Button {
 	return menuButtons
 }
 
+// This functions, given an array of buttons and a new state, will change those buttons to the given state
 func ChangeStateButtons(arrButtons []*Button, state bool) {
 
 	for i := 0; i < len(arrButtons); i++ {
@@ -44,6 +46,7 @@ func ChangeStateButtons(arrButtons []*Button, state bool) {
 	}
 }
 
+// This function, takes in the current screen dimensions and returns the game maze size buttons for the given screen size
 func GameSizeButtons(screenWidth, screenHeight int) []*Button {
 	// Initialize the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
@@ -93,6 +96,7 @@ func GameSizeButtons(screenWidth, screenHeight int) []*Button {
 	return sizeButtons
 }
 
+// This function, takes in the current screen dimensions and returns the game change algorithm buttons for the given screen size
 func GameAlgoButtons(screenWidth, screenHeight int) []*Button {
 	// Initialize the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
