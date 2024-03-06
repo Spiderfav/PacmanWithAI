@@ -8,6 +8,7 @@ import (
 
 type Algorithm = int
 
+// This enum is used to define the possible algorithms to be used for the ghosts
 const (
 	DijkstraAlgo Algorithm = 0
 	AStarAlgo    Algorithm = 1
@@ -27,6 +28,8 @@ func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {
 		for x := 0; x < size; x++ {
 
 			gameGridDFS[y][x].Visited = false
+
+			// If the square contains an object, we need to add a weight to tell the ghosts to try not to traverse through them
 			if gameGridDFS[y][x].ContainsObject {
 				gameGridDFS[y][x].Weight = 10
 
@@ -41,7 +44,8 @@ func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {
 
 }
 
-// This functions adds weights to a specific square in the grid
+// This functions adds weights/pellots to a random square in the grid, given the game grid
+// It adds weights/pellots depending on the size of the maze
 func AddWeights(gameGridDFS [][]mazegrid.MazeSquare) {
 
 	numberOfObjects := rand.Intn(len(gameGridDFS[0]))
@@ -55,6 +59,7 @@ func AddWeights(gameGridDFS [][]mazegrid.MazeSquare) {
 
 }
 
+// This function, given a game grid, returns an array with all the position of the pellots on the map
 func GetPellotsPos(gameGridDFS [][]mazegrid.MazeSquare) []mazegrid.Position {
 
 	var pellots []mazegrid.Position
