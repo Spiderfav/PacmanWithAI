@@ -20,6 +20,7 @@ type FrameProperties struct {
 	FrameCount  int
 }
 
+// The character class is a super class for both the player and the NPC class
 type Character struct {
 	Sprite   *ebiten.Image
 	Position mazegrid.Position
