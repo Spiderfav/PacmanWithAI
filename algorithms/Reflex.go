@@ -7,7 +7,7 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, ghostPos mazegrid.Position, pellots []mazegrid.Position) []mazegrid.MazeSquare {
+func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, ghostPos mazegrid.Position, pellots []mazegrid.Position, squareSize int) []mazegrid.MazeSquare {
 
 	//Check for distance to Player
 
@@ -15,14 +15,14 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 
 	if distance <= 60 {
 
-		return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(playerPos.YCoordinate), int(playerPos.XCoordinate))
+		return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(playerPos.YCoordinate), int(playerPos.XCoordinate), squareSize)
 	}
 
 	nearestPellotPos, nearestPellotDistance := nearestPellot(ghostPos, pellots)
 
 	if nearestPellotDistance >= 20 && nearestPellotDistance <= 100 {
 
-		return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(nearestPellotPos.YCoordinate), int(nearestPellotPos.XCoordinate))
+		return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(nearestPellotPos.YCoordinate), int(nearestPellotPos.XCoordinate), squareSize)
 
 	}
 
@@ -31,7 +31,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 
 	randomNode := gameGridDFS[randomX][randomY].NodePosition
 
-	return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(randomNode.YCoordinate), int(randomNode.XCoordinate))
+	return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(randomNode.YCoordinate), int(randomNode.XCoordinate), squareSize)
 
 }
 
