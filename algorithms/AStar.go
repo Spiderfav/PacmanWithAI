@@ -29,15 +29,12 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 	prevWeight := 0           // Stores the previous Node's weight
 	var nodePrevWeights []int // Stores the nodes weight while traversing a path
 
-	var splitNodes []mazegrid.MazeSquare
+	var splitNodes []mazegrid.MazeSquare // Stores the choice to take next when backtracking
 
 	// While the node we want the distance to has not been visited
 	for !endNode.Visited {
 
 		currentNode := &gameGridDFS[int(startX/squareSize)-1][int(startY/squareSize)-1]
-		fmt.Println("This is the current node ", currentNode)
-		fmt.Println("This is the end node ", endNode)
-		fmt.Println("This is length of all the choice nodes ", len(splitNodes))
 
 		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
 
@@ -136,6 +133,8 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			nodePrevWeights = append(nodePrevWeights, prevWeight)
 		}
 
+		// Need to find a way to pop nodes that were bad
+
 		// If no path was possible from the current node, try a previous found neighbour of a node and set that as the new start
 		if len(splitNodes) != 0 {
 			nodePopped := splitNodes[len(splitNodes)-1]
@@ -154,8 +153,9 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 	fmt.Println("\nA* Concluded")
 	fmt.Println(" ")
 
+	fmt.Println(JustPositions(ReversePath(bestPath)))
 	// Returns the path that the algorithm took to get from the start to the finish
-	return ReversePath(bestPath)
+	return bestPath
 }
 
 // This function, given the respective x and y values of two nodes, calculates the euclidean distance added to the Manhattan Distance between two points
