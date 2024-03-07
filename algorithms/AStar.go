@@ -35,6 +35,10 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 	for !endNode.Visited {
 
 		currentNode := &gameGridDFS[int(startX/squareSize)-1][int(startY/squareSize)-1]
+		fmt.Println("This is the current node ", currentNode)
+		fmt.Println("This is the end node ", endNode)
+		fmt.Println("This is length of all the choice nodes ", len(splitNodes))
+
 		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
 
 		// Assigning a new weight to the current node only if it is not the starting point
@@ -54,7 +58,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 		// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
 		// It calculates the distance from the neighbour nodes to the end node
 		if !currentNode.HasWalls.HasDown {
-			currentNodeDown := &gameGridDFS[int(currentNode.Walls.Down.XCoordinate)/squareSize-1][int(currentNode.Walls.Down.YCoordinate)/squareSize-1]
+			currentNodeDown := &gameGridDFS[(int(currentNode.Walls.Down.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Down.YCoordinate)/squareSize)-1]
 
 			fmt.Println("\n Down")
 
@@ -69,7 +73,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 		}
 
 		if !currentNode.HasWalls.HasUp {
-			currentNodeUp := &gameGridDFS[int(currentNode.Walls.Up.XCoordinate)/squareSize-1][int(currentNode.Walls.Up.YCoordinate)/squareSize-1]
+			currentNodeUp := &gameGridDFS[(int(currentNode.Walls.Up.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Up.YCoordinate)/squareSize)-1]
 
 			fmt.Println("\n Up")
 			fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Up.XCoordinate == currentNodeUp.NodePosition.XCoordinate)
@@ -84,7 +88,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 		if !currentNode.HasWalls.HasLeft {
 
-			currentNodeLeft := &gameGridDFS[int(currentNode.Walls.Left.XCoordinate)/squareSize-1][int(currentNode.Walls.Left.YCoordinate)/squareSize-1]
+			currentNodeLeft := &gameGridDFS[(int(currentNode.Walls.Left.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Left.YCoordinate)/squareSize)-1]
 
 			fmt.Println("\n Left")
 			fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Left.XCoordinate == currentNodeLeft.NodePosition.XCoordinate)
@@ -99,7 +103,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 		if !currentNode.HasWalls.HasRight {
 
-			currentNodeRight := &gameGridDFS[int(currentNode.Walls.Right.XCoordinate)/squareSize-1][int(currentNode.Walls.Right.YCoordinate)/squareSize-1]
+			currentNodeRight := &gameGridDFS[(int(currentNode.Walls.Right.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Right.YCoordinate)/squareSize)-1]
 
 			fmt.Println("\n Right")
 			fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Right.XCoordinate == currentNodeRight.NodePosition.XCoordinate)
@@ -143,7 +147,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			startX = int(nodePopped.NodePosition.XCoordinate)
 			startY = int(nodePopped.NodePosition.YCoordinate)
 		}
-
 	}
 
 	elapsed := time.Since(start)
