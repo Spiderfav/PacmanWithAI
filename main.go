@@ -200,16 +200,16 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 
 	}
 
-	// Reset the player and the Ghosts position to their original start
-	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
-	g.Player.ResetPoints()
-
 	if g.Ghosts.CancelFunc != nil {
 		g.Ghosts.CancelFunc()
 	}
 
 	// Cancel any ghosts undergoing movement
 	g.Ghosts.Ctx, g.Ghosts.CancelFunc = context.WithCancel(context.Background())
+
+	// Reset the player and the Ghosts position to their original start
+	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
+	g.Player.ResetPoints()
 
 	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
 

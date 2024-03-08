@@ -53,6 +53,9 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.SetPosition(pos)
 
+	if enemyPoints == 0 {
+		npc.Cooldown = 3
+	}
 	// npc.Pellots = algorithms.GetPellotsPos(grid)
 	// npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
