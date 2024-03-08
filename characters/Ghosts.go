@@ -2,6 +2,7 @@ package characters
 
 import (
 	"context"
+	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
@@ -53,10 +54,11 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.SetPosition(pos)
 
-	if enemyPoints == 0 {
-		npc.Cooldown = 3
-	}
-	// npc.Pellots = algorithms.GetPellotsPos(grid)
+	// if enemyPoints == 0 {
+	// 	npc.Cooldown = 3
+	// }
+
+	// npc.Pellots = mazegrid.GetPellotsPos(grid)
 	// npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
 	// Makes sure that the NPC is not stuck just recalculating paths each time
@@ -86,9 +88,11 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
 
 	case algorithms.AStarAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate), 20))
+		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
 
 		//path = algorithms.AStar(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate), 20)
+
+		fmt.Print("\nFinal Path: ", algorithms.JustPositions(path))
 
 	case algorithms.ReflexAlgo:
 		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, 20))
