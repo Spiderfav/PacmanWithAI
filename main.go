@@ -39,6 +39,7 @@ var menuOrGame = 0
 // This function updated the game logic 60 times a second
 func (g *Game) Update() error {
 	g.Ghosts.UpdateCount()
+	g.Maze.Pellots = mazegrid.GetPellotsPos(g.Maze.Grid)
 
 	if menuOrGame == 1 {
 		// Checking if the player is moving and if so, moving the player
@@ -58,8 +59,8 @@ func (g *Game) Update() error {
 
 		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
 
-		// Game Over
-		if g.Ghosts.GetPosition() == g.Player.GetPosition() {
+		// Game Over or new game
+		if g.Ghosts.GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
 			changeMazeSize(g.Maze.Size, false, g)
 		}
 	}
@@ -141,7 +142,7 @@ func NewGame() *Game {
 	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil)
 	algorithms.MarkUnvisited(oldGameGridDFS)
 	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
-	maze := mazegrid.Maze{Size: mazeSizeOriginal, Grid: gameGridDFS}
+	maze := mazegrid.Maze{Size: mazeSizeOriginal, Grid: gameGridDFS, Pellots: mazegrid.GetPellotsPos(gameGridDFS)}
 
 	// Creating the player object
 	pacman := characters.Player{}
@@ -149,7 +150,7 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.AStarAlgo, pacman.GetPosition(), gameGridDFS)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.AStarAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots)
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button

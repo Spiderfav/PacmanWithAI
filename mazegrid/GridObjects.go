@@ -60,6 +60,30 @@ func (x *MazeSquare) CountWalls() int {
 
 // The Maze object contains the size of the maze and the grid of the maze
 type Maze struct {
-	Size int
-	Grid [][]MazeSquare
+	Size    int
+	Grid    [][]MazeSquare
+	Pellots []Position
+}
+
+// This function, given a game grid, returns an array with all the position of the pellots on the map
+func GetPellotsPos(gameGridDFS [][]MazeSquare) []Position {
+
+	var pellots []Position
+
+	size := len(gameGridDFS[0])
+
+	for y := 0; y < size; y++ {
+
+		for x := 0; x < size; x++ {
+
+			if gameGridDFS[y][x].ContainsObject {
+				pellots = append(pellots, gameGridDFS[y][x].NodePosition)
+			}
+
+		}
+
+	}
+
+	return pellots
+
 }

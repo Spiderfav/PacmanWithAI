@@ -25,10 +25,10 @@ type NPC struct {
 }
 
 // This function intialises the NPC variables and creates a starting path for the ghost to take
-func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare) {
+func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare, pellots []mazegrid.Position) {
 	npc.Attributes.Init(pos, colour)
 	npc.Algo = algo
-	npc.Pellots = algorithms.GetPellotsPos(grid)
+	npc.Pellots = pellots
 	npc.Path = npc.calculatePath(enemyPos, 0, grid)
 	npc.hasMutex = true
 	npc.Cooldown = 0
@@ -58,7 +58,7 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 
 	// Makes sure that the NPC is not stuck just recalculating paths each time
 	if npc.Cooldown == 3 || len(npc.Path) < 2 {
-		npc.Pellots = algorithms.GetPellotsPos(grid)
+		npc.Pellots = mazegrid.GetPellotsPos(grid)
 		npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
 		npc.Cooldown = 0

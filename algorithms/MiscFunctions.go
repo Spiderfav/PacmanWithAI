@@ -58,26 +58,3 @@ func AddWeights(gameGridDFS [][]mazegrid.MazeSquare) {
 	}
 
 }
-
-// This function, given a game grid, returns an array with all the position of the pellots on the map
-func GetPellotsPos(gameGridDFS [][]mazegrid.MazeSquare) []mazegrid.Position {
-
-	var pellots []mazegrid.Position
-
-	size := len(gameGridDFS[0])
-
-	for y := 0; y < size; y++ {
-
-		for x := 0; x < size; x++ {
-
-			if gameGridDFS[y][x].ContainsObject {
-				pellots = append(pellots, gameGridDFS[y][x].NodePosition)
-			}
-
-		}
-
-	}
-
-	return pellots
-
-}
