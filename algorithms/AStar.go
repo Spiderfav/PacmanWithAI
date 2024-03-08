@@ -12,6 +12,9 @@ import (
 // AStar uses the A* Algorithm to find the shortest path from one node to another in a given maze
 // The maze must be built with type mazegrid.Mazesquare
 func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
+	// Marking every node unvisited
+	MarkUnvisited(gameGridDFS)
+
 	start := time.Now() // This is used to time how long the function took to execute
 
 	// Storing the original start values
@@ -20,9 +23,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 	startingNode := &gameGridDFS[int(originalStartX/squareSize)-1][int(originalStartY/squareSize)-1]
 	endNode := &gameGridDFS[int(finishX/squareSize)-1][int(finishY/squareSize)-1]
-
-	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS)
 
 	var bestPath []mazegrid.MazeSquare // Stores the best path found
 
@@ -36,6 +36,11 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 		currentNode := &gameGridDFS[int(startX/squareSize)-1][int(startY/squareSize)-1]
 
+		fmt.Println("This is the current node ", currentNode)
+		fmt.Println("Has it been visited? ", currentNode.Visited)
+		fmt.Println("This is the end node ", endNode)
+		fmt.Println("This is length of all the choice nodes ", len(splitNodes))
+
 		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
 
 		// Assigning a new weight to the current node only if it is not the starting point
@@ -48,89 +53,93 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			currentNode.Weight = 0
 		}
 
-		// Mark the current node as visited and add the node to the array of nodes for the path taken
-		currentNode.Visited = true
-		bestPath = append(bestPath, *currentNode)
+		// Making sure if for some reason, a node is added that has been visited isn't checked
+		if !currentNode.Visited {
+			// Mark the current node as visited and add the node to the array of nodes for the path taken
+			currentNode.Visited = true
+			bestPath = append(bestPath, *currentNode)
 
-		// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
-		// It calculates the distance from the neighbour nodes to the end node
-		if !currentNode.HasWalls.HasDown {
-			currentNodeDown := &gameGridDFS[(int(currentNode.Walls.Down.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Down.YCoordinate)/squareSize)-1]
+			// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
+			// It calculates the distance from the neighbour nodes to the end node
+			if !currentNode.HasWalls.HasDown {
+				currentNodeDown := &gameGridDFS[(int(currentNode.Walls.Down.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Down.YCoordinate)/squareSize)-1]
 
-			fmt.Println("\n Down")
+				fmt.Println("\n Down")
 
-			fmt.Println("Are they equal in x ? ", currentNode.Walls.Down.XCoordinate == currentNodeDown.NodePosition.XCoordinate)
-			fmt.Println("Are they equal in y ? ", currentNode.Walls.Down.YCoordinate == currentNodeDown.NodePosition.YCoordinate)
+				fmt.Println("Are they equal in x ? ", currentNode.Walls.Down.XCoordinate == currentNodeDown.NodePosition.XCoordinate)
+				fmt.Println("Are they equal in y ? ", currentNode.Walls.Down.YCoordinate == currentNodeDown.NodePosition.YCoordinate)
 
-			if !currentNodeDown.Visited {
-				tempminDistance := HeuristicsDistance(float64(currentNodeDown.NodePosition.XCoordinate), float64(currentNodeDown.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-				choosingNodes[*currentNodeDown] = tempminDistance + float64(currentNodeDown.Weight)
+				if !currentNodeDown.Visited {
+					tempminDistance := HeuristicsDistance(float64(currentNodeDown.NodePosition.XCoordinate), float64(currentNodeDown.NodePosition.YCoordinate), float64(finishX), float64(finishY))
+					choosingNodes[*currentNodeDown] = tempminDistance + float64(currentNodeDown.Weight)
+				}
+
 			}
 
-		}
+			if !currentNode.HasWalls.HasUp {
+				currentNodeUp := &gameGridDFS[(int(currentNode.Walls.Up.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Up.YCoordinate)/squareSize)-1]
 
-		if !currentNode.HasWalls.HasUp {
-			currentNodeUp := &gameGridDFS[(int(currentNode.Walls.Up.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Up.YCoordinate)/squareSize)-1]
+				fmt.Println("\n Up")
+				fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Up.XCoordinate == currentNodeUp.NodePosition.XCoordinate)
+				fmt.Println("\nAre they equal in y ? ", currentNode.Walls.Up.YCoordinate == currentNodeUp.NodePosition.YCoordinate)
 
-			fmt.Println("\n Up")
-			fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Up.XCoordinate == currentNodeUp.NodePosition.XCoordinate)
-			fmt.Println("\nAre they equal in y ? ", currentNode.Walls.Up.YCoordinate == currentNodeUp.NodePosition.YCoordinate)
+				if !currentNodeUp.Visited {
+					tempminDistance := HeuristicsDistance(float64(currentNodeUp.NodePosition.XCoordinate), float64(currentNodeUp.NodePosition.YCoordinate), float64(finishX), float64(finishY))
+					choosingNodes[*currentNodeUp] = tempminDistance + float64(currentNodeUp.Weight)
+				}
 
-			if !currentNodeUp.Visited {
-				tempminDistance := HeuristicsDistance(float64(currentNodeUp.NodePosition.XCoordinate), float64(currentNodeUp.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-				choosingNodes[*currentNodeUp] = tempminDistance + float64(currentNodeUp.Weight)
 			}
 
-		}
+			if !currentNode.HasWalls.HasLeft {
 
-		if !currentNode.HasWalls.HasLeft {
+				currentNodeLeft := &gameGridDFS[(int(currentNode.Walls.Left.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Left.YCoordinate)/squareSize)-1]
 
-			currentNodeLeft := &gameGridDFS[(int(currentNode.Walls.Left.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Left.YCoordinate)/squareSize)-1]
+				fmt.Println("\n Left")
+				fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Left.XCoordinate == currentNodeLeft.NodePosition.XCoordinate)
+				fmt.Println("\nAre they equal in y ? ", currentNode.Walls.Left.YCoordinate == currentNodeLeft.NodePosition.YCoordinate)
 
-			fmt.Println("\n Left")
-			fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Left.XCoordinate == currentNodeLeft.NodePosition.XCoordinate)
-			fmt.Println("\nAre they equal in y ? ", currentNode.Walls.Left.YCoordinate == currentNodeLeft.NodePosition.YCoordinate)
+				if !currentNodeLeft.Visited {
+					tempminDistance := HeuristicsDistance(float64(currentNodeLeft.NodePosition.XCoordinate), float64(currentNodeLeft.NodePosition.YCoordinate), float64(finishX), float64(finishY))
+					choosingNodes[*currentNodeLeft] = tempminDistance + float64(currentNodeLeft.Weight)
+				}
 
-			if !currentNodeLeft.Visited {
-				tempminDistance := HeuristicsDistance(float64(currentNodeLeft.NodePosition.XCoordinate), float64(currentNodeLeft.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-				choosingNodes[*currentNodeLeft] = tempminDistance + float64(currentNodeLeft.Weight)
 			}
 
-		}
+			if !currentNode.HasWalls.HasRight {
 
-		if !currentNode.HasWalls.HasRight {
+				currentNodeRight := &gameGridDFS[(int(currentNode.Walls.Right.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Right.YCoordinate)/squareSize)-1]
 
-			currentNodeRight := &gameGridDFS[(int(currentNode.Walls.Right.XCoordinate)/squareSize)-1][(int(currentNode.Walls.Right.YCoordinate)/squareSize)-1]
+				fmt.Println("\n Right")
+				fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Right.XCoordinate == currentNodeRight.NodePosition.XCoordinate)
+				fmt.Println("\nAre they equal in y ? ", currentNode.Walls.Right.YCoordinate == currentNodeRight.NodePosition.YCoordinate)
 
-			fmt.Println("\n Right")
-			fmt.Println("\nAre they equal in x ? ", currentNode.Walls.Right.XCoordinate == currentNodeRight.NodePosition.XCoordinate)
-			fmt.Println("\nAre they equal in y ? ", currentNode.Walls.Right.YCoordinate == currentNodeRight.NodePosition.YCoordinate)
+				if !currentNodeRight.Visited {
+					tempminDistance := HeuristicsDistance(float64(currentNodeRight.NodePosition.XCoordinate), float64(currentNodeRight.NodePosition.YCoordinate), float64(finishX), float64(finishY))
+					choosingNodes[*currentNodeRight] = tempminDistance + float64(currentNodeRight.Weight)
+				}
 
-			if !currentNodeRight.Visited {
-				tempminDistance := HeuristicsDistance(float64(currentNodeRight.NodePosition.XCoordinate), float64(currentNodeRight.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-				choosingNodes[*currentNodeRight] = tempminDistance + float64(currentNodeRight.Weight)
 			}
 
-		}
+			keys := make([]mazegrid.MazeSquare, 0, len(choosingNodes)) // Extracting the keys from the node choices
 
-		keys := make([]mazegrid.MazeSquare, 0, len(choosingNodes)) // Extracting the keys from the node choices
+			// The neighbouring nodes are added to a map based on the keys available
+			for key := range choosingNodes {
+				keys = append(keys, key)
+			}
 
-		// The neighbouring nodes are added to a map based on the keys available
-		for key := range choosingNodes {
-			keys = append(keys, key)
-		}
+			// This sorts the ( [Node] = Distance ) from highest distance to lowest distance
+			sort.SliceStable(keys, func(i, j int) bool {
+				return choosingNodes[keys[i]] > choosingNodes[keys[j]]
+			})
 
-		// This sorts the ( [Node] = Distance ) from highest distance to lowest distance
-		sort.SliceStable(keys, func(i, j int) bool {
-			return choosingNodes[keys[i]] > choosingNodes[keys[j]]
-		})
-
-		// This is adding the sorted nodes back to the array to check for all paths possible
-		// This way, the shortest distance nodes are checked first and then the highest distance checked later
-		for i := 0; i < len(keys); i++ {
-			k := keys[i]
-			splitNodes = append(splitNodes, gameGridDFS[int(k.NodePosition.YCoordinate)/squareSize-1][int(k.NodePosition.XCoordinate)/squareSize-1])
-			nodePrevWeights = append(nodePrevWeights, prevWeight)
+			// This is adding the sorted nodes back to the array to check for all paths possible
+			// This way, the shortest distance nodes are checked first and then the highest distance checked later
+			for i := 0; i < len(keys); i++ {
+				k := keys[i]
+				nodeToAdd := &gameGridDFS[int(k.NodePosition.YCoordinate)/squareSize-1][int(k.NodePosition.XCoordinate)/squareSize-1]
+				splitNodes = append(splitNodes, *nodeToAdd)
+				nodePrevWeights = append(nodePrevWeights, prevWeight)
+			}
 		}
 
 		// Need to find a way to pop nodes that were bad
@@ -145,6 +154,10 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 			startX = int(nodePopped.NodePosition.XCoordinate)
 			startY = int(nodePopped.NodePosition.YCoordinate)
+
+		} else {
+			// If we couldn't find a path
+			break
 		}
 	}
 
@@ -153,7 +166,7 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 	fmt.Println("\nA* Concluded")
 	fmt.Println(" ")
 
-	fmt.Println(JustPositions(ReversePath(bestPath)))
+	// fmt.Println(JustPositions(ReversePath(bestPath)))
 	// Returns the path that the algorithm took to get from the start to the finish
 	return bestPath
 }
@@ -186,3 +199,14 @@ func JustPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
 
 	return posArr
 }
+
+// func sliceContains(arrOfSquares []mazegrid.MazeSquare, itemToFind mazegrid.MazeSquare) bool {
+
+// 	for i := 0; i < len(arrOfSquares); i++ {
+// 		if arrOfSquares[i] == itemToFind {
+// 			return true
+// 		}
+// 	}
+
+// 	return false
+// }
