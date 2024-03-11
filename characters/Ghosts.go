@@ -109,6 +109,10 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		path = (algorithms.BFS(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
 
+	case algorithms.DFSAlgo:
+
+		path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
+
 	}
 
 	return path

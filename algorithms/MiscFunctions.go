@@ -15,6 +15,7 @@ const (
 	ReflexAlgo   Algorithm = 2
 	MiniMaxAlgo  Algorithm = 3
 	BFSAlgo      Algorithm = 4
+	DFSAlgo      Algorithm = 5
 )
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
