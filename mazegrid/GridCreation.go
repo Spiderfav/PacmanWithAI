@@ -1,22 +1,22 @@
 package mazegrid
 
 // This functions creates and returns an empty MazeSquare object
-func CreateBlankSquare() MazeSquare {
-	return MazeSquare{Position{20, 20}, Direction{}, HasDirection{true, true, true, true}, false, 0, false}
+func CreateBlankSquare(squareSize int) MazeSquare {
+	return MazeSquare{Position{float32(squareSize), float32(squareSize)}, Direction{}, HasDirection{true, true, true, true}, false, 0, false}
 
 }
 
 // Takes 2 parameters: The Game grid, position
 // This function, given the grid and a position, will return the MazeSquare from the game grid of the given position
-func PosToNode(x [][]MazeSquare, p Position) *MazeSquare {
-	yCoord := int(p.YCoordinate/20) - 1
-	xCoord := int(p.XCoordinate/20) - 1
+func PosToNode(x [][]MazeSquare, p Position, squareSize int) *MazeSquare {
+	yCoord := int(p.YCoordinate/float32(squareSize)) - 1
+	xCoord := int(p.XCoordinate/float32(squareSize)) - 1
 
 	return &x[yCoord][xCoord]
 }
 
 // This function creates a grid of 8*8 MazeSquares, each with pointers to its direct neighbours
-func CreateGrid(size int) [][]MazeSquare {
+func CreateGrid(size int, squareSize int) [][]MazeSquare {
 
 	// Define the size of the grid
 
@@ -27,7 +27,7 @@ func CreateGrid(size int) [][]MazeSquare {
 
 	var x, y float32
 
-	var squareLengthX, squareLengthY float32 = 20, 20
+	var squareLengthX, squareLengthY float32 = float32(squareSize), float32(squareSize)
 
 	// Even though we are using X and Y co-ordinates for the objects, in an array sense, it will be Y and X
 

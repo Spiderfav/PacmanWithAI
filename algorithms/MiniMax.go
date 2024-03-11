@@ -14,7 +14,7 @@ type PruningParams struct {
 // In Params: Game Grid, Pruning Paramaters, Moves Pacman will make, Current Pacman points, Moves Ghosts will make, Position of all the pellots in the maze, Max tree depth, If Maximiser or Minimiser, Whether to use pruning or not
 // Out Params: Evaluation of Position, Moves Pacman made to given position eval, Moves Ghost made to given position eval
 // This functions will calculate best play between two opponents, given a maze and the pellots in the maze. It can allow play to be pruned or not
-func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool, usePruning bool) (int, []mazegrid.Position, []mazegrid.Position, PruningParams) {
+func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool, usePruning bool, squareSize int) (int, []mazegrid.Position, []mazegrid.Position, PruningParams) {
 
 	// If the depth has reached zero or ghost has caught pacman
 	if depthToSearch == 0 || pacmanPos[len(pacmanPos)-1] == ghostPos[len(ghostPos)-1] {
@@ -25,7 +25,7 @@ func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos [
 		maxEval := math.Inf(-1)
 		var bestPacmanPos []mazegrid.Position
 
-		possibleMoves := getPossibleMoves(gameGrid, pacmanPos[len(pacmanPos)-1])
+		possibleMoves := getPossibleMoves(gameGrid, pacmanPos[len(pacmanPos)-1], squareSize)
 
 		// For every possible move in the square
 		for _, element := range possibleMoves {
@@ -33,7 +33,7 @@ func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos [
 			copy(tempPacmanPos, pacmanPos)
 			tempPacmanPos = append(tempPacmanPos, element)
 
-			eval, newPacmanPos, newGhostPos, _ := MiniMax(gameGrid, params, tempPacmanPos, pacmanPoints, ghostPos, pellots, depthToSearch-1, false, usePruning)
+			eval, newPacmanPos, newGhostPos, _ := MiniMax(gameGrid, params, tempPacmanPos, pacmanPoints, ghostPos, pellots, depthToSearch-1, false, usePruning, squareSize)
 
 			if float64(eval) > maxEval {
 				maxEval = float64(eval)
@@ -60,14 +60,14 @@ func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos [
 		minEval := math.Inf(1)
 		var bestGhostPos []mazegrid.Position
 
-		possibleMoves := getPossibleMoves(gameGrid, ghostPos[len(ghostPos)-1])
+		possibleMoves := getPossibleMoves(gameGrid, ghostPos[len(ghostPos)-1], squareSize)
 
 		for _, element := range possibleMoves {
 			tempGhostPos := make([]mazegrid.Position, len(ghostPos))
 			copy(tempGhostPos, ghostPos)
 			tempGhostPos = append(tempGhostPos, element)
 
-			eval, newPacmanPos, newGhostPos, _ := MiniMax(gameGrid, params, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, usePruning)
+			eval, newPacmanPos, newGhostPos, _ := MiniMax(gameGrid, params, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, usePruning, squareSize)
 
 			if float64(eval) < minEval {
 				minEval = float64(eval)
@@ -129,12 +129,12 @@ func evalPos(pacmanPos mazegrid.Position, pacmanPoints int, ghostPos mazegrid.Po
 }
 
 // This function, given the game grid and a position, will look at the possible moves in that given square
-func getPossibleMoves(gameGrid [][]mazegrid.MazeSquare, charPos mazegrid.Position) []mazegrid.Position {
+func getPossibleMoves(gameGrid [][]mazegrid.MazeSquare, charPos mazegrid.Position, squareSize int) []mazegrid.Position {
 	// Try up, down, left, right
 	var possibleMoves []mazegrid.Position
 
-	firstArr := int((charPos.YCoordinate / 20) - 1)
-	secondArr := int((charPos.XCoordinate / 20) - 1)
+	firstArr := int((charPos.YCoordinate / float32(squareSize)) - 1)
+	secondArr := int((charPos.XCoordinate / float32(squareSize)) - 1)
 
 	gameNode := gameGrid[firstArr][secondArr]
 

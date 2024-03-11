@@ -42,7 +42,7 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 		}
 
 		// Get all the possible moves from that given square
-		possibleMoves := getPossibleMoves(gameGridDFS, currentNode.NodePosition)
+		possibleMoves := getPossibleMoves(gameGridDFS, currentNode.NodePosition, squareSize)
 
 		// From those given moves, check which ones have already been visited and add them to the FIFO queue
 		for i := 0; i < len(possibleMoves); i++ {

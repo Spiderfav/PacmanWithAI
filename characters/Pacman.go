@@ -62,10 +62,10 @@ func (p *Player) GetPoints() int {
 	return p.Points
 }
 
-func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare) {
+func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize int) {
 
-	array2Pos := int((p.Attributes.Position.XCoordinate / 20) - 1)
-	array1Pos := int((p.Attributes.Position.YCoordinate / 20) - 1)
+	array2Pos := int((p.Attributes.Position.XCoordinate / float32(squareSize)) - 1)
+	array1Pos := int((p.Attributes.Position.YCoordinate / float32(squareSize)) - 1)
 
 	if m[array1Pos][array2Pos].ContainsObject {
 		p.Points += 1

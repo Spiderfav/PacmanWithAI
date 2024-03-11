@@ -15,23 +15,23 @@ func drawSquare(screen *ebiten.Image, squareToDraw mazegrid.MazeSquare) {
 	var strokeWidth float32 = 1
 
 	if squareToDraw.ContainsObject {
-		vector.DrawFilledCircle(screen, squareToDraw.NodePosition.XCoordinate+10, squareToDraw.NodePosition.YCoordinate+10, 2, color.RGBA{255, 100, 0, 250}, true)
+		vector.DrawFilledCircle(screen, squareToDraw.NodePosition.XCoordinate+float32(halfSquare), squareToDraw.NodePosition.YCoordinate+float32(halfSquare), halfSquare/4, color.RGBA{255, 100, 0, 250}, true)
 	}
 
 	if squareToDraw.HasWalls.HasDown {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+20, squareToDraw.NodePosition.XCoordinate+20, squareToDraw.NodePosition.YCoordinate+20, strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+float32(squareSize), squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, color.Black, false)
 	}
 
 	if squareToDraw.HasWalls.HasRight {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate+20, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+20, squareToDraw.NodePosition.YCoordinate+20, strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, color.Black, false)
 	}
 
 	if squareToDraw.HasWalls.HasLeft {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+20, strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, color.Black, false)
 	}
 
 	if squareToDraw.HasWalls.HasUp {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+20, squareToDraw.NodePosition.YCoordinate, strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate, strokeWidth, color.Black, false)
 	}
 
 }
@@ -53,13 +53,13 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
 	if len(pathTaken) == 0 {
 		return
 	}
-	prevX := pathTaken[0].NodePosition.XCoordinate + 10
-	prevY := pathTaken[0].NodePosition.YCoordinate + 10
+	prevX := pathTaken[0].NodePosition.XCoordinate + halfSquare
+	prevY := pathTaken[0].NodePosition.YCoordinate + halfSquare
 
 	for i := 1; i < len(pathTaken); i++ {
-		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].NodePosition.XCoordinate+10, pathTaken[i].NodePosition.YCoordinate+10, 1, color.RGBA{0, 255, 0, 250}, false)
-		prevX = pathTaken[i].NodePosition.XCoordinate + 10
-		prevY = pathTaken[i].NodePosition.YCoordinate + 10
+		vector.StrokeLine(screen, prevX, prevY, pathTaken[i].NodePosition.XCoordinate+halfSquare, pathTaken[i].NodePosition.YCoordinate+halfSquare, 1, color.RGBA{0, 255, 0, 250}, false)
+		prevX = pathTaken[i].NodePosition.XCoordinate + halfSquare
+		prevY = pathTaken[i].NodePosition.YCoordinate + halfSquare
 
 	}
 
@@ -73,6 +73,6 @@ func DrawSprite(screen *ebiten.Image, char characters.Character) {
 	// sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
 	// screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
 
-	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+10, char.GetPosition().YCoordinate+10, 2, char.Colour, true)
+	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+halfSquare, char.GetPosition().YCoordinate+halfSquare, halfSquare/2, char.Colour, true)
 
 }

@@ -14,21 +14,23 @@ import (
 
 // The NPC Class is the class used for any AI ghosts (or pacman) to traverse the maze
 type NPC struct {
-	Attributes Character
-	Algo       algorithms.Algorithm
-	Path       []mazegrid.MazeSquare
-	hasMutex   bool
-	Ctx        context.Context
-	CancelFunc context.CancelFunc
-	Pellots    []mazegrid.Position
-	Cooldown   int
+	Attributes     Character
+	Algo           algorithms.Algorithm
+	Path           []mazegrid.MazeSquare
+	hasMutex       bool
+	Ctx            context.Context
+	CancelFunc     context.CancelFunc
+	Pellots        []mazegrid.Position
+	Cooldown       int
+	MazeSquareSize int
 }
 
 // This function intialises the NPC variables and creates a starting path for the ghost to take
-func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare, pellots []mazegrid.Position) {
+func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare, pellots []mazegrid.Position, squareSize int) {
 	npc.Attributes.Init(pos, colour)
 	npc.Algo = algo
 	npc.Pellots = pellots
+	npc.MazeSquareSize = squareSize
 	npc.Path = npc.calculatePath(enemyPos, 0, grid)
 	npc.hasMutex = true
 	npc.Cooldown = 0
@@ -87,12 +89,12 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
 
 	case algorithms.AStarAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
+		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
 
 		//path = algorithms.AStar(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate), 20)
 
 	case algorithms.ReflexAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, 20))
+		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize))
 
 	case algorithms.MiniMaxAlgo:
 		enemyPosArr := []mazegrid.Position{enemyPos}
@@ -101,17 +103,17 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		params := algorithms.PruningParams{Alpha: math.Inf(1), Beta: math.Inf(-1)}
 
-		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, true)
+		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, true, npc.MazeSquareSize)
 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew))
 
 	case algorithms.BFSAlgo:
 
-		path = (algorithms.BFS(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
+		path = (algorithms.BFS(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
 
 	case algorithms.DFSAlgo:
 
-		path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
+		path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
 
 	}
 

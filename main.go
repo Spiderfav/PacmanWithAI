@@ -19,6 +19,8 @@ import (
 const (
 	screenWidth  = 1920
 	screenHeight = 1080
+	squareSize   = 30
+	halfSquare   = squareSize / 2
 )
 
 type Game struct {
@@ -44,16 +46,16 @@ func (g *Game) Update() error {
 	if menuOrGame == 1 {
 		// Checking if the player is moving and if so, moving the player
 		if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
-			g.Player.Move(characters.Up, g.Maze.Grid)
+			g.Player.Move(characters.Up, g.Maze.Grid, squareSize)
 
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyS) || inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
-			g.Player.Move(characters.Down, g.Maze.Grid)
+			g.Player.Move(characters.Down, g.Maze.Grid, squareSize)
 
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyA) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-			g.Player.Move(characters.Left, g.Maze.Grid)
+			g.Player.Move(characters.Left, g.Maze.Grid, squareSize)
 
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyD) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-			g.Player.Move(characters.Right, g.Maze.Grid)
+			g.Player.Move(characters.Right, g.Maze.Grid, squareSize)
 
 		}
 
@@ -139,9 +141,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 func NewGame() *Game {
 
 	// Creating the maze by aplying DFS twice
-	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil)
+	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil, squareSize)
 	algorithms.MarkUnvisited(oldGameGridDFS)
-	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS)
+	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS, squareSize)
 	maze := mazegrid.Maze{Size: mazeSizeOriginal, Grid: gameGridDFS, Pellots: mazegrid.GetPellotsPos(gameGridDFS)}
 
 	// Creating the player object
@@ -150,7 +152,7 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.DFSAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.BFSAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
@@ -192,9 +194,9 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 	// If maze isn't being loaded
 	if !loadedMaze {
 		// Create new maze with the given size
-		oldGameGridDFS := algorithms.DFS(newSize, nil)
+		oldGameGridDFS := algorithms.DFS(newSize, nil, squareSize)
 		algorithms.MarkUnvisited(oldGameGridDFS)
-		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS)
+		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS, squareSize)
 		// Set new game size to be the given size
 		g.Maze.Size = newSize
 
