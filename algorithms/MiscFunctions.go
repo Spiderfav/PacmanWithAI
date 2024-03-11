@@ -14,7 +14,7 @@ const (
 	AStarAlgo    Algorithm = 1
 	ReflexAlgo   Algorithm = 2
 	MiniMaxAlgo  Algorithm = 3
-	RandomAlgo   Algorithm = 4
+	BFSAlgo      Algorithm = 4
 )
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited

@@ -12,9 +12,6 @@ import (
 // AStar uses the A* Algorithm to find the shortest path from one node to another in a given maze
 // The maze must be built with type mazegrid.Mazesquare
 func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
-	fmt.Print("\n")
-	fmt.Print("\n")
-	fmt.Print("\n")
 	// Marking every node unvisited
 	MarkUnvisited(gameGridDFS)
 
@@ -39,11 +36,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 		fmt.Print("\n")
 		currentNode := &gameGridDFS[int(startY/squareSize)-1][int(startX/squareSize)-1]
 
-		// fmt.Println("\nThis is the current node ", currentNode)
-		// fmt.Println("Has it been visited? ", currentNode.Visited)
-		// fmt.Println("This is the end node ", endNode)
-		fmt.Println("\nThis is the split of all the choice nodes ", JustPositions(splitNodes))
-
 		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
 
 		// Assigning a new weight to the current node only if it is not the starting point
@@ -67,9 +59,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			if !currentNode.HasWalls.HasDown {
 				currentNodeDown := &gameGridDFS[(int(currentNode.Walls.Down.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Down.XCoordinate)/squareSize)-1]
 
-				fmt.Println("\nNode I want: ", currentNode.Walls.Down)
-				fmt.Println("Node I got: ", currentNodeDown.NodePosition)
-
 				if !currentNodeDown.Visited {
 					tempminDistance := HeuristicsDistance(float64(currentNodeDown.NodePosition.XCoordinate), float64(currentNodeDown.NodePosition.YCoordinate), float64(finishX), float64(finishY))
 					choosingNodes[*currentNodeDown] = tempminDistance + float64(currentNodeDown.Weight)
@@ -79,9 +68,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 			if !currentNode.HasWalls.HasUp {
 				currentNodeUp := &gameGridDFS[(int(currentNode.Walls.Up.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Up.XCoordinate)/squareSize)-1]
-
-				fmt.Println("\nNode I want: ", currentNode.Walls.Up)
-				fmt.Println("Node I got: ", currentNodeUp.NodePosition)
 
 				if !currentNodeUp.Visited {
 					tempminDistance := HeuristicsDistance(float64(currentNodeUp.NodePosition.XCoordinate), float64(currentNodeUp.NodePosition.YCoordinate), float64(finishX), float64(finishY))
@@ -94,9 +80,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 				currentNodeLeft := &gameGridDFS[(int(currentNode.Walls.Left.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Left.XCoordinate)/squareSize)-1]
 
-				fmt.Println("\nNode I want: ", currentNode.Walls.Left)
-				fmt.Println("Node I got: ", currentNodeLeft.NodePosition)
-
 				if !currentNodeLeft.Visited {
 					tempminDistance := HeuristicsDistance(float64(currentNodeLeft.NodePosition.XCoordinate), float64(currentNodeLeft.NodePosition.YCoordinate), float64(finishX), float64(finishY))
 					choosingNodes[*currentNodeLeft] = tempminDistance + float64(currentNodeLeft.Weight)
@@ -107,9 +90,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			if !currentNode.HasWalls.HasRight {
 
 				currentNodeRight := &gameGridDFS[(int(currentNode.Walls.Right.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Right.XCoordinate)/squareSize)-1]
-
-				fmt.Println("\nNode I want: ", currentNode.Walls.Right)
-				fmt.Println("Node I got: ", currentNodeRight.NodePosition)
 
 				if !currentNodeRight.Visited {
 					tempminDistance := HeuristicsDistance(float64(currentNodeRight.NodePosition.XCoordinate), float64(currentNodeRight.NodePosition.YCoordinate), float64(finishX), float64(finishY))
@@ -135,7 +115,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			for i := 0; i < len(keys); i++ {
 				k := keys[i]
 				nodeToAdd := &gameGridDFS[int(k.NodePosition.YCoordinate)/squareSize-1][int(k.NodePosition.XCoordinate)/squareSize-1]
-				fmt.Println("\nNode I'm adding: ", nodeToAdd.NodePosition)
 				splitNodes = append(splitNodes, *nodeToAdd)
 				nodePrevWeights = append(nodePrevWeights, prevWeight)
 			}
@@ -151,17 +130,11 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
 			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
 
-			fmt.Println("\nNode I've chosen: ", nodePopped.NodePosition)
 			startX = int(nodePopped.NodePosition.XCoordinate)
 			startY = int(nodePopped.NodePosition.YCoordinate)
 
 		}
-		// else {
-		// 	// If we couldn't find a path
-		// 	break
-		// }
 
-		fmt.Println("\nCurrent Best Path: ", JustPositions(bestPath))
 	}
 
 	elapsed := time.Since(start)
@@ -169,8 +142,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 	fmt.Println("\nA* Concluded")
 	fmt.Println(" ")
 
-	fmt.Println(JustPositions(ReversePath(bestPath)))
-	ReversePath(bestPath)
 	// Returns the path that the algorithm took to get from the start to the finish
 	return bestPath
 }

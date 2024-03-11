@@ -2,7 +2,6 @@ package characters
 
 import (
 	"context"
-	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
@@ -92,8 +91,6 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		//path = algorithms.AStar(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate), 20)
 
-		fmt.Print("\nFinal Path: ", algorithms.JustPositions(path))
-
 	case algorithms.ReflexAlgo:
 		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, 20))
 
@@ -107,6 +104,11 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, true)
 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew))
+
+	case algorithms.BFSAlgo:
+
+		path = (algorithms.BFS(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), 20))
+
 	}
 
 	return path
