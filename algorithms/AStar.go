@@ -120,8 +120,6 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 			}
 		}
 
-		// Need to find a way to pop nodes that were bad
-
 		// If no path was possible from the current node, try a previous found neighbour of a node and set that as the new start
 		if len(splitNodes) != 0 {
 			nodePopped := splitNodes[len(splitNodes)-1]

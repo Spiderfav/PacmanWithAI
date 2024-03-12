@@ -59,19 +59,19 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 	// 	npc.Cooldown = 3
 	// }
 
-	// npc.Pellots = mazegrid.GetPellotsPos(grid)
-	// npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+	npc.Pellots = mazegrid.GetPellotsPos(grid)
+	npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
 	// Makes sure that the NPC is not stuck just recalculating paths each time
-	if npc.Cooldown == 3 || len(npc.Path) < 2 {
-		npc.Pellots = mazegrid.GetPellotsPos(grid)
-		npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+	// if npc.Cooldown == 3 || len(npc.Path) < 2 {
+	// 	npc.Pellots = mazegrid.GetPellotsPos(grid)
+	// 	npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
-		npc.Cooldown = 0
-	} else {
-		npc.Path = npc.Path[:len(npc.Path)-1]
-		npc.Cooldown += 1
-	}
+	// 	npc.Cooldown = 0
+	// } else {
+	// 	npc.Path = npc.Path[:len(npc.Path)-1]
+	// 	npc.Cooldown += 1
+	// }
 
 }
 

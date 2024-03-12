@@ -25,6 +25,7 @@ func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos [
 		maxEval := math.Inf(-1)
 		var bestPacmanPos []mazegrid.Position
 
+		// Get the possible moves from this single square
 		possibleMoves := getPossibleMoves(gameGrid, pacmanPos[len(pacmanPos)-1], squareSize)
 
 		// For every possible move in the square
