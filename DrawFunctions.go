@@ -12,26 +12,32 @@ import (
 // This function draws a given square to the screen
 // It checks if the current node has a given wall, then draws it to the screen
 func drawSquare(screen *ebiten.Image, squareToDraw mazegrid.MazeSquare) {
-	var strokeWidth float32 = 1
+	const strokeWidth float32 = 1
 
-	if squareToDraw.ContainsObject {
-		vector.DrawFilledCircle(screen, squareToDraw.NodePosition.XCoordinate+float32(halfSquare), squareToDraw.NodePosition.YCoordinate+float32(halfSquare), halfSquare/4, color.RGBA{255, 100, 0, 250}, true)
+	lineColour := color.RGBA{5, 8, 173, 250}
+
+	if squareToDraw.HasPellot {
+		vector.DrawFilledCircle(screen, squareToDraw.NodePosition.XCoordinate+float32(halfSquare), squareToDraw.NodePosition.YCoordinate+float32(halfSquare), halfSquare/6, color.RGBA{255, 248, 173, 250}, true)
+	}
+
+	if squareToDraw.HasSuperPellot {
+		vector.DrawFilledCircle(screen, squareToDraw.NodePosition.XCoordinate+float32(halfSquare), squareToDraw.NodePosition.YCoordinate+float32(halfSquare), halfSquare/3, color.RGBA{255, 248, 173, 250}, true)
 	}
 
 	if squareToDraw.HasWalls.HasDown {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+float32(squareSize), squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+float32(squareSize), squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, lineColour, false)
 	}
 
 	if squareToDraw.HasWalls.HasRight {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, lineColour, false)
 	}
 
 	if squareToDraw.HasWalls.HasLeft {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate+float32(squareSize), strokeWidth, lineColour, false)
 	}
 
 	if squareToDraw.HasWalls.HasUp {
-		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate, strokeWidth, color.Black, false)
+		vector.StrokeLine(screen, squareToDraw.NodePosition.XCoordinate, squareToDraw.NodePosition.YCoordinate, squareToDraw.NodePosition.XCoordinate+float32(squareSize), squareToDraw.NodePosition.YCoordinate, strokeWidth, lineColour, false)
 	}
 
 }

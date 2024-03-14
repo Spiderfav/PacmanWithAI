@@ -43,7 +43,7 @@ func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 // This function draws the game meny to the screen
 func gameMenu(screen *ebiten.Image, g *Game) {
 	// 	// Clear the screen to white
-	screen.Fill(color.White)
+	screen.Fill(color.Black)
 	// 	// Draw the maze to the screen
 	drawMaze(screen, g)
 	//OldMazeSystem(screen, g)
