@@ -82,7 +82,7 @@ func DFS(size int, oldDFS [][]mazegrid.MazeSquare, squareSize int) [][]mazegrid.
 
 // This function, given an X and Y co-ordinate from a MazeNode, choses a random direction to go in
 func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare, squareSize int) *mazegrid.MazeSquare {
-	startNode := gameGrid[(y/squareSize)-1][(x/squareSize)-1]
+	startNode := &gameGrid[(y/squareSize)-1][(x/squareSize)-1]
 
 	var options []int
 
@@ -92,28 +92,39 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare, s
 
 	// These if blocks check if the MazeSquare chosen is not an edge and that its neighbours are not empty or visited
 
+	// If the Y value is not in the furthest edge
 	if ((y / squareSize) - 1) != size {
-		if (gameGrid[((y/squareSize)-1)+1][(x/squareSize)-1] != mazegrid.MazeSquare{}) && !gameGrid[((y/squareSize)-1)+1][(x/squareSize)-1].Visited {
+		node := &gameGrid[((y/squareSize)-1)+1][(x/squareSize)-1]
+		if (*node != mazegrid.MazeSquare{}) && !node.Visited {
 			options = append(options, 1)
 		}
 	}
 
+	// If the Y value is not in the closest edge
 	if ((y / squareSize) - 1) != 0 {
-		if (gameGrid[((y/squareSize)-1)-1][(x/squareSize)-1] != mazegrid.MazeSquare{}) && !gameGrid[((y/squareSize)-1)-1][(x/squareSize)-1].Visited {
+		node := &gameGrid[((y/squareSize)-1)-1][(x/squareSize)-1]
+
+		if (*node != mazegrid.MazeSquare{}) && !node.Visited {
 
 			options = append(options, 3)
 		}
 	}
 
+	// If the X value is not in the furthest edge
 	if ((x / squareSize) - 1) != size {
-		if (gameGrid[(y/squareSize)-1][((x/squareSize)-1)+1] != mazegrid.MazeSquare{}) && !gameGrid[(y/squareSize)-1][((x/squareSize)-1)+1].Visited {
+		node := &gameGrid[(y/squareSize)-1][((x/squareSize)-1)+1]
+
+		if (*node != mazegrid.MazeSquare{}) && !node.Visited {
 
 			options = append(options, 2)
 		}
 	}
 
+	// If the X value is not in the closest edge
 	if ((x / squareSize) - 1) != 0 {
-		if (gameGrid[(y/squareSize)-1][((x/squareSize)-1)-1] != mazegrid.MazeSquare{}) && !gameGrid[(y/squareSize)-1][((x/squareSize)-1)-1].Visited {
+		node := &gameGrid[(y/squareSize)-1][((x/squareSize)-1)-1]
+
+		if (*node != mazegrid.MazeSquare{}) && !node.Visited {
 
 			options = append(options, 0)
 		}
@@ -134,41 +145,51 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare, s
 
 	switch directionNumber {
 
+	// Going left
 	case 0:
 		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Left, squareSize)
 
-		//time.Sleep(5 * time.Second)
+		// Break the left wall of the current node
+		startNode.HasWalls.HasLeft = false
 
-		//direction = &gameGrid[int(startNode.Walls.Left.XCoordinate/20)-1][int(startNode.Walls.Left.YCoordinate/20)-1]
+		// Break the right wall of the chosen node
+		direction.HasWalls.HasRight = false
 
-		gameGrid[(y/squareSize)-1][(x/squareSize)-1].HasWalls.HasLeft = false
-		gameGrid[(y/squareSize)-1][((x/squareSize)-1)-1].HasWalls.HasRight = false
-
+	// Going down
 	case 1:
 
 		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Down, squareSize)
-		//direction = &gameGrid[int(startNode.Walls.Down.XCoordinate/20)-1][int(startNode.Walls.Down.YCoordinate/20)-1]
 
-		gameGrid[(y/squareSize)-1][(x/squareSize)-1].HasWalls.HasDown = false
-		gameGrid[((y/squareSize)-1)+1][(x/squareSize)-1].HasWalls.HasUp = false
+		// Break the down wall of the current node
+		startNode.HasWalls.HasDown = false
 
+		// Break the up wall of the chosen node
+		direction.HasWalls.HasUp = false
+
+	// Going right
 	case 2:
 
 		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Right, squareSize)
-		//direction = &gameGrid[int(startNode.Walls.Right.XCoordinate/20)-1][int(startNode.Walls.Right.YCoordinate/20)-1]
 
-		gameGrid[(y/squareSize)-1][(x/squareSize)-1].HasWalls.HasRight = false
-		gameGrid[(y/squareSize)-1][((x/squareSize)-1)+1].HasWalls.HasLeft = false
+		// Break the right wall of the current node
+		startNode.HasWalls.HasRight = false
 
+		// Break the left wall of the chosen node
+		direction.HasWalls.HasLeft = false
+
+	// Goinf up
 	case 3:
 
 		direction = mazegrid.PosToNode(gameGrid, startNode.Walls.Up, squareSize)
-		//direction = &gameGrid[int(startNode.Walls.Up.XCoordinate/20)-1][int(startNode.Walls.Up.YCoordinate/squareSize)-1]
 
-		gameGrid[(y/squareSize)-1][(x/squareSize)-1].HasWalls.HasUp = false
-		gameGrid[((y/squareSize)-1)-1][(x/squareSize)-1].HasWalls.HasDown = false
+		// Break the up wall of the current node
+		startNode.HasWalls.HasUp = false
+
+		// Break the down wall of the chosen node
+		direction.HasWalls.HasDown = false
 
 	}
 
+	// Return the direction chosen
 	return direction
 }
