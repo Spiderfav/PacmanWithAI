@@ -67,9 +67,14 @@ func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize
 	array2Pos := int((p.Attributes.Position.XCoordinate / float32(squareSize)) - 1)
 	array1Pos := int((p.Attributes.Position.YCoordinate / float32(squareSize)) - 1)
 
-	if m[array1Pos][array2Pos].ContainsObject {
+	if m[array1Pos][array2Pos].HasPellot {
 		p.Points += 1
-		m[array1Pos][array2Pos].ContainsObject = false
+		m[array1Pos][array2Pos].HasPellot = false
+	}
+
+	if m[array1Pos][array2Pos].HasSuperPellot {
+		p.Points += 5
+		m[array1Pos][array2Pos].HasSuperPellot = false
 	}
 
 	switch d {

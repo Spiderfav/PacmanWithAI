@@ -13,16 +13,16 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 
 	distance := HeuristicsDistance(float64(ghostPos.XCoordinate), float64(ghostPos.YCoordinate), float64(playerPos.XCoordinate), float64(playerPos.YCoordinate))
 
-	if distance <= 60 {
+	if distance <= 160 {
 
-		return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(playerPos.YCoordinate), int(playerPos.XCoordinate), squareSize)
+		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(playerPos.XCoordinate), int(playerPos.YCoordinate), squareSize)
 	}
 
 	nearestPellotPos, nearestPellotDistance := nearestPellot(ghostPos, pellots)
 
-	if nearestPellotDistance >= 20 && nearestPellotDistance <= 100 {
+	if nearestPellotDistance >= 20 && nearestPellotDistance <= 160 {
 
-		return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(nearestPellotPos.YCoordinate), int(nearestPellotPos.XCoordinate), squareSize)
+		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(nearestPellotPos.XCoordinate), int(nearestPellotPos.YCoordinate), squareSize)
 
 	}
 
@@ -31,7 +31,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 
 	randomNode := gameGridDFS[randomX][randomY].NodePosition
 
-	return AStar(gameGridDFS, int(ghostPos.YCoordinate), int(ghostPos.XCoordinate), int(randomNode.YCoordinate), int(randomNode.XCoordinate), squareSize)
+	return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(randomNode.XCoordinate), int(randomNode.YCoordinate), squareSize)
 
 }
 

@@ -75,6 +75,7 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	elapsed := time.Since(start)
 	fmt.Printf("BFS took %s", elapsed)
 	fmt.Println("\nBFS Concluded")
+	fmt.Println(" ")
 
 	return pathTaken
 }

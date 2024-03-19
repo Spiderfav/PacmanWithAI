@@ -32,7 +32,8 @@ type MazeSquare struct {
 	HasWalls       HasDirection
 	Visited        bool
 	Weight         int
-	ContainsObject bool
+	HasPellot      bool
+	HasSuperPellot bool
 }
 
 // This function counts the walls of a node and returns the number of walls as an integer
@@ -76,7 +77,7 @@ func GetPellotsPos(gameGridDFS [][]MazeSquare) []Position {
 
 		for x := 0; x < size; x++ {
 
-			if gameGridDFS[y][x].ContainsObject {
+			if gameGridDFS[y][x].HasPellot || gameGridDFS[y][x].HasSuperPellot {
 				pellots = append(pellots, gameGridDFS[y][x].NodePosition)
 			}
 

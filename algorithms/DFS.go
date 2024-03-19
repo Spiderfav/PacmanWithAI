@@ -62,6 +62,7 @@ func DFSearch(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finis
 	elapsed := time.Since(start)
 	fmt.Printf("DFS took %s", elapsed)
 	fmt.Println("\nDFS Concluded")
+	fmt.Println(" ")
 
 	return pathTaken
 }

@@ -31,7 +31,7 @@ func MarkUnvisited(gameGridDFS [][]mazegrid.MazeSquare) {
 			gameGridDFS[y][x].Visited = false
 
 			// If the square contains an object, we need to add a weight to tell the ghosts to try not to traverse through them
-			if gameGridDFS[y][x].ContainsObject {
+			if gameGridDFS[y][x].HasPellot || gameGridDFS[y][x].HasSuperPellot {
 				gameGridDFS[y][x].Weight = 10
 
 			} else {
@@ -53,9 +53,10 @@ func AddWeights(gameGridDFS [][]mazegrid.MazeSquare) {
 
 	for i := 0; i <= numberOfObjects; i++ {
 		xValue := rand.Intn(len(gameGridDFS[0]) - 1)
-		yvalue := rand.Intn(len(gameGridDFS[0]) - 1)
+		yValue := rand.Intn(len(gameGridDFS[0]) - 1)
 
-		gameGridDFS[xValue][yvalue].ContainsObject = true
+		gameGridDFS[yValue][xValue].HasPellot = false
+		gameGridDFS[yValue][xValue].HasSuperPellot = true
 	}
 
 }

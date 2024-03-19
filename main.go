@@ -148,11 +148,11 @@ func NewGame() *Game {
 
 	// Creating the player object
 	pacman := characters.Player{}
-	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{200, 200, 0, 255})
+	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{255, 234, 0, 255})
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.BFSAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
