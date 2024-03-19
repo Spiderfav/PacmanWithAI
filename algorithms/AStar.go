@@ -16,6 +16,7 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 
 	start := time.Now()
 
+	// Create a priority queue for choosing next nodes
 	priorityQueue := make(PriorityQueue, 0)
 	heap.Init(&priorityQueue)
 
@@ -32,6 +33,7 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 	// Store each node's predecessor for path reconstruction
 	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
+	// While the priority queue is not empty
 	for len(priorityQueue) > 0 {
 		currentNode := heap.Pop(&priorityQueue).(*PriorityNode).node
 
@@ -47,17 +49,17 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 			if !nodeToTest.Visited {
 				currentNode.Visited = true
 
-				tentativeGScore := currentNode.Weight + 1
+				// Update the current distance to the start
+				distanceToStart := currentNode.Weight + 1
 
-				if tentativeGScore < nodeToTest.Weight {
+				if distanceToStart < nodeToTest.Weight {
 					predecessor[nodeToTest] = currentNode
-					nodeToTest.Weight = tentativeGScore
+					nodeToTest.Weight = distanceToStart
 					nodeToTest.Heuristic = HeuristicsDistance(float64(move.XCoordinate), float64(move.YCoordinate), float64(finishX), float64(finishY))
 
 					if !nodeInQueue(nodeToTest, priorityQueue) {
+						//The node will be added to the priority queue, with the both heuristics
 						heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight + nodeToTest.Heuristic})
-					} else {
-						priorityQueue.update(&PriorityNode{node: nodeToTest}, nodeToTest, nodeToTest.Weight+nodeToTest.Heuristic)
 					}
 				}
 			}
@@ -96,6 +98,7 @@ func HeuristicsDistance(x1 float64, y1 float64, x2 float64, y2 float64) float64 
 
 }
 
+// This function, given an array of mazeSquares, returns an array of their positions
 func JustPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
 	var posArr []mazegrid.Position
 
@@ -106,7 +109,7 @@ func JustPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
 	return posArr
 }
 
-// nodeInQueue checks if a node is in the priority queue.
+// This function checks if a node is in the given priority queue.
 func nodeInQueue(node *mazegrid.MazeSquare, pq PriorityQueue) bool {
 	for _, pn := range pq {
 		if pn.node == node {
@@ -115,14 +118,3 @@ func nodeInQueue(node *mazegrid.MazeSquare, pq PriorityQueue) bool {
 	}
 	return false
 }
-
-// func sliceContains(arrOfSquares []mazegrid.MazeSquare, itemToFind mazegrid.MazeSquare) bool {
-
-// 	for i := 0; i < len(arrOfSquares); i++ {
-// 		if arrOfSquares[i] == itemToFind {
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-// }
