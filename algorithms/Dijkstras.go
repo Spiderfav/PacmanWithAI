@@ -19,10 +19,8 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 	priorityQueue := make(PriorityQueue, 0)
 	heap.Init(&priorityQueue)
 
-	var pathTaken []mazegrid.MazeSquare
-
 	// Store each node's predecessor for path reconstruction
-	predecessor := make(map[mazegrid.MazeSquare]*mazegrid.MazeSquare)
+	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
 	startNode := &gameGrid[(startY/squareSize)-1][(startX/squareSize)-1]
 	startNode.Weight = 0.0
@@ -52,7 +50,7 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 				nodeToTest.Weight = currentNode.Weight + 1
 				nodeToTest.Visited = true
 				heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight})
-				predecessor[*nodeToTest] = currentNode
+				predecessor[nodeToTest] = currentNode
 
 			}
 
@@ -62,15 +60,8 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 
 	}
 
-	// Start from the end node and work backwards to the start and create the path taken
-	for current := endNode; current != nil; current = predecessor[*current] {
-		pathTaken = append(pathTaken, *current)
-
-		// Break the loop when the start node is reached
-		if current == startNode {
-			break
-		}
-	}
+	// Reconstruct path
+	pathTaken := PathReconstructor(startNode, endNode, predecessor)
 
 	elapsed := time.Since(start)
 	fmt.Printf("Dijkstra's took %s", elapsed)
@@ -79,5 +70,5 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 	fmt.Println(JustPositions(pathTaken))
 
 	// Returns the path that the algorithm took to get from the start to the finish
-	return ReversePath(pathTaken)
+	return pathTaken
 }

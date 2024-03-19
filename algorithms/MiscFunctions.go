@@ -30,18 +30,10 @@ func MarkUnvisited(gameGrid [][]mazegrid.MazeSquare, markInfinity bool) {
 		for x := 0; x < size; x++ {
 
 			gameGrid[y][x].Visited = false
+			gameGrid[y][x].Heuristic = 0.0
+			gameGrid[y][x].Weight = 0.0
 
-			if !markInfinity {
-				// If the square contains an object, we need to add a weight to tell the ghosts to try not to traverse through them
-				if gameGrid[y][x].HasPellot || gameGrid[y][x].HasSuperPellot {
-					gameGrid[y][x].Weight = 10
-
-				} else {
-					gameGrid[y][x].Weight = 0
-
-				}
-
-			} else {
+			if markInfinity {
 				gameGrid[y][x].Weight = math.Inf(1)
 			}
 
@@ -64,5 +56,23 @@ func AddWeights(gameGrid [][]mazegrid.MazeSquare) {
 		gameGrid[yValue][xValue].HasPellot = false
 		gameGrid[yValue][xValue].HasSuperPellot = true
 	}
+
+}
+
+// This function, given a start node, an end node and a dictionary of predecessors, calculates the path taken from start to end
+func PathReconstructor(startNode *mazegrid.MazeSquare, endNode *mazegrid.MazeSquare, predecessor map[*mazegrid.MazeSquare]*mazegrid.MazeSquare) []mazegrid.MazeSquare {
+	var pathTaken []mazegrid.MazeSquare
+
+	// Start from the end node and work backwards to the start and create the path taken
+	for current := endNode; current != nil; current = predecessor[current] {
+		pathTaken = append(pathTaken, *current)
+
+		// Break the loop when the start node is reached
+		if current == startNode {
+			break
+		}
+	}
+
+	return pathTaken
 
 }

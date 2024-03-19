@@ -18,8 +18,6 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	// Initialize the FIFO queue
 	var queue []mazegrid.MazeSquare
 
-	var pathTaken []mazegrid.MazeSquare
-
 	endNode := &gameGridDFS[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
 	// Start from the starting node
@@ -28,7 +26,7 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	queue = append(queue, *startNode)
 
 	// Store each node's predecessor for path reconstruction
-	predecessor := make(map[mazegrid.MazeSquare]*mazegrid.MazeSquare)
+	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
 	for len(queue) > 0 {
 
@@ -54,21 +52,14 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 
 				queue = append(queue, *nodeToTest)
 
-				predecessor[*nodeToTest] = &currentNode
+				predecessor[nodeToTest] = &currentNode
 			}
 		}
 
 	}
 
-	// Start from the end node and work backwards to the start and create the path taken
-	for current := endNode; current != nil; current = predecessor[*current] {
-		pathTaken = append(pathTaken, *current)
-
-		// Break the loop when the start node is reached
-		if *current == *startNode {
-			break
-		}
-	}
+	// Reconstruct path
+	pathTaken := PathReconstructor(startNode, endNode, predecessor)
 
 	elapsed := time.Since(start)
 	fmt.Printf("BFS took %s", elapsed)
