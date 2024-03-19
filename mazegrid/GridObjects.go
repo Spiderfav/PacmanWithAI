@@ -31,7 +31,7 @@ type MazeSquare struct {
 	Walls          Direction
 	HasWalls       HasDirection
 	Visited        bool
-	Weight         int
+	Weight         float64
 	HasPellot      bool
 	HasSuperPellot bool
 }

@@ -13,7 +13,7 @@ import (
 // The maze must be built with type mazegrid.Mazesquare
 func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
 	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS)
+	MarkUnvisited(gameGridDFS, false)
 
 	start := time.Now() // This is used to time how long the function took to execute
 
@@ -26,8 +26,8 @@ func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX 
 
 	var bestPath []mazegrid.MazeSquare // Stores the best path found
 
-	prevWeight := 0           // Stores the previous Node's weight
-	var nodePrevWeights []int // Stores the nodes weight while traversing a path
+	prevWeight := 0.0             // Stores the previous Node's weight
+	var nodePrevWeights []float64 // Stores the nodes weight while traversing a path
 
 	var splitNodes []mazegrid.MazeSquare // Stores the choice to take next when backtracking
 

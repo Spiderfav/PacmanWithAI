@@ -11,7 +11,7 @@ import (
 // The maze must be built with type mazegrid.Mazesquare
 func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
 	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS)
+	MarkUnvisited(gameGridDFS, false)
 
 	start := time.Now() // This is used to time how long the function took to execute
 
@@ -58,8 +58,6 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 			}
 		}
 
-		// Mark the current node as visited
-		currentNode.Visited = true
 	}
 
 	// Start from the end node and work backwards to the start and create the path taken

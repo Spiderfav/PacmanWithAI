@@ -86,7 +86,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 	var path []mazegrid.MazeSquare
 	switch npc.Algo {
 	case algorithms.DijkstraAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate)))
+		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
 
 	case algorithms.AStarAlgo:
 		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))

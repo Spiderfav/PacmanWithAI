@@ -10,7 +10,7 @@ import (
 // https://pkg.go.dev/container/heap .
 // However, to fit my purposes, as I will use the distance as priority, some functions have changed.
 type PriorityNode struct {
-	node     mazegrid.MazeSquare
+	node     *mazegrid.MazeSquare
 	priority float64
 	index    int
 }
@@ -50,7 +50,7 @@ func (pq *PriorityQueue) Pop() any {
 }
 
 // Update changes the priority and value of an PriorityNode in the queue
-func (pq *PriorityQueue) update(item *PriorityNode, value mazegrid.MazeSquare, priority float64) {
+func (pq *PriorityQueue) update(item *PriorityNode, value *mazegrid.MazeSquare, priority float64) {
 	item.node = value
 	item.priority = priority
 	heap.Fix(pq, item.index)

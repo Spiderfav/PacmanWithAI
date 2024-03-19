@@ -8,11 +8,11 @@ func CreateBlankSquare(squareSize int) MazeSquare {
 
 // Takes 2 parameters: The Game grid, position
 // This function, given the grid and a position, will return the MazeSquare from the game grid of the given position
-func PosToNode(x [][]MazeSquare, p Position, squareSize int) *MazeSquare {
+func PosToNode(gameGrid [][]MazeSquare, p Position, squareSize int) *MazeSquare {
 	yCoord := int(p.YCoordinate/float32(squareSize)) - 1
 	xCoord := int(p.XCoordinate/float32(squareSize)) - 1
 
-	return &x[yCoord][xCoord]
+	return &gameGrid[yCoord][xCoord]
 }
 
 // This function creates a grid of squareSize*squareSize MazeSquares, each with pointers to its direct neighbours

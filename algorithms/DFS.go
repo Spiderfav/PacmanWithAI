@@ -10,7 +10,7 @@ import (
 // DFS aims to find a path to any given point by traversing through all nodes in the graph until the node is reached
 func DFSearch(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
 	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS)
+	MarkUnvisited(gameGridDFS, false)
 
 	start := time.Now()
 
@@ -20,7 +20,7 @@ func DFSearch(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finis
 	endNode := &gameGridDFS[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
 	// Start from the starting node
-	startNode := &gameGridDFS[(startY/20)-1][(startX/20)-1]
+	startNode := &gameGridDFS[(startY/squareSize)-1][(startX/squareSize)-1]
 	startNode.Visited = true
 	stack = append(stack, *startNode)
 

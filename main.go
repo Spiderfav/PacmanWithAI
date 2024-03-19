@@ -142,7 +142,7 @@ func NewGame() *Game {
 
 	// Creating the maze by aplying DFS twice
 	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil, squareSize)
-	algorithms.MarkUnvisited(oldGameGridDFS)
+	algorithms.MarkUnvisited(oldGameGridDFS, false)
 	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS, squareSize)
 	maze := mazegrid.Maze{Size: mazeSizeOriginal, Grid: gameGridDFS, Pellots: mazegrid.GetPellotsPos(gameGridDFS)}
 
@@ -152,7 +152,7 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.DijkstraAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
@@ -195,7 +195,7 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 	if !loadedMaze {
 		// Create new maze with the given size
 		oldGameGridDFS := algorithms.DFS(newSize, nil, squareSize)
-		algorithms.MarkUnvisited(oldGameGridDFS)
+		algorithms.MarkUnvisited(oldGameGridDFS, false)
 		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS, squareSize)
 		// Set new game size to be the given size
 		g.Maze.Size = newSize
