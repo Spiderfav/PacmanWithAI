@@ -2,7 +2,7 @@ package mazegrid
 
 // This functions creates and returns an empty MazeSquare object
 func CreateBlankSquare(squareSize int) MazeSquare {
-	return MazeSquare{Position{float32(squareSize), float32(squareSize)}, Direction{}, HasDirection{true, true, true, true}, false, 0, true, false}
+	return MazeSquare{Position{float32(squareSize), float32(squareSize)}, Direction{}, HasDirection{true, true, true, true}, false, 0, 0, true, false}
 
 }
 
@@ -43,7 +43,7 @@ func CreateGrid(size int, squareSize int) [][]MazeSquare {
 			nodeHasWalls := HasDirection{true, true, true, true}
 
 			// Using i + 1 and j + 1 as this is calculating the square size and as it starts by 0, we need to add one to the normal counter
-			var square = MazeSquare{positionOfNode, nodeWalls, nodeHasWalls, false, 0, true, false}
+			var square = MazeSquare{positionOfNode, nodeWalls, nodeHasWalls, false, 0, 0, true, false}
 
 			// Setting the game grid values to the MazeSquare object
 			gameGrid[int(y)][int(x)] = square

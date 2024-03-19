@@ -46,9 +46,11 @@ func (g *Game) Update() error {
 	if menuOrGame == 1 {
 		// Checking if the player is moving and if so, moving the player
 		if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+
 			g.Player.Move(characters.Up, g.Maze.Grid, squareSize)
 
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyS) || inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+
 			g.Player.Move(characters.Down, g.Maze.Grid, squareSize)
 
 		} else if inpututil.IsKeyJustPressed(ebiten.KeyA) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
@@ -152,7 +154,7 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.DijkstraAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.AStarAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button

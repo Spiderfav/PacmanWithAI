@@ -86,12 +86,10 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 	var path []mazegrid.MazeSquare
 	switch npc.Algo {
 	case algorithms.DijkstraAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.Dijkstras(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
+		path = algorithms.Dijkstras(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize)
 
 	case algorithms.AStarAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
-
-		//path = algorithms.AStar(grid, int(npc.Attributes.Position.YCoordinate), int(npc.Attributes.Position.XCoordinate), int(enemyPos.YCoordinate), int(enemyPos.XCoordinate), 20)
+		path = algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize)
 
 	case algorithms.ReflexAlgo:
 		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize))

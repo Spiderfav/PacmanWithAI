@@ -1,9 +1,9 @@
 package algorithms
 
 import (
+	"container/heap"
 	"fmt"
 	"math"
-	"sort"
 	"time"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
@@ -11,137 +11,70 @@ import (
 
 // AStar uses the A* Algorithm to find the shortest path from one node to another in a given maze
 // The maze must be built with type mazegrid.Mazesquare
-func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
-	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS, false)
+func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, squareSize int) []mazegrid.MazeSquare {
+	MarkUnvisited(gameGrid, true) // Marking every node unvisited
 
-	start := time.Now() // This is used to time how long the function took to execute
+	start := time.Now()
 
-	// Storing the original start values
-	originalStartX := startX
-	originalStartY := startY
+	priorityQueue := make(PriorityQueue, 0)
+	heap.Init(&priorityQueue)
 
-	startingNode := &gameGridDFS[int(originalStartY/squareSize)-1][int(originalStartX/squareSize)-1]
-	endNode := &gameGridDFS[int(finishY/squareSize)-1][int(finishX/squareSize)-1]
+	startNode := &gameGrid[(startY/squareSize)-1][(startX/squareSize)-1]
 
-	var bestPath []mazegrid.MazeSquare // Stores the best path found
+	endNode := &gameGrid[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
-	prevWeight := 0.0             // Stores the previous Node's weight
-	var nodePrevWeights []float64 // Stores the nodes weight while traversing a path
+	// Initialize start node
+	startNode.Weight = 0
+	startNode.Heuristic = HeuristicsDistance(float64(startX), float64(startY), float64(finishX), float64(finishY))
 
-	var splitNodes []mazegrid.MazeSquare // Stores the choice to take next when backtracking
+	heap.Push(&priorityQueue, &PriorityNode{node: startNode, priority: startNode.Weight + startNode.Heuristic})
 
-	// While the node we want the distance to has not been visited
-	for !endNode.Visited {
-		fmt.Print("\n")
-		currentNode := &gameGridDFS[int(startY/squareSize)-1][int(startX/squareSize)-1]
+	// Store each node's predecessor for path reconstruction
+	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
-		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
+	for len(priorityQueue) > 0 {
+		currentNode := heap.Pop(&priorityQueue).(*PriorityNode).node
 
-		// Assigning a new weight to the current node only if it is not the starting point
-		if currentNode != startingNode {
-			prevWeight += 1
-			currentNode.Weight = prevWeight + currentNode.Weight
-
-		} else {
-			// Assigning the first node a weight of 0
-			currentNode.Weight = 0
+		if currentNode == endNode {
+			break // Reached the end node
 		}
 
-		// Making sure if for some reason, a node is added that has been visited isn't checked
-		if !currentNode.Visited {
-			// Mark the current node as visited and add the node to the array of nodes for the path taken
-			currentNode.Visited = true
-			bestPath = append(bestPath, *currentNode)
+		possibleMoves := getPossibleMoves(gameGrid, currentNode.NodePosition, squareSize)
 
-			// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
-			// It calculates the distance from the neighbour nodes to the end node
-			if !currentNode.HasWalls.HasDown {
-				currentNodeDown := &gameGridDFS[(int(currentNode.Walls.Down.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Down.XCoordinate)/squareSize)-1]
+		for _, move := range possibleMoves {
+			nodeToTest := &gameGrid[(int(move.YCoordinate)/squareSize)-1][(int(move.XCoordinate)/squareSize)-1]
 
-				if !currentNodeDown.Visited {
-					tempminDistance := HeuristicsDistance(float64(currentNodeDown.NodePosition.XCoordinate), float64(currentNodeDown.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-					choosingNodes[*currentNodeDown] = tempminDistance + float64(currentNodeDown.Weight)
+			if !nodeToTest.Visited {
+				currentNode.Visited = true
+
+				tentativeGScore := currentNode.Weight + 1
+
+				if tentativeGScore < nodeToTest.Weight {
+					predecessor[nodeToTest] = currentNode
+					nodeToTest.Weight = tentativeGScore
+					nodeToTest.Heuristic = HeuristicsDistance(float64(move.XCoordinate), float64(move.YCoordinate), float64(finishX), float64(finishY))
+
+					if !nodeInQueue(nodeToTest, priorityQueue) {
+						heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight + nodeToTest.Heuristic})
+					} else {
+						priorityQueue.update(&PriorityNode{node: nodeToTest}, nodeToTest, nodeToTest.Weight+nodeToTest.Heuristic)
+					}
 				}
-
 			}
-
-			if !currentNode.HasWalls.HasUp {
-				currentNodeUp := &gameGridDFS[(int(currentNode.Walls.Up.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Up.XCoordinate)/squareSize)-1]
-
-				if !currentNodeUp.Visited {
-					tempminDistance := HeuristicsDistance(float64(currentNodeUp.NodePosition.XCoordinate), float64(currentNodeUp.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-					choosingNodes[*currentNodeUp] = tempminDistance + float64(currentNodeUp.Weight)
-				}
-
-			}
-
-			if !currentNode.HasWalls.HasLeft {
-
-				currentNodeLeft := &gameGridDFS[(int(currentNode.Walls.Left.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Left.XCoordinate)/squareSize)-1]
-
-				if !currentNodeLeft.Visited {
-					tempminDistance := HeuristicsDistance(float64(currentNodeLeft.NodePosition.XCoordinate), float64(currentNodeLeft.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-					choosingNodes[*currentNodeLeft] = tempminDistance + float64(currentNodeLeft.Weight)
-				}
-
-			}
-
-			if !currentNode.HasWalls.HasRight {
-
-				currentNodeRight := &gameGridDFS[(int(currentNode.Walls.Right.YCoordinate)/squareSize)-1][(int(currentNode.Walls.Right.XCoordinate)/squareSize)-1]
-
-				if !currentNodeRight.Visited {
-					tempminDistance := HeuristicsDistance(float64(currentNodeRight.NodePosition.XCoordinate), float64(currentNodeRight.NodePosition.YCoordinate), float64(finishX), float64(finishY))
-					choosingNodes[*currentNodeRight] = tempminDistance + float64(currentNodeRight.Weight)
-				}
-
-			}
-
-			keys := make([]mazegrid.MazeSquare, 0, len(choosingNodes)) // Extracting the keys from the node choices
-
-			// The neighbouring nodes are added to a map based on the keys available
-			for key := range choosingNodes {
-				keys = append(keys, key)
-			}
-
-			// This sorts the ( [Node] = Distance ) from highest distance to lowest distance
-			sort.SliceStable(keys, func(i, j int) bool {
-				return choosingNodes[keys[i]] > choosingNodes[keys[j]]
-			})
-
-			// This is adding the sorted nodes back to the array to check for all paths possible
-			// This way, the shortest distance nodes are checked first and then the highest distance checked later
-			for i := 0; i < len(keys); i++ {
-				k := keys[i]
-				nodeToAdd := &gameGridDFS[int(k.NodePosition.YCoordinate)/squareSize-1][int(k.NodePosition.XCoordinate)/squareSize-1]
-				splitNodes = append(splitNodes, *nodeToAdd)
-				nodePrevWeights = append(nodePrevWeights, prevWeight)
-			}
-		}
-
-		// If no path was possible from the current node, try a previous found neighbour of a node and set that as the new start
-		if len(splitNodes) != 0 {
-			nodePopped := splitNodes[len(splitNodes)-1]
-			splitNodes = splitNodes[:len(splitNodes)-1]
-
-			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
-			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
-
-			startX = int(nodePopped.NodePosition.XCoordinate)
-			startY = int(nodePopped.NodePosition.YCoordinate)
 
 		}
 
 	}
+
+	// Reconstruct path
+	pathTaken := PathReconstructor(startNode, endNode, predecessor)
 
 	elapsed := time.Since(start)
 	fmt.Printf("A* took %s", elapsed)
 	fmt.Println("\nA* Concluded")
 	fmt.Println(" ")
 
-	// Returns the path that the algorithm took to get from the start to the finish
-	return bestPath
+	return pathTaken
 }
 
 // This function, given the respective x and y values of two nodes, calculates the euclidean distance added to the Manhattan Distance between two points
@@ -171,6 +104,16 @@ func JustPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
 	}
 
 	return posArr
+}
+
+// nodeInQueue checks if a node is in the priority queue.
+func nodeInQueue(node *mazegrid.MazeSquare, pq PriorityQueue) bool {
+	for _, pn := range pq {
+		if pn.node == node {
+			return true
+		}
+	}
+	return false
 }
 
 // func sliceContains(arrOfSquares []mazegrid.MazeSquare, itemToFind mazegrid.MazeSquare) bool {
