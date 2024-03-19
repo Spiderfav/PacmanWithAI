@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/kbinani/screenshot"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/characters"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
@@ -16,11 +17,14 @@ import (
 	"golang.org/x/image/font/basicfont"
 )
 
+var (
+	screenWidth  = screenshot.GetDisplayBounds(0).Dx()
+	screenHeight = screenshot.GetDisplayBounds(0).Dy()
+)
+
 const (
-	screenWidth  = 1920
-	screenHeight = 1080
-	squareSize   = 30
-	halfSquare   = squareSize / 2
+	squareSize = 30
+	halfSquare = squareSize / 2
 )
 
 type Game struct {
