@@ -2,6 +2,7 @@ package algorithms
 
 import "gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 
+// This function, given a array of positions and a game grid, turns the array of positions to an array of maze squares
 func PosToNode(gameGrid [][]mazegrid.MazeSquare, arrOfPos []mazegrid.Position) []mazegrid.MazeSquare {
 	var posToNodeArr []mazegrid.MazeSquare
 

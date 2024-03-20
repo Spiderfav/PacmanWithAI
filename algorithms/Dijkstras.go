@@ -1,6 +1,7 @@
 package algorithms
 
 import (
+	"container/heap"
 	"fmt"
 	"time"
 
@@ -9,82 +10,64 @@ import (
 
 // Dijkstras uses Dijkstras Algorithm to find the shortest path from one node to another in a given maze
 // The maze must be built with type mazegrid.Mazesquare
-func Dijkstras(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int) []mazegrid.MazeSquare {
+func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int, squareSize int) []mazegrid.MazeSquare {
+	// Marking every node unvisited
+	MarkUnvisited(gameGrid, true)
+
 	start := time.Now() // This is used to time how long the function took to execute
 
-	// Storing the original start values
-	originalStartX := startX
-	originalStartY := startY
+	priorityQueue := make(PriorityQueue, 0)
+	heap.Init(&priorityQueue)
 
-	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS)
+	// Store each node's predecessor for path reconstruction
+	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
-	var pathTaken []mazegrid.MazeSquare // Stores the best path found
+	startNode := &gameGrid[(startY/squareSize)-1][(startX/squareSize)-1]
+	startNode.Weight = 0.0
 
-	prevWeight := 0           // Stores the previous Node's weight
-	var nodePrevWeights []int // Stores the nodes weight while traversing a path
+	endNode := &gameGrid[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
-	var splitNodes []mazegrid.MazeSquare
+	heap.Push(&priorityQueue, &PriorityNode{node: startNode, priority: startNode.Weight})
 
-	// Assigning the first node a weight of 0
-	gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = 0
+	for len(priorityQueue) > 0 {
 
-	// While the node we want the distance to has not been visited
-	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
+		currentNode := heap.Pop(&priorityQueue).(*PriorityNode).node //Asserting the type from the pop
 
-		// Assigning a new weight to the current node only if it is not the starting point
-		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[(originalStartX/20)-1][(originalStartY/20)-1] {
-			prevWeight += 1
-			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight + gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight
+		// Check if this is the end node
+		if currentNode == endNode {
+			break
 		}
 
-		// Mark the current node as visited and add the node to the array of nodes for the path taken
-		gameGridDFS[int(startX/20)-1][int(startY/20)-1].Visited = true
-		pathTaken = append(pathTaken, gameGridDFS[int(startX/20)-1][int(startY/20)-1])
+		// Get all the possible moves from that given square
+		possibleMoves := getPossibleMoves(gameGrid, currentNode.NodePosition, squareSize)
 
-		// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
-		// It also stores the current weight at the given node for backtracking (that way the weight is correct)
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
-			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1+1][int(startY/20)-1])
-			nodePrevWeights = append(nodePrevWeights, prevWeight)
-		}
+		// From those given moves, check which ones have already been visited and add them to the FIFO queue
+		for i := 0; i < len(possibleMoves); i++ {
+			nodeToTest := &gameGrid[(int(possibleMoves[i].YCoordinate)/squareSize)-1][(int(possibleMoves[i].XCoordinate)/squareSize - 1)]
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
-			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1-1][int(startY/20)-1])
-			nodePrevWeights = append(nodePrevWeights, prevWeight)
+			if !nodeToTest.Visited || nodeToTest.Weight > currentNode.Weight+1 {
+
+				nodeToTest.Weight = currentNode.Weight + 1
+				nodeToTest.Visited = true
+				heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight})
+				predecessor[nodeToTest] = currentNode
+
+			}
 
 		}
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
-			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1-1])
-			nodePrevWeights = append(nodePrevWeights, prevWeight)
-
-		}
-
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
-			splitNodes = append(splitNodes, gameGridDFS[int(startX/20)-1][int(startY/20)-1+1])
-			nodePrevWeights = append(nodePrevWeights, prevWeight)
-
-		}
-
-		// If no path was possible from the current node, try a previous found neighbour of a node and set that as the new start
-		if len(splitNodes) != 0 {
-			nodePopped := splitNodes[len(splitNodes)-1]
-			splitNodes = splitNodes[:len(splitNodes)-1]
-
-			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
-			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
-
-			startY = int(nodePopped.NodePosition.XCoordinate)
-			startX = int(nodePopped.NodePosition.YCoordinate)
-		}
+		currentNode.Visited = true
 
 	}
+
+	// Reconstruct path
+	pathTaken := PathReconstructor(startNode, endNode, predecessor)
 
 	elapsed := time.Since(start)
 	fmt.Printf("Dijkstra's took %s", elapsed)
 	fmt.Println("\nDijkstra Concluded")
 	fmt.Println(" ")
+	fmt.Println(JustPositions(pathTaken))
 
 	// Returns the path that the algorithm took to get from the start to the finish
 	return pathTaken

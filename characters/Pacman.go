@@ -9,6 +9,7 @@ import (
 
 type DirectionOfPlayer = int
 
+// These are the directions available for a player to take
 const (
 	Up    DirectionOfPlayer = 0
 	Down  DirectionOfPlayer = 1
@@ -16,6 +17,7 @@ const (
 	Right DirectionOfPlayer = 3
 )
 
+// This player object is an extension of character
 type Player struct {
 	Attributes Character
 	Points     int
@@ -62,14 +64,22 @@ func (p *Player) GetPoints() int {
 	return p.Points
 }
 
-func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare) {
+// This function, given the direction that the player is moving, will move the player one square in that direction
+func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize int) {
 
-	array2Pos := int((p.Attributes.Position.XCoordinate / 20) - 1)
-	array1Pos := int((p.Attributes.Position.YCoordinate / 20) - 1)
+	array2Pos := int((p.Attributes.Position.XCoordinate / float32(squareSize)) - 1)
+	array1Pos := int((p.Attributes.Position.YCoordinate / float32(squareSize)) - 1)
 
-	if m[array1Pos][array2Pos].ContainsObject {
+	// If the square contains a pellot, add points to the player
+	// Delete the pellot from the square once collected
+	if m[array1Pos][array2Pos].HasPellot {
 		p.Points += 1
-		m[array1Pos][array2Pos].ContainsObject = false
+		m[array1Pos][array2Pos].HasPellot = false
+	}
+
+	if m[array1Pos][array2Pos].HasSuperPellot {
+		p.Points += 5
+		m[array1Pos][array2Pos].HasSuperPellot = false
 	}
 
 	switch d {
@@ -95,7 +105,3 @@ func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare) {
 	}
 
 }
-
-// func (p *Player) setSprite() image.Image {
-// 	return p.Attributes.setSprite()
-// }

@@ -1,9 +1,9 @@
 package algorithms
 
 import (
+	"container/heap"
 	"fmt"
 	"math"
-	"sort"
 	"time"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
@@ -11,108 +11,72 @@ import (
 
 // AStar uses the A* Algorithm to find the shortest path from one node to another in a given maze
 // The maze must be built with type mazegrid.Mazesquare
-func AStar(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX int, finishY int) []mazegrid.MazeSquare {
-	start := time.Now() // This is used to time how long the function took to execute
+func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, squareSize int) []mazegrid.MazeSquare {
+	MarkUnvisited(gameGrid, true) // Marking every node unvisited
 
-	// Storing the original start values
-	originalStartX := startX
-	originalStartY := startY
+	start := time.Now()
 
-	// Marking every node unvisited
-	MarkUnvisited(gameGridDFS)
+	// Create a priority queue for choosing next nodes
+	priorityQueue := make(PriorityQueue, 0)
+	heap.Init(&priorityQueue)
 
-	var bestPath []mazegrid.MazeSquare // Stores the best path found
+	startNode := &gameGrid[(startY/squareSize)-1][(startX/squareSize)-1]
 
-	prevWeight := 0           // Stores the previous Node's weight
-	var nodePrevWeights []int // Stores the nodes weight while traversing a path
+	endNode := &gameGrid[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
-	var splitNodes []mazegrid.MazeSquare
+	// Initialize start node
+	startNode.Weight = 0
+	startNode.Heuristic = HeuristicsDistance(float64(startX), float64(startY), float64(finishX), float64(finishY))
 
-	// Assigning the first node a weight of 0
-	gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = 0
+	heap.Push(&priorityQueue, &PriorityNode{node: startNode, priority: startNode.Weight + startNode.Heuristic})
 
-	// While the node we want the distance to has not been visited
-	for !gameGridDFS[int(finishX/20)-1][int(finishY/20)-1].Visited {
+	// Store each node's predecessor for path reconstruction
+	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
-		choosingNodes := make(map[mazegrid.MazeSquare]float64) // Stores all the possible choices that can be made from the current node
+	// While the priority queue is not empty
+	for len(priorityQueue) > 0 {
+		currentNode := heap.Pop(&priorityQueue).(*PriorityNode).node
 
-		// Assigning a new weight to the current node only if it is not the starting point
-		if gameGridDFS[int(startX/20)-1][int(startY/20)-1] != gameGridDFS[int(originalStartX/20)-1][int(originalStartY/20)-1] {
-			prevWeight += 1
-			gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight = prevWeight + gameGridDFS[int(startX/20)-1][int(startY/20)-1].Weight
-
+		if currentNode == endNode {
+			break // Reached the end node
 		}
 
-		// Mark the current node as visited and add the node to the array of nodes for the path taken
-		gameGridDFS[int(startX/20)-1][int(startY/20)-1].Visited = true
-		bestPath = append(bestPath, gameGridDFS[int(startX/20)-1][int(startY/20)-1])
+		possibleMoves := getPossibleMoves(gameGrid, currentNode.NodePosition, squareSize)
 
-		// This if block checks if the current node has any neighbours and if so, adds them all sequentially to an array
-		// It calculates the distance from the neighbour nodes to the end node
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasDown && !gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Visited {
-			tempminDistance := HeuristicsDistance(float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].NodePosition.XCoordinate), float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].NodePosition.YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1+1][int(startY/20)-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1+1][int(startY/20)-1].Weight)
+		for _, move := range possibleMoves {
+			nodeToTest := &gameGrid[(int(move.YCoordinate)/squareSize)-1][(int(move.XCoordinate)/squareSize)-1]
 
-		}
+			if !nodeToTest.Visited {
+				currentNode.Visited = true
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasUp && !gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Visited {
-			tempminDistance := HeuristicsDistance(float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].NodePosition.XCoordinate), float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].NodePosition.YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1-1][int(startY/20)-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1-1][int(startY/20)-1].Weight)
+				// Update the current distance to the start
+				distanceToStart := currentNode.Weight + 1
 
-		}
+				if distanceToStart < nodeToTest.Weight {
+					predecessor[nodeToTest] = currentNode
+					nodeToTest.Weight = distanceToStart
+					nodeToTest.Heuristic = HeuristicsDistance(float64(move.XCoordinate), float64(move.YCoordinate), float64(finishX), float64(finishY))
 
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasLeft && !gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Visited {
-			tempminDistance := HeuristicsDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].NodePosition.XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].NodePosition.YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1-1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1-1].Weight)
+					if !nodeInQueue(nodeToTest, priorityQueue) {
+						//The node will be added to the priority queue, with the both heuristics
+						heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight + nodeToTest.Heuristic})
+					}
+				}
+			}
 
-		}
-
-		if !gameGridDFS[int(startX/20)-1][int(startY/20)-1].HasWalls.HasRight && !gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Visited {
-			tempminDistance := HeuristicsDistance(float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].NodePosition.XCoordinate), float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].NodePosition.YCoordinate), float64(finishX), float64(finishY))
-			choosingNodes[gameGridDFS[int(startX/20)-1][int(startY/20)-1+1]] = tempminDistance + float64(gameGridDFS[int(startX/20)-1][int(startY/20)-1+1].Weight)
-
-		}
-
-		keys := make([]mazegrid.MazeSquare, 0, len(choosingNodes)) // Extracting the keys from the node choices
-
-		// The neighbouring nodes are added to a map based on the keys available
-		for key := range choosingNodes {
-			keys = append(keys, key)
-		}
-
-		// This sorts the ( [Node] = Distance ) from highest distance to lowest distance
-		sort.SliceStable(keys, func(i, j int) bool {
-			return choosingNodes[keys[i]] > choosingNodes[keys[j]]
-		})
-
-		// This is adding the sorted nodes back to the array to check for all paths possible
-		// This way, the shortest distance nodes are checked first and then the highest distance checked later
-		for i := 0; i < len(keys); i++ {
-			k := keys[i]
-			splitNodes = append(splitNodes, gameGridDFS[int(k.NodePosition.YCoordinate/20)-1][int(k.NodePosition.XCoordinate/20)-1])
-			nodePrevWeights = append(nodePrevWeights, prevWeight)
-		}
-
-		// If no path was possible from the current node, try a previous found neighbour of a node and set that as the new start
-		if len(splitNodes) != 0 {
-			nodePopped := splitNodes[len(splitNodes)-1]
-			splitNodes = splitNodes[:len(splitNodes)-1]
-
-			prevWeight = nodePrevWeights[len(nodePrevWeights)-1]
-			nodePrevWeights = nodePrevWeights[:len(nodePrevWeights)-1]
-
-			startY = int(nodePopped.NodePosition.XCoordinate)
-			startX = int(nodePopped.NodePosition.YCoordinate)
 		}
 
 	}
+
+	// Reconstruct path
+	pathTaken := PathReconstructor(startNode, endNode, predecessor)
 
 	elapsed := time.Since(start)
 	fmt.Printf("A* took %s", elapsed)
 	fmt.Println("\nA* Concluded")
 	fmt.Println(" ")
-	// Returns the path that the algorithm took to get from the start to the finish
-	return bestPath
+
+	return pathTaken
 }
 
 // This function, given the respective x and y values of two nodes, calculates the euclidean distance added to the Manhattan Distance between two points
@@ -132,4 +96,25 @@ func HeuristicsDistance(x1 float64, y1 float64, x2 float64, y2 float64) float64 
 
 	return math.Sqrt(fakeDotProduct) + manhatten
 
+}
+
+// This function, given an array of mazeSquares, returns an array of their positions
+func JustPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
+	var posArr []mazegrid.Position
+
+	for i := 0; i < len(path); i++ {
+		posArr = append(posArr, path[i].NodePosition)
+	}
+
+	return posArr
+}
+
+// This function checks if a node is in the given priority queue.
+func nodeInQueue(node *mazegrid.MazeSquare, pq PriorityQueue) bool {
+	for _, pn := range pq {
+		if pn.node == node {
+			return true
+		}
+	}
+	return false
 }
