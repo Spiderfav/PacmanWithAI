@@ -6,6 +6,7 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
+// These are the parameters to be used to prune branches in perfect play
 type PruningParams struct {
 	Alpha float64
 	Beta  float64

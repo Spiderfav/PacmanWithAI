@@ -17,16 +17,19 @@ import (
 	"golang.org/x/image/font/basicfont"
 )
 
+// These variables set the game size to the screen the user is running it on
 var (
 	screenWidth  = screenshot.GetDisplayBounds(0).Dx()
 	screenHeight = screenshot.GetDisplayBounds(0).Dy()
 )
 
+// Sets the size the maze will be rendered
 const (
 	squareSize = 30
 	halfSquare = squareSize / 2
 )
 
+// Defines what a game object should keep track of
 type Game struct {
 	Maze        mazegrid.Maze
 	buttonsMenu []*input.Button
@@ -38,11 +41,13 @@ type Game struct {
 	Player      characters.Player
 }
 
+// The original grid size
 const mazeSizeOriginal = 8
 
+// Checks if the game is menu or playing the game
 var menuOrGame = 0
 
-// This function updated the game logic 60 times a second
+// This function updates the game logic 60 times a second
 func (g *Game) Update() error {
 	g.Ghosts.UpdateCount()
 	g.Maze.Pellots = mazegrid.GetPellotsPos(g.Maze.Grid)
@@ -65,6 +70,7 @@ func (g *Game) Update() error {
 
 		}
 
+		// Move the ghosts
 		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
 
 		// Game Over or new game
