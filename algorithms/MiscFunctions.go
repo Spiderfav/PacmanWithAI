@@ -11,12 +11,13 @@ type Algorithm = int
 
 // This enum is used to define the possible algorithms to be used for the ghosts
 const (
-	DijkstraAlgo Algorithm = 0
-	AStarAlgo    Algorithm = 1
-	ReflexAlgo   Algorithm = 2
-	MiniMaxAlgo  Algorithm = 3
-	BFSAlgo      Algorithm = 4
-	DFSAlgo      Algorithm = 5
+	DijkstraAlgo   Algorithm = 0
+	AStarAlgo      Algorithm = 1
+	ReflexAlgo     Algorithm = 2
+	MiniMaxAlgo    Algorithm = 3
+	BFSAlgo        Algorithm = 4
+	DFSAlgo        Algorithm = 5
+	ExpectimaxAlgo Algorithm = 6
 )
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited
