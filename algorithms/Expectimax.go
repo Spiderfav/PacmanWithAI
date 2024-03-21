@@ -7,7 +7,12 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
+// In Params: Game Grid, Moves Pacman will make, Current Pacman points, Moves Ghosts will make, Position of all the pellots in the maze, Max tree depth, If Maximiser or Minimiser.
+// Out Params: Evaluation of Position, Moves Pacman made to given position eval, Moves Ghost made to given position eval.
+// This function will calculate play between two opponents, one will be maximising whereas the other will be randomised, given a maze and the pellots in the maze.
 func Expectimax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool, squareSize int) (int, []mazegrid.Position, []mazegrid.Position) {
+
+	// Pacman is always assumed to be the Maximiser
 
 	if depthToSearch == 0 || pacmanPos[len(pacmanPos)-1] == ghostPos[len(ghostPos)-1] {
 		return evalPos(pacmanPos[len(pacmanPos)-1], pacmanPoints, ghostPos[len(ghostPos)-1], pellots, isPacman), pacmanPos, ghostPos
