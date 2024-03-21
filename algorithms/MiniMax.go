@@ -12,15 +12,17 @@ type PruningParams struct {
 	Beta  float64
 }
 
-// In Params: Game Grid, Pruning Paramaters, Moves Pacman will make, Current Pacman points, Moves Ghosts will make, Position of all the pellots in the maze, Max tree depth, If Maximiser or Minimiser, Whether to use pruning or not
-// Out Params: Evaluation of Position, Moves Pacman made to given position eval, Moves Ghost made to given position eval
-// This functions will calculate best play between two opponents, given a maze and the pellots in the maze. It can allow play to be pruned or not
+// In Params: Game Grid, Pruning Paramaters, Moves Pacman will make, Current Pacman points, Moves Ghosts will make, Position of all the pellots in the maze, Max tree depth, If Maximiser or Minimiser, Whether to use pruning or not.
+// Out Params: Evaluation of Position, Moves Pacman made to given position eval, Moves Ghost made to given position eval.
+// This function will calculate best play between two opponents, given a maze and the pellots in the maze. It can allow play to be pruned or not.
 func MiniMax(gameGrid [][]mazegrid.MazeSquare, params PruningParams, pacmanPos []mazegrid.Position, pacmanPoints int, ghostPos []mazegrid.Position, pellots []mazegrid.Position, depthToSearch int, isPacman bool, usePruning bool, squareSize int) (int, []mazegrid.Position, []mazegrid.Position, PruningParams) {
 
 	// If the depth has reached zero or ghost has caught pacman
 	if depthToSearch == 0 || pacmanPos[len(pacmanPos)-1] == ghostPos[len(ghostPos)-1] {
 		return evalPos(pacmanPos[len(pacmanPos)-1], pacmanPoints, ghostPos[len(ghostPos)-1], pellots, isPacman), pacmanPos, ghostPos, params
 	}
+
+	// Pacman is always assumed to be the Maximiser
 
 	if isPacman {
 		maxEval := math.Inf(-1)

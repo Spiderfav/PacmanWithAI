@@ -103,7 +103,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, true, npc.MazeSquareSize)
 
-		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew))
+		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
 
 	case algorithms.BFSAlgo:
 
@@ -113,6 +113,15 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
 
+	case algorithms.ExpectimaxAlgo:
+
+		enemyPosArr := []mazegrid.Position{enemyPos}
+
+		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
+
+		_, _, ghostPosArrNew := algorithms.Expectimax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, npc.MazeSquareSize)
+
+		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
 	}
 
 	return path
