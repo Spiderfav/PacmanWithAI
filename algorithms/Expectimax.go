@@ -2,6 +2,7 @@ package algorithms
 
 import (
 	"math"
+	"math/rand"
 
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
@@ -40,18 +41,22 @@ func Expectimax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position,
 
 		possibleMoves := getPossibleMoves(gameGrid, ghostPos[len(ghostPos)-1], squareSize)
 
-		for _, element := range possibleMoves {
-			tempGhostPos := make([]mazegrid.Position, len(ghostPos))
-			copy(tempGhostPos, ghostPos)
-			tempGhostPos = append(tempGhostPos, element)
+		randomNodeChosen := rand.Intn(len(possibleMoves) - 1)
 
-			eval, newPacmanPos, newGhostPos := Expectimax(gameGrid, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, squareSize)
+		for i, element := range possibleMoves {
 
-			if float64(eval) < minEval {
+			if i == randomNodeChosen {
+				tempGhostPos := make([]mazegrid.Position, len(ghostPos))
+				copy(tempGhostPos, ghostPos)
+				tempGhostPos = append(tempGhostPos, element)
+
+				eval, newPacmanPos, newGhostPos := Expectimax(gameGrid, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, squareSize)
+
 				minEval = float64(eval)
 				pacmanPos = newPacmanPos
 				bestGhostPos = newGhostPos
 			}
+
 		}
 
 		return int(minEval), pacmanPos, bestGhostPos
