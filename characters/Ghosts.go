@@ -92,7 +92,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		path = algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize)
 
 	case algorithms.ReflexAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize))
+		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize)
 
 	case algorithms.MiniMaxAlgo:
 		enemyPosArr := []mazegrid.Position{enemyPos}
