@@ -32,7 +32,7 @@ func ResetColours(buttons []*Button) {
 	var buttonImage = ebiten.NewImage(100, 30)     // Set the size of the button
 	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with base color
 
-	for i, _ := range buttons {
+	for i := range buttons {
 		buttons[i].Image = buttonImage
 	}
 

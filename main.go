@@ -4,6 +4,7 @@ import (
 	"context"
 	"image/color"
 	"log"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -53,30 +54,17 @@ func (g *Game) Update() error {
 	g.Maze.Pellots = mazegrid.GetPellotsPos(g.Maze.Grid)
 
 	if menuOrGame == 1 {
-		// Checking if the player is moving and if so, moving the player
-		if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
-
-			g.Player.Move(characters.Up, g.Maze.Grid, squareSize)
-
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyS) || inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
-
-			g.Player.Move(characters.Down, g.Maze.Grid, squareSize)
-
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyA) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-			g.Player.Move(characters.Left, g.Maze.Grid, squareSize)
-
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyD) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-			g.Player.Move(characters.Right, g.Maze.Grid, squareSize)
-
-		}
-
-		// Move the ghosts
-		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
-
 		// Game Over or new game
 		if g.Ghosts.GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
 			changeMazeSize(g.Maze.Size, false, g)
 		}
+
+		// Check if player is moving
+		go g.Player.IsPlayerMoving(g.Maze.Grid, squareSize)
+
+		// Move the ghosts
+		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
+
 	}
 
 	// Check if the mouse button is clicked on a given button
@@ -99,6 +87,10 @@ func (g *Game) Update() error {
 				g.Maze.Grid = file.LoadFromFile()
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
+			} else if g.buttonsMenu[2].In(x, y) {
+
+			} else if g.buttonsMenu[3].In(x, y) {
+				os.Exit(0)
 			}
 
 			// If the game buttons are enabled
@@ -115,17 +107,17 @@ func (g *Game) Update() error {
 				return nil
 
 			} else if g.buttonsSize[0].In(x, y) {
-				input.ResetColours(g.buttonsAlgo)
+				input.ResetColours(g.buttonsSize)
 				g.buttonsSize[0].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize(mazeSizeOriginal, false, g)
 
 			} else if g.buttonsSize[1].In(x, y) {
-				input.ResetColours(g.buttonsAlgo)
+				input.ResetColours(g.buttonsSize)
 				g.buttonsSize[1].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize(mazeSizeOriginal*2, false, g)
 
 			} else if g.buttonsSize[2].In(x, y) {
-				input.ResetColours(g.buttonsAlgo)
+				input.ResetColours(g.buttonsSize)
 				g.buttonsSize[2].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
