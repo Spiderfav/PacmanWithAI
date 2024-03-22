@@ -13,11 +13,11 @@ type Algorithm = int
 const (
 	DijkstraAlgo   Algorithm = 0
 	AStarAlgo      Algorithm = 1
-	ReflexAlgo     Algorithm = 2
-	MiniMaxAlgo    Algorithm = 3
-	BFSAlgo        Algorithm = 4
-	DFSAlgo        Algorithm = 5
-	ExpectimaxAlgo Algorithm = 6
+	BFSAlgo        Algorithm = 2
+	DFSAlgo        Algorithm = 3
+	MiniMaxAlgo    Algorithm = 4
+	ExpectimaxAlgo Algorithm = 5
+	ReflexAlgo     Algorithm = 6
 )
 
 // This simple function is run before any pathfinding algorithm to make sure that the nodes are marked unvisited

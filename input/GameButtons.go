@@ -8,36 +8,6 @@ import (
 
 var buttonImage = ebiten.NewImage(100, 30) // Set the size of the button
 
-// This function, takes in the current screen dimensions and returns the main menu buttons for the given screen size
-func MakeMainMenuButtons(screenWidth, screenHeight int) []*Button {
-	// Initialize the button
-	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
-
-	button := &Button{
-		Image:   buttonImage,
-		X:       (screenWidth / 2) - 50, // Position of the button
-		Y:       (screenHeight / 2),
-		Width:   100,
-		Height:  30,
-		Message: "Start Game",
-		Enabled: true,
-	}
-
-	buttonImport := &Button{
-		Image:   buttonImage,
-		X:       (screenWidth / 2) - 50, // Position of the button
-		Y:       (screenHeight / 2) + 50,
-		Width:   100,
-		Height:  30,
-		Message: "Import Map",
-		Enabled: true,
-	}
-
-	var menuButtons = []*Button{button, buttonImport}
-
-	return menuButtons
-}
-
 // This functions, given an array of buttons and a new state, will change those buttons to the given state
 func ChangeStateButtons(arrButtons []*Button, state bool) {
 
@@ -107,7 +77,7 @@ func GameAlgoButtons(screenWidth, screenHeight int) []*Button {
 		Y:       (screenHeight / 2) + 50,
 		Width:   100,
 		Height:  30,
-		Message: "A*",
+		Message: "Dijkstras",
 		Enabled: true,
 	}
 
@@ -117,41 +87,61 @@ func GameAlgoButtons(screenWidth, screenHeight int) []*Button {
 		Y:       (screenHeight / 2) + 100,
 		Width:   100,
 		Height:  30,
-		Message: "Dijkstras",
+		Message: "A*",
 		Enabled: true,
 	}
 
-	buttonNodes := &Button{
+	buttonDFS := &Button{
 		Image:   buttonImage,
 		X:       (screenWidth / 2) - 20, // Position of the button
 		Y:       (screenHeight / 2) + 150,
 		Width:   100,
 		Height:  30,
-		Message: "Nodes",
+		Message: "BFS",
 		Enabled: true,
 	}
 
-	buttonPath := &Button{
+	buttonBFS := &Button{
 		Image:   buttonImage,
 		X:       (screenWidth / 2) - 20, // Position of the button
 		Y:       (screenHeight / 2) + 200,
 		Width:   100,
 		Height:  30,
-		Message: "Path",
+		Message: "DFS",
 		Enabled: true,
 	}
 
-	buttonNone := &Button{
+	buttonMiniMax := &Button{
 		Image:   buttonImage,
 		X:       (screenWidth / 2) - 20, // Position of the button
 		Y:       (screenHeight / 2) + 250,
 		Width:   100,
 		Height:  30,
-		Message: "Maze Only",
+		Message: "MiniMax",
 		Enabled: true,
 	}
 
-	var sizeButtons = []*Button{buttonAStar, buttonDij, buttonNodes, buttonPath, buttonNone}
+	buttonMiniMaxPrune := &Button{
+		Image:   buttonImage,
+		X:       (screenWidth / 2) - 20, // Position of the button
+		Y:       (screenHeight / 2) + 300,
+		Width:   100,
+		Height:  30,
+		Message: "MiniMax(Pruned)",
+		Enabled: true,
+	}
+
+	buttonExpectimax := &Button{
+		Image:   buttonImage,
+		X:       (screenWidth / 2) - 20, // Position of the button
+		Y:       (screenHeight / 2) + 350,
+		Width:   100,
+		Height:  30,
+		Message: "Expectimax",
+		Enabled: true,
+	}
+
+	var sizeButtons = []*Button{buttonAStar, buttonDij, buttonDFS, buttonBFS, buttonMiniMax, buttonMiniMaxPrune, buttonExpectimax}
 
 	return sizeButtons
 }

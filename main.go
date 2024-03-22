@@ -82,10 +82,14 @@ func (g *Game) Update() error {
 	// Check if the mouse button is clicked on a given button
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
+
+		// If the menu buttons are enabled
 		if g.buttonsMenu[0].Enabled {
 			if g.buttonsMenu[0].In(x, y) {
 				menuOrGame = 1
 				g.buttonBack.Enabled = true
+
+				// Change Size and Algo buttons to enabled and disable the Menu Buttons
 				input.ChangeStateButtons(g.buttonsSize[:], true)
 				input.ChangeStateButtons(g.buttonsAlgo[:], true)
 				input.ChangeStateButtons(g.buttonsMenu[:], false)
@@ -97,27 +101,61 @@ func (g *Game) Update() error {
 				changeMazeSize(0, true, g)
 			}
 
+			// If the game buttons are enabled
 		} else if g.buttonBack.Enabled {
 
 			if g.buttonBack.In(x, y) {
 				menuOrGame = 0
 				g.buttonBack.Enabled = false
+
+				// Change Size and Algo buttons to disabled and enable the Menu Buttons
 				input.ChangeStateButtons(g.buttonsSize[:], false)
 				input.ChangeStateButtons(g.buttonsAlgo[:], false)
 				input.ChangeStateButtons(g.buttonsMenu[:], true)
 				return nil
 
 			} else if g.buttonsSize[0].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsSize[0].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize(mazeSizeOriginal, false, g)
 
 			} else if g.buttonsSize[1].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsSize[1].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize(mazeSizeOriginal*2, false, g)
 
 			} else if g.buttonsSize[2].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsSize[2].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
 				file.SaveToFile(g.Maze.Grid)
+
+			} else if g.buttonsAlgo[0].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[0].ChangeColour(color.RGBA{0, 255, 0, 250})
+				g.Ghosts.Algo = algorithms.DijkstraAlgo
+
+			} else if g.buttonsAlgo[1].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[1].ChangeColour(color.RGBA{0, 255, 0, 250})
+				g.Ghosts.Algo = algorithms.AStarAlgo
+
+			} else if g.buttonsAlgo[2].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[2].ChangeColour(color.RGBA{0, 255, 0, 250})
+				g.Ghosts.Algo = algorithms.BFSAlgo
+
+			} else if g.buttonsAlgo[3].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[3].ChangeColour(color.RGBA{0, 255, 0, 250})
+				g.Ghosts.Algo = algorithms.DFSAlgo
+
+			} else if g.buttonsAlgo[4].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[4].ChangeColour(color.RGBA{0, 255, 0, 250})
+				g.Ghosts.Algo = algorithms.MiniMaxAlgo
 
 			}
 
