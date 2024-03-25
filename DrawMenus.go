@@ -50,6 +50,7 @@ func gameMenu(screen *ebiten.Image, g *Game) {
 	backButton(screen, g)
 	drawMenu(screen, g.buttonsSize, g.fontFace)
 	drawMenu(screen, g.buttonsAlgo, g.fontFace)
+	drawMenu(screen, g.buttonsGhost, g.fontFace)
 
 }
 

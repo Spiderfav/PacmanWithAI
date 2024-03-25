@@ -10,7 +10,7 @@ import (
 // This function returns the path for a Reflex agent to taken, given the position of the player and the pellots on the game board
 func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, ghostPos mazegrid.Position, pellots []mazegrid.Position, squareSize int) []mazegrid.MazeSquare {
 
-	//Check for distance to Player
+	//Check to see how many pellots are left, if less than 8, go to Pacman
 	if len(pellots) <= 8 {
 		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(playerPos.XCoordinate), int(playerPos.YCoordinate), squareSize)
 	}

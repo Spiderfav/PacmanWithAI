@@ -145,3 +145,33 @@ func GameAlgoButtons(screenWidth, screenHeight int) []*Button {
 
 	return sizeButtons
 }
+
+// This function, takes in the current screen dimensions and returns the ghost's buttons to the game
+func GameGhostButtons(screenWidth, screenHeight int) []*Button {
+	// Initialize the button
+	buttonImage.Fill(color.RGBA{0, 255, 255, 250}) // Fill with a color
+
+	buttonAdd := &Button{
+		Image:   buttonImage,
+		X:       (screenWidth / 2) + 160, // Position of the button
+		Y:       (screenHeight / 2) + 50,
+		Width:   100,
+		Height:  30,
+		Message: "Add Ghost",
+		Enabled: true,
+	}
+
+	buttonRemove := &Button{
+		Image:   buttonImage,
+		X:       (screenWidth / 2) + 160, // Position of the button
+		Y:       (screenHeight / 2) + 100,
+		Width:   100,
+		Height:  30,
+		Message: "Remove Ghost",
+		Enabled: true,
+	}
+
+	var ghostButtons = []*Button{buttonAdd, buttonRemove}
+
+	return ghostButtons
+}
