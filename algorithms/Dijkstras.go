@@ -45,7 +45,7 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 		for i := 0; i < len(possibleMoves); i++ {
 			nodeToTest := &gameGrid[(int(possibleMoves[i].YCoordinate)/squareSize)-1][(int(possibleMoves[i].XCoordinate)/squareSize - 1)]
 
-			if !nodeToTest.Visited || nodeToTest.Weight > currentNode.Weight+1 {
+			if !nodeToTest.Visited {
 
 				nodeToTest.Weight = currentNode.Weight + 1
 				nodeToTest.Visited = true
@@ -67,7 +67,6 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 	fmt.Printf("Dijkstra's took %s", elapsed)
 	fmt.Println("\nDijkstra Concluded")
 	fmt.Println(" ")
-	fmt.Println(JustPositions(pathTaken))
 
 	// Returns the path that the algorithm took to get from the start to the finish
 	return pathTaken
