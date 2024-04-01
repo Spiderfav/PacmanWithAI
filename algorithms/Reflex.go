@@ -18,7 +18,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 	distance := HeuristicsDistance(float64(ghostPos.XCoordinate), float64(ghostPos.YCoordinate), float64(playerPos.XCoordinate), float64(playerPos.YCoordinate))
 
 	// If the player is close, go to the player
-	if distance <= 160 {
+	if distance <= float64(squareSize)*8 {
 
 		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(playerPos.XCoordinate), int(playerPos.YCoordinate), squareSize)
 	}
@@ -26,7 +26,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 	nearestPellotPos, nearestPellotDistance := nearestPellot(ghostPos, pellots)
 
 	// If the ghost is near a pellot, go to the pellot
-	if nearestPellotDistance >= 20 && nearestPellotDistance <= 160 {
+	if nearestPellotDistance >= float64(squareSize) && nearestPellotDistance <= float64(squareSize)*8 {
 
 		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(nearestPellotPos.XCoordinate), int(nearestPellotPos.YCoordinate), squareSize)
 
