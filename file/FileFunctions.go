@@ -10,7 +10,7 @@ import (
 
 // This function, given an game grid, will save that game grid to a file
 func SaveToFile(gameGrid [][]mazegrid.MazeSquare) {
-	file, err := os.Create("gameGridDFS.gob")
+	file, err := os.Create("Maze.gob")
 	if err != nil {
 		log.Fatalf("Failed to create file: %v", err)
 	}
@@ -19,7 +19,7 @@ func SaveToFile(gameGrid [][]mazegrid.MazeSquare) {
 	encoder := gob.NewEncoder(file)
 	err = encoder.Encode(gameGrid)
 	if err != nil {
-		log.Fatalf("Failed to encode gameGridDFS: %v", err)
+		log.Fatalf("Failed to encode Maze: %v", err)
 	}
 }
 
@@ -28,7 +28,7 @@ func LoadFromFile() [][]mazegrid.MazeSquare {
 
 	var gameGrid [][]mazegrid.MazeSquare
 
-	file, err := os.Open("gameGridDFS.gob")
+	file, err := os.Open("Small.gob")
 	if err != nil {
 		log.Fatalf("Failed to get file: %v", err)
 	}
@@ -37,7 +37,7 @@ func LoadFromFile() [][]mazegrid.MazeSquare {
 	decoder := gob.NewDecoder(file)
 	err = decoder.Decode(&gameGrid)
 	if err != nil {
-		log.Fatalf("Failed to encode gameGridDFS: %v", err)
+		log.Fatalf("Failed to encode Maze: %v", err)
 	}
 
 	return gameGrid

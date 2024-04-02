@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -13,6 +14,8 @@ func DFSearch(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finis
 	MarkUnvisited(gameGridDFS, false)
 
 	start := time.Now()
+	fmt.Println("Mem usage before:")
+	file.PrintMemUsage()
 
 	// Initialize the stack
 	var stack []mazegrid.MazeSquare
@@ -62,6 +65,10 @@ func DFSearch(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finis
 	elapsed := time.Since(start)
 	fmt.Printf("DFS took %s", elapsed)
 	fmt.Println("\nDFS Concluded")
+	fmt.Println(" ")
+
+	fmt.Println("Mem usage after:")
+	file.PrintMemUsage()
 	fmt.Println(" ")
 
 	return pathTaken

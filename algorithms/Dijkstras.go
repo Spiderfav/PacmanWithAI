@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -15,6 +16,8 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 	MarkUnvisited(gameGrid, true)
 
 	start := time.Now() // This is used to time how long the function took to execute
+	fmt.Println("Mem usage before:")
+	file.PrintMemUsage()
 
 	priorityQueue := make(PriorityQueue, 0)
 	heap.Init(&priorityQueue)
@@ -66,6 +69,10 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 	elapsed := time.Since(start)
 	fmt.Printf("Dijkstra's took %s", elapsed)
 	fmt.Println("\nDijkstra Concluded")
+	fmt.Println(" ")
+
+	fmt.Println("Mem usage after:")
+	file.PrintMemUsage()
 	fmt.Println(" ")
 
 	// Returns the path that the algorithm took to get from the start to the finish

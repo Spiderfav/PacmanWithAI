@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -14,6 +15,8 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	MarkUnvisited(gameGridDFS, false)
 
 	start := time.Now() // This is used to time how long the function took to execute
+	fmt.Println("Mem usage before:")
+	file.PrintMemUsage()
 
 	// Initialize the FIFO queue
 	var queue []*mazegrid.MazeSquare
@@ -65,6 +68,10 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	elapsed := time.Since(start)
 	fmt.Printf("BFS took %s", elapsed)
 	fmt.Println("\nBFS Concluded")
+	fmt.Println(" ")
+
+	fmt.Println("Mem usage after:")
+	file.PrintMemUsage()
 	fmt.Println(" ")
 
 	return pathTaken
