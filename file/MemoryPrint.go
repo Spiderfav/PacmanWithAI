@@ -22,5 +22,6 @@ func PrintMemUsage() {
 
 // This function returns the Mb of memory used from the number of bytes
 func byteToMb(b uint64) uint64 {
-	return b / 1024 / 1024
+	// return b / 1024 / 1024
+	return b
 }
