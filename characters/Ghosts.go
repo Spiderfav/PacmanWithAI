@@ -2,7 +2,6 @@ package characters
 
 import (
 	"context"
-	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
@@ -166,7 +165,7 @@ func (npc *NPC) ResetMutex() {
 
 // This function will make the NPC wait to move to the next position until the given time is up
 func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * 5000)
 	defer ticker.Stop()
 
 	for {
@@ -183,7 +182,6 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 				nextNode = 0
 			}
 
-			fmt.Println("Trying to move to: ", npc.Path[nextNode].NodePosition)
 			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, enemyPoints, grid)
 			npc.hasMutex = true
 			return

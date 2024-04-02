@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"image/color"
 	"log"
+	"math/rand"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -40,8 +40,8 @@ type Game struct {
 	buttonsGhost []*input.Button
 	buttonBack   *input.Button
 	fontFace     font.Face
-	Ghosts       []characters.NPC
-	Player       characters.Player
+	Ghosts       []*characters.NPC
+	Player       *characters.Player
 }
 
 // The original grid size
@@ -64,10 +64,10 @@ func (g *Game) Update() error {
 		for i := range g.Ghosts {
 			if g.Ghosts[i].GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
 				changeMazeSize(g.Maze.Size, false, g)
+				break
 			}
 
 			// Move the ghosts
-			fmt.Println("Trying to move ghost at position: ", i)
 			g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
 
 		}
@@ -159,15 +159,15 @@ func (g *Game) Update() error {
 				changeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
 
 			} else if g.buttonsGhost[0].In(x, y) {
-				ghostNew := characters.NPC{}
-				ghostNew.Init(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, g.Player.GetPosition(), g.Maze.Grid, g.Maze.Pellots, squareSize)
+				ghostNew := &characters.NPC{}
+				ghostNew.Init(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, color.RGBA{uint8(rand.Intn(255)), uint8(rand.Intn(255)), uint8(rand.Intn(255)), 255}, g.Ghosts[0].Algo, g.Player.GetPosition(), g.Maze.Grid, g.Maze.Pellots, squareSize)
 				g.Ghosts = append(g.Ghosts, ghostNew)
-				cancelAndUpdate(g.Ghosts, g.Maze, g.Player)
+				update(g.Ghosts, g.Maze, g.Player)
 
 			} else if g.buttonsGhost[1].In(x, y) {
 				if len(g.Ghosts) > 1 {
 					g.Ghosts = g.Ghosts[:len(g.Ghosts)-1]
-					cancelAndUpdate(g.Ghosts, g.Maze, g.Player)
+					update(g.Ghosts, g.Maze, g.Player)
 				}
 
 			}
@@ -218,8 +218,8 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
-	ghosts := []characters.NPC{ghost}
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.AStarAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghosts := []*characters.NPC{&ghost}
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
@@ -253,7 +253,7 @@ func NewGame() *Game {
 		fontFace:     basicfont.Face7x13,
 		Ghosts:       ghosts,
 		Maze:         maze,
-		Player:       pacman,
+		Player:       &pacman,
 	}
 }
 
@@ -272,11 +272,21 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 
 	}
 
+	ghosts := []*characters.NPC{g.Ghosts[0]}
+	g.Ghosts = ghosts
+
+	if g.Ghosts[0].CancelFunc != nil {
+		g.Ghosts[0].CancelFunc()
+	}
+
+	// Cancel any ghosts undergoing movement
+	g.Ghosts[0].Ctx, g.Ghosts[0].CancelFunc = context.WithCancel(context.Background())
+
 	// Reset the player and the Ghosts position to their original start
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
 	g.Player.ResetPoints()
 
-	cancelAndUpdate(g.Ghosts, g.Maze, g.Player)
+	g.Ghosts[0].UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
 
 }
 
@@ -289,7 +299,7 @@ func main() {
 	}
 }
 
-func changeGhostsAlgo(ghosts []characters.NPC, ghostNewAlgo int) {
+func changeGhostsAlgo(ghosts []*characters.NPC, ghostNewAlgo int) {
 
 	for i := range ghosts {
 		ghosts[i].Algo = ghostNewAlgo
@@ -297,18 +307,10 @@ func changeGhostsAlgo(ghosts []characters.NPC, ghostNewAlgo int) {
 
 }
 
-func cancelAndUpdate(ghosts []characters.NPC, game mazegrid.Maze, player characters.Player) {
+func update(ghosts []*characters.NPC, game mazegrid.Maze, player *characters.Player) {
 
 	for i := range ghosts {
-		if ghosts[i].CancelFunc != nil {
-			ghosts[i].CancelFunc()
-		}
-
-		// Cancel any ghosts undergoing movement
-		ghosts[i].Ctx, ghosts[i].CancelFunc = context.WithCancel(context.Background())
 
 		ghosts[i].UpdatePosition(game.Grid[game.Size/2][game.Size/2].NodePosition, player.GetPosition(), 0, game.Grid)
-
-		ghosts[i].ResetMutex()
 	}
 }
