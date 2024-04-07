@@ -2,6 +2,7 @@ package characters
 
 import (
 	"context"
+	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
@@ -138,7 +139,7 @@ func (npc *NPC) Move(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 		// A mutex is used here as this function is called in the Update section of the game code and is called as much as possible
 		// So to prevent the overwriting of the path for a ghost, a mutex must be used
 		npc.hasMutex = false
-		go npc.wait(enemyPos, enemyPoints, grid)
+		npc.wait(enemyPos, enemyPoints, grid)
 
 	}
 }
@@ -165,7 +166,7 @@ func (npc *NPC) ResetMutex() {
 
 // This function will make the NPC wait to move to the next position until the given time is up
 func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
-	ticker := time.NewTicker(time.Millisecond * 5000)
+	ticker := time.NewTicker(time.Millisecond * 500)
 	defer ticker.Stop()
 
 	for {
@@ -182,6 +183,8 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 				nextNode = 0
 			}
 
+			fmt.Println("Here is my path :", algorithms.JustPositions(npc.Path))
+			fmt.Println("Here is my next node :", npc.Path[nextNode].NodePosition)
 			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, enemyPoints, grid)
 			npc.hasMutex = true
 			return

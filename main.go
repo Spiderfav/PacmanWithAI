@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"image/color"
 	"log"
 	"math/rand"
@@ -60,17 +61,8 @@ func (g *Game) Update() error {
 		// Check if player is moving
 		go g.Player.IsPlayerMoving(g.Maze.Grid, squareSize)
 
-		// Game Over or new game
-		for i := range g.Ghosts {
-			if g.Ghosts[i].GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
-				changeMazeSize(g.Maze.Size, false, g)
-				break
-			}
-
-			// Move the ghosts
-			g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
-
-		}
+		// go moveGhosts(g) // Causes memory leak
+		moveGhosts(g)
 
 	}
 
@@ -159,10 +151,10 @@ func (g *Game) Update() error {
 				changeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
 
 			} else if g.buttonsGhost[0].In(x, y) {
+				update(g.Ghosts, g.Maze, g.Player)
 				ghostNew := &characters.NPC{}
 				ghostNew.Init(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, color.RGBA{uint8(rand.Intn(255)), uint8(rand.Intn(255)), uint8(rand.Intn(255)), 255}, g.Ghosts[0].Algo, g.Player.GetPosition(), g.Maze.Grid, g.Maze.Pellots, squareSize)
 				g.Ghosts = append(g.Ghosts, ghostNew)
-				update(g.Ghosts, g.Maze, g.Player)
 
 			} else if g.buttonsGhost[1].In(x, y) {
 				if len(g.Ghosts) > 1 {
@@ -218,7 +210,7 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.DFSAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
 	ghosts := []*characters.NPC{&ghost}
 
 	// Initialize all buttons
@@ -272,21 +264,21 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 
 	}
 
-	ghosts := []*characters.NPC{g.Ghosts[0]}
-	g.Ghosts = ghosts
-
-	if g.Ghosts[0].CancelFunc != nil {
-		g.Ghosts[0].CancelFunc()
-	}
-
-	// Cancel any ghosts undergoing movement
-	g.Ghosts[0].Ctx, g.Ghosts[0].CancelFunc = context.WithCancel(context.Background())
-
 	// Reset the player and the Ghosts position to their original start
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
 	g.Player.ResetPoints()
 
-	g.Ghosts[0].UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
+	for i := range g.Ghosts {
+		if g.Ghosts[i].CancelFunc != nil {
+			g.Ghosts[i].CancelFunc()
+		}
+
+		// Cancel any ghosts undergoing movement
+		g.Ghosts[i].Ctx, g.Ghosts[i].CancelFunc = context.WithCancel(context.Background())
+
+		g.Ghosts[i].UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
+
+	}
 
 }
 
@@ -309,8 +301,34 @@ func changeGhostsAlgo(ghosts []*characters.NPC, ghostNewAlgo int) {
 
 func update(ghosts []*characters.NPC, game mazegrid.Maze, player *characters.Player) {
 
+	newPath := []mazegrid.MazeSquare{game.Grid[game.Size/2][game.Size/2], game.Grid[game.Size/2][game.Size/2], game.Grid[game.Size/2][game.Size/2]}
+
+	fmt.Println("Taking new path: ", algorithms.JustPositions(newPath))
+
 	for i := range ghosts {
+		if ghosts[i].CancelFunc != nil {
+			ghosts[i].CancelFunc()
+		}
+
+		// Cancel any ghosts undergoing movement
+		ghosts[i].Ctx, ghosts[i].CancelFunc = context.WithCancel(context.Background())
 
 		ghosts[i].UpdatePosition(game.Grid[game.Size/2][game.Size/2].NodePosition, player.GetPosition(), 0, game.Grid)
+		ghosts[i].Path = newPath
+
+	}
+}
+
+func moveGhosts(g *Game) {
+	// Game Over or new game
+	for i := range g.Ghosts {
+		if g.Ghosts[i].GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
+			changeMazeSize(g.Maze.Size, false, g)
+			break
+		}
+
+		// Move the ghosts
+		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
+
 	}
 }
