@@ -37,14 +37,6 @@ func (p *Player) SetPosition(m mazegrid.Position) {
 	p.Attributes.SetPosition(m)
 }
 
-func (p *Player) GetFrameProperties() FrameProperties {
-	return p.Attributes.GetFrameProperties()
-}
-
-func (p *Player) SetFrameProperties(fp FrameProperties) {
-	p.Attributes.SetFrameProperties(fp)
-}
-
 func (p *Player) UpdateCount() {
 	p.Attributes.UpdateCount()
 }

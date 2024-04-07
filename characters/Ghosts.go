@@ -8,7 +8,6 @@ import (
 	"math"
 	"time"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
@@ -128,10 +127,6 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 	return path
 }
 
-func (npc *NPC) GetFrameProperties() FrameProperties {
-	return npc.Attributes.GetFrameProperties()
-}
-
 // This function allows the NPC to move in the game grid if it is currently allowed
 // It will only move the NPC once every, 500 milliseconds
 func (npc *NPC) Move(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
@@ -142,22 +137,6 @@ func (npc *NPC) Move(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 		npc.wait(enemyPos, enemyPoints, grid)
 
 	}
-}
-
-func (npc *NPC) SetFrameProperties(fp FrameProperties) {
-	npc.Attributes.SetFrameProperties(fp)
-}
-
-func (npc *NPC) UpdateCount() {
-	npc.Attributes.Count += 1
-}
-
-func (npc *NPC) GetCount() int {
-	return npc.Attributes.GetCount()
-}
-
-func (npc *NPC) GetSprite() *ebiten.Image {
-	return npc.Attributes.GetSprite()
 }
 
 func (npc *NPC) ResetMutex() {
