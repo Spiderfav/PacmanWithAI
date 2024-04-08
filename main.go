@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"image/color"
 	"log"
 	"math/rand"
@@ -268,17 +266,7 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
 	g.Player.ResetPoints()
 
-	for i := range g.Ghosts {
-		if g.Ghosts[i].CancelFunc != nil {
-			g.Ghosts[i].CancelFunc()
-		}
-
-		// Cancel any ghosts undergoing movement
-		g.Ghosts[i].Ctx, g.Ghosts[i].CancelFunc = context.WithCancel(context.Background())
-
-		g.Ghosts[i].UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
-
-	}
+	update(g.Ghosts, g.Maze, g.Player)
 
 }
 
@@ -288,47 +276,5 @@ func main() {
 	ebiten.SetWindowTitle("Pacman")
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
-	}
-}
-
-func changeGhostsAlgo(ghosts []*characters.NPC, ghostNewAlgo int) {
-
-	for i := range ghosts {
-		ghosts[i].Algo = ghostNewAlgo
-	}
-
-}
-
-func update(ghosts []*characters.NPC, game mazegrid.Maze, player *characters.Player) {
-
-	newPath := []mazegrid.MazeSquare{game.Grid[game.Size/2][game.Size/2], game.Grid[game.Size/2][game.Size/2], game.Grid[game.Size/2][game.Size/2]}
-
-	fmt.Println("Taking new path: ", algorithms.JustPositions(newPath))
-
-	for i := range ghosts {
-		if ghosts[i].CancelFunc != nil {
-			ghosts[i].CancelFunc()
-		}
-
-		// Cancel any ghosts undergoing movement
-		ghosts[i].Ctx, ghosts[i].CancelFunc = context.WithCancel(context.Background())
-
-		ghosts[i].UpdatePosition(game.Grid[game.Size/2][game.Size/2].NodePosition, player.GetPosition(), 0, game.Grid)
-		ghosts[i].Path = newPath
-
-	}
-}
-
-func moveGhosts(g *Game) {
-	// Game Over or new game
-	for i := range g.Ghosts {
-		if g.Ghosts[i].GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
-			changeMazeSize(g.Maze.Size, false, g)
-			break
-		}
-
-		// Move the ghosts
-		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
-
 	}
 }
