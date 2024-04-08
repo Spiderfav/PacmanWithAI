@@ -59,19 +59,19 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 	// 	npc.Cooldown = 3
 	// }
 
-	npc.Pellots = mazegrid.GetPellotsPos(grid)
-	npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+	// npc.Pellots = mazegrid.GetPellotsPos(grid)
+	// npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
 	// Makes sure that the NPC is not stuck just recalculating paths each time
-	// if npc.Cooldown == 3 || len(npc.Path) < 2 {
-	// 	npc.Pellots = mazegrid.GetPellotsPos(grid)
-	// 	npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+	if npc.Cooldown == 3 || len(npc.Path) < 2 {
+		npc.Pellots = mazegrid.GetPellotsPos(grid)
+		npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
-	// 	npc.Cooldown = 0
-	// } else {
-	// 	npc.Path = npc.Path[:len(npc.Path)-1]
-	// 	npc.Cooldown += 1
-	// }
+		npc.Cooldown = 0
+	} else {
+		npc.Path = npc.Path[:len(npc.Path)-1]
+		npc.Cooldown += 1
+	}
 
 }
 
@@ -84,17 +84,8 @@ func (npc *NPC) GetAlgo() int {
 // It returns the path that NPC will take
 func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) []mazegrid.MazeSquare {
 	var path []mazegrid.MazeSquare
-	switch npc.Algo {
-	case algorithms.DijkstraAlgo:
-		path = algorithms.Dijkstras(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize)
 
-	case algorithms.AStarAlgo:
-		path = algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize)
-
-	case algorithms.ReflexAlgo:
-		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize)
-
-	case algorithms.MiniMaxAlgo:
+	if npc.Algo == algorithms.MiniMaxAlgo {
 		enemyPosArr := []mazegrid.Position{enemyPos}
 
 		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
@@ -105,16 +96,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
 
-	case algorithms.BFSAlgo:
-
-		path = (algorithms.BFS(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
-
-	case algorithms.DFSAlgo:
-
-		path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
-
-	case algorithms.ExpectimaxAlgo:
-
+	} else if npc.Algo == algorithms.ExpectimaxAlgo {
 		enemyPosArr := []mazegrid.Position{enemyPos}
 
 		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
@@ -122,6 +104,15 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		_, _, ghostPosArrNew := algorithms.Expectimax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, npc.MazeSquareSize)
 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
+
+	} else {
+
+		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize, npc.Algo)
+
+		// case algorithms.DFSAlgo:
+
+		// 	path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
+
 	}
 
 	return path
