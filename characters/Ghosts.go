@@ -2,12 +2,12 @@ package characters
 
 import (
 	"context"
+	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
 	"time"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/algorithms"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
@@ -92,7 +92,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		path = algorithms.AStar(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize)
 
 	case algorithms.ReflexAlgo:
-		path, _ = algorithms.AbsolutePath(algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize))
+		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize)
 
 	case algorithms.MiniMaxAlgo:
 		enemyPosArr := []mazegrid.Position{enemyPos}
@@ -127,10 +127,6 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 	return path
 }
 
-func (npc *NPC) GetFrameProperties() FrameProperties {
-	return npc.Attributes.GetFrameProperties()
-}
-
 // This function allows the NPC to move in the game grid if it is currently allowed
 // It will only move the NPC once every, 500 milliseconds
 func (npc *NPC) Move(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
@@ -138,25 +134,13 @@ func (npc *NPC) Move(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 		// A mutex is used here as this function is called in the Update section of the game code and is called as much as possible
 		// So to prevent the overwriting of the path for a ghost, a mutex must be used
 		npc.hasMutex = false
-		go npc.wait(enemyPos, enemyPoints, grid)
+		npc.wait(enemyPos, enemyPoints, grid)
 
 	}
 }
 
-func (npc *NPC) SetFrameProperties(fp FrameProperties) {
-	npc.Attributes.SetFrameProperties(fp)
-}
-
-func (npc *NPC) UpdateCount() {
-	npc.Attributes.Count += 1
-}
-
-func (npc *NPC) GetCount() int {
-	return npc.Attributes.GetCount()
-}
-
-func (npc *NPC) GetSprite() *ebiten.Image {
-	return npc.Attributes.GetSprite()
+func (npc *NPC) ResetMutex() {
+	npc.hasMutex = true
 }
 
 // This function will make the NPC wait to move to the next position until the given time is up
@@ -178,6 +162,8 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 				nextNode = 0
 			}
 
+			fmt.Println("Here is my path :", algorithms.JustPositions(npc.Path))
+			fmt.Println("Here is my next node :", npc.Path[nextNode].NodePosition)
 			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, enemyPoints, grid)
 			npc.hasMutex = true
 			return

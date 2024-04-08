@@ -40,7 +40,7 @@ func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 	}
 }
 
-// This function draws the game meny to the screen
+// This function draws the game menu to the screen
 func gameMenu(screen *ebiten.Image, g *Game) {
 	// 	// Clear the screen to white
 	screen.Fill(color.Black)
@@ -50,6 +50,7 @@ func gameMenu(screen *ebiten.Image, g *Game) {
 	backButton(screen, g)
 	drawMenu(screen, g.buttonsSize, g.fontFace)
 	drawMenu(screen, g.buttonsAlgo, g.fontFace)
+	drawMenu(screen, g.buttonsGhost, g.fontFace)
 
 }
 

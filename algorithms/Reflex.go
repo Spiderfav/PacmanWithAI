@@ -10,12 +10,15 @@ import (
 // This function returns the path for a Reflex agent to taken, given the position of the player and the pellots on the game board
 func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, ghostPos mazegrid.Position, pellots []mazegrid.Position, squareSize int) []mazegrid.MazeSquare {
 
-	//Check for distance to Player
+	//Check to see how many pellots are left, if less than 8, go to Pacman
+	if len(pellots) <= 8 {
+		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(playerPos.XCoordinate), int(playerPos.YCoordinate), squareSize)
+	}
 
 	distance := HeuristicsDistance(float64(ghostPos.XCoordinate), float64(ghostPos.YCoordinate), float64(playerPos.XCoordinate), float64(playerPos.YCoordinate))
 
 	// If the player is close, go to the player
-	if distance <= 160 {
+	if distance <= float64(squareSize)*8 {
 
 		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(playerPos.XCoordinate), int(playerPos.YCoordinate), squareSize)
 	}
@@ -23,7 +26,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 	nearestPellotPos, nearestPellotDistance := nearestPellot(ghostPos, pellots)
 
 	// If the ghost is near a pellot, go to the pellot
-	if nearestPellotDistance >= 20 && nearestPellotDistance <= 160 {
+	if nearestPellotDistance >= float64(squareSize) && nearestPellotDistance <= float64(squareSize)*8 {
 
 		return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(nearestPellotPos.XCoordinate), int(nearestPellotPos.YCoordinate), squareSize)
 
@@ -33,7 +36,7 @@ func Reflex(gameGridDFS [][]mazegrid.MazeSquare, playerPos mazegrid.Position, gh
 	randomX := rand.Intn(len(gameGridDFS) - 1)
 	randomY := rand.Intn(len(gameGridDFS) - 1)
 
-	randomNode := gameGridDFS[randomX][randomY].NodePosition
+	randomNode := gameGridDFS[randomY][randomX].NodePosition
 
 	return AStar(gameGridDFS, int(ghostPos.XCoordinate), int(ghostPos.YCoordinate), int(randomNode.XCoordinate), int(randomNode.YCoordinate), squareSize)
 

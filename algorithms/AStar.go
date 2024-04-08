@@ -6,6 +6,7 @@ import (
 	"math"
 	"time"
 
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -15,6 +16,8 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 	MarkUnvisited(gameGrid, true) // Marking every node unvisited
 
 	start := time.Now()
+	fmt.Println("Mem usage before:")
+	file.PrintMemUsage()
 
 	// Create a priority queue for choosing next nodes
 	priorityQueue := make(PriorityQueue, 0)
@@ -74,6 +77,10 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 	elapsed := time.Since(start)
 	fmt.Printf("A* took %s", elapsed)
 	fmt.Println("\nA* Concluded")
+	fmt.Println(" ")
+
+	fmt.Println("Mem usage after:")
+	file.PrintMemUsage()
 	fmt.Println(" ")
 
 	return pathTaken

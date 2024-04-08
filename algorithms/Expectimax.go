@@ -41,7 +41,7 @@ func Expectimax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position,
 		return int(maxEval), bestPacmanPos, ghostPos
 
 	} else {
-		minEval := math.Inf(1)
+		var totalEval float64
 		var bestGhostPos []mazegrid.Position
 
 		possibleMoves := getPossibleMoves(gameGrid, ghostPos[len(ghostPos)-1], squareSize)
@@ -49,21 +49,21 @@ func Expectimax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position,
 		randomNodeChosen := rand.Intn(len(possibleMoves) - 1)
 
 		for i, element := range possibleMoves {
+			tempGhostPos := make([]mazegrid.Position, len(ghostPos))
+			copy(tempGhostPos, ghostPos)
+			tempGhostPos = append(tempGhostPos, element)
+
+			eval, newPacmanPos, newGhostPos := Expectimax(gameGrid, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, squareSize)
+			totalEval = totalEval + float64(eval)
 
 			if i == randomNodeChosen {
-				tempGhostPos := make([]mazegrid.Position, len(ghostPos))
-				copy(tempGhostPos, ghostPos)
-				tempGhostPos = append(tempGhostPos, element)
-
-				eval, newPacmanPos, newGhostPos := Expectimax(gameGrid, pacmanPos, pacmanPoints, tempGhostPos, pellots, depthToSearch-1, true, squareSize)
-
-				minEval = float64(eval)
 				pacmanPos = newPacmanPos
 				bestGhostPos = newGhostPos
 			}
 
 		}
 
-		return int(minEval), pacmanPos, bestGhostPos
+		avgEval := totalEval / float64(len(possibleMoves))
+		return int(avgEval), pacmanPos, bestGhostPos
 	}
 }

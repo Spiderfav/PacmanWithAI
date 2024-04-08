@@ -4,6 +4,7 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -36,14 +37,6 @@ func (p *Player) SetPosition(m mazegrid.Position) {
 	p.Attributes.SetPosition(m)
 }
 
-func (p *Player) GetFrameProperties() FrameProperties {
-	return p.Attributes.GetFrameProperties()
-}
-
-func (p *Player) SetFrameProperties(fp FrameProperties) {
-	p.Attributes.SetFrameProperties(fp)
-}
-
 func (p *Player) UpdateCount() {
 	p.Attributes.UpdateCount()
 }
@@ -65,7 +58,7 @@ func (p *Player) GetPoints() int {
 }
 
 // This function, given the direction that the player is moving, will move the player one square in that direction
-func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize int) {
+func (p *Player) move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize int) {
 
 	array2Pos := int((p.Attributes.Position.XCoordinate / float32(squareSize)) - 1)
 	array1Pos := int((p.Attributes.Position.YCoordinate / float32(squareSize)) - 1)
@@ -102,6 +95,29 @@ func (p *Player) Move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize
 		if !m[array1Pos][array2Pos].HasWalls.HasLeft {
 			p.Attributes.SetPosition(m[array1Pos][array2Pos].Walls.Left)
 		}
+	}
+
+}
+
+// This function checks if the player is moving and moves the player in the game grid if so.
+func (p *Player) IsPlayerMoving(gameGrid [][]mazegrid.MazeSquare, squareSize int) {
+
+	// Checking if the player is moving and if so, moving the player
+	if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+		p.move(Up, gameGrid, squareSize)
+
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyS) || inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+
+		// for !inpututil.IsKeyJustReleased(ebiten.KeyS) || inpututil.IsKeyJustReleased(ebiten.KeyArrowDown) {
+		p.move(Down, gameGrid, squareSize)
+		//}
+
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyA) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+		p.move(Left, gameGrid, squareSize)
+
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyD) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+		p.move(Right, gameGrid, squareSize)
+
 	}
 
 }

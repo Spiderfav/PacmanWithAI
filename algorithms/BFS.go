@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/file"
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
@@ -14,16 +15,19 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	MarkUnvisited(gameGridDFS, false)
 
 	start := time.Now() // This is used to time how long the function took to execute
+	fmt.Println("Mem usage before:")
+	file.PrintMemUsage()
 
 	// Initialize the FIFO queue
-	var queue []mazegrid.MazeSquare
+	var queue []*mazegrid.MazeSquare
 
 	endNode := &gameGridDFS[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
 	// Start from the starting node
 	startNode := &gameGridDFS[(startY/squareSize)-1][(startX/squareSize)-1]
 	startNode.Visited = true
-	queue = append(queue, *startNode)
+
+	queue = append(queue, startNode)
 
 	// Store each node's predecessor for path reconstruction
 	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
@@ -35,7 +39,7 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 		queue = queue[1:]
 
 		// Check if this is the end node
-		if currentNode == *endNode {
+		if currentNode == endNode {
 			break
 		}
 
@@ -50,9 +54,9 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 
 				nodeToTest.Visited = true
 
-				queue = append(queue, *nodeToTest)
+				queue = append(queue, nodeToTest)
 
-				predecessor[nodeToTest] = &currentNode
+				predecessor[nodeToTest] = currentNode
 			}
 		}
 
@@ -64,6 +68,10 @@ func BFS(gameGridDFS [][]mazegrid.MazeSquare, startX int, startY int, finishX in
 	elapsed := time.Since(start)
 	fmt.Printf("BFS took %s", elapsed)
 	fmt.Println("\nBFS Concluded")
+	fmt.Println(" ")
+
+	fmt.Println("Mem usage after:")
+	file.PrintMemUsage()
 	fmt.Println(" ")
 
 	return pathTaken

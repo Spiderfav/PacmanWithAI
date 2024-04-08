@@ -11,22 +11,12 @@ import (
 	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
-// This object is used to store the frame data needed to animate the sprite
-type FrameProperties struct {
-	FrameOX     int
-	FrameOY     int
-	FrameWidth  int
-	FrameHeight int
-	FrameCount  int
-}
-
 // The character class is a super class for both the player and the NPC class
 type Character struct {
 	Sprite   *ebiten.Image
 	Position mazegrid.Position
-	FrameProperties
-	Count  int
-	Colour color.Color
+	Count    int
+	Colour   color.Color
 }
 
 // Initialises the character given the grid position and a colour
@@ -34,11 +24,6 @@ func (c *Character) Init(startPos mazegrid.Position, colour color.Color) {
 
 	c.Sprite = ebiten.NewImageFromImage(c.setSprite())
 	c.Position = startPos
-	c.FrameOX = 0
-	c.FrameOY = 32
-	c.FrameWidth = 32
-	c.FrameHeight = 32
-	c.FrameCount = 8
 	c.Colour = colour
 
 }
@@ -51,16 +36,6 @@ func (c *Character) GetPosition() mazegrid.Position {
 // Function that sets a new position for the character
 func (c *Character) SetPosition(p mazegrid.Position) {
 	c.Position = p
-}
-
-// Function that returns the frame properties of the character
-func (c *Character) GetFrameProperties() FrameProperties {
-	return c.FrameProperties
-}
-
-// Function that sets the frame properties of the character
-func (c *Character) SetFrameProperties(fp FrameProperties) {
-	c.FrameProperties = fp
 }
 
 // Function that updates the counter for the sprite

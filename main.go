@@ -1,9 +1,10 @@
 package main
 
 import (
-	"context"
 	"image/color"
 	"log"
+	"math/rand"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -31,14 +32,15 @@ const (
 
 // Defines what a game object should keep track of
 type Game struct {
-	Maze        mazegrid.Maze
-	buttonsMenu []*input.Button
-	buttonsSize []*input.Button
-	buttonsAlgo []*input.Button
-	buttonBack  *input.Button
-	fontFace    font.Face
-	Ghosts      characters.NPC
-	Player      characters.Player
+	Maze         mazegrid.Maze
+	buttonsMenu  []*input.Button
+	buttonsSize  []*input.Button
+	buttonsAlgo  []*input.Button
+	buttonsGhost []*input.Button
+	buttonBack   *input.Button
+	fontFace     font.Face
+	Ghosts       []*characters.NPC
+	Player       *characters.Player
 }
 
 // The original grid size
@@ -49,45 +51,33 @@ var menuOrGame = 0
 
 // This function updates the game logic 60 times a second
 func (g *Game) Update() error {
-	g.Ghosts.UpdateCount()
-	g.Maze.Pellots = mazegrid.GetPellotsPos(g.Maze.Grid)
 
 	if menuOrGame == 1 {
-		// Checking if the player is moving and if so, moving the player
-		if inpututil.IsKeyJustPressed(ebiten.KeyW) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 
-			g.Player.Move(characters.Up, g.Maze.Grid, squareSize)
+		g.Maze.Pellots = mazegrid.GetPellotsPos(g.Maze.Grid)
 
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyS) || inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+		// Check if player is moving
+		go g.Player.IsPlayerMoving(g.Maze.Grid, squareSize)
 
-			g.Player.Move(characters.Down, g.Maze.Grid, squareSize)
+		// go moveGhosts(g) // Causes memory leak
+		moveGhosts(g)
 
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyA) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-			g.Player.Move(characters.Left, g.Maze.Grid, squareSize)
-
-		} else if inpututil.IsKeyJustPressed(ebiten.KeyD) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-			g.Player.Move(characters.Right, g.Maze.Grid, squareSize)
-
-		}
-
-		// Move the ghosts
-		g.Ghosts.Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
-
-		// Game Over or new game
-		if g.Ghosts.GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
-			changeMazeSize(g.Maze.Size, false, g)
-		}
 	}
 
 	// Check if the mouse button is clicked on a given button
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
+
+		// If the menu buttons are enabled
 		if g.buttonsMenu[0].Enabled {
 			if g.buttonsMenu[0].In(x, y) {
 				menuOrGame = 1
 				g.buttonBack.Enabled = true
+
+				// Change Size and Algo buttons to enabled and disable the Menu Buttons
 				input.ChangeStateButtons(g.buttonsSize[:], true)
 				input.ChangeStateButtons(g.buttonsAlgo[:], true)
+				input.ChangeStateButtons(g.buttonsGhost[:], true)
 				input.ChangeStateButtons(g.buttonsMenu[:], false)
 				return nil
 
@@ -95,29 +85,80 @@ func (g *Game) Update() error {
 				g.Maze.Grid = file.LoadFromFile()
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
+			} else if g.buttonsMenu[2].In(x, y) {
+
+			} else if g.buttonsMenu[3].In(x, y) {
+				os.Exit(0)
 			}
 
+			// If the game buttons are enabled
 		} else if g.buttonBack.Enabled {
 
 			if g.buttonBack.In(x, y) {
 				menuOrGame = 0
 				g.buttonBack.Enabled = false
+
+				// Change Size and Algo buttons to disabled and enable the Menu Buttons
 				input.ChangeStateButtons(g.buttonsSize[:], false)
 				input.ChangeStateButtons(g.buttonsAlgo[:], false)
+				input.ChangeStateButtons(g.buttonsGhost[:], false)
 				input.ChangeStateButtons(g.buttonsMenu[:], true)
 				return nil
 
 			} else if g.buttonsSize[0].In(x, y) {
+				input.ResetColours(g.buttonsSize)
+				g.buttonsSize[0].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize(mazeSizeOriginal, false, g)
 
 			} else if g.buttonsSize[1].In(x, y) {
+				input.ResetColours(g.buttonsSize)
+				g.buttonsSize[1].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize(mazeSizeOriginal*2, false, g)
 
 			} else if g.buttonsSize[2].In(x, y) {
+				input.ResetColours(g.buttonsSize)
+				g.buttonsSize[2].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
 				file.SaveToFile(g.Maze.Grid)
+
+			} else if g.buttonsAlgo[0].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[0].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.DijkstraAlgo)
+
+			} else if g.buttonsAlgo[1].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[1].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.AStarAlgo)
+
+			} else if g.buttonsAlgo[2].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[2].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.BFSAlgo)
+
+			} else if g.buttonsAlgo[3].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[3].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.DFSAlgo)
+
+			} else if g.buttonsAlgo[4].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[4].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
+
+			} else if g.buttonsGhost[0].In(x, y) {
+				update(g.Ghosts, g.Maze, g.Player)
+				ghostNew := &characters.NPC{}
+				ghostNew.Init(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, color.RGBA{uint8(rand.Intn(255)), uint8(rand.Intn(255)), uint8(rand.Intn(255)), 255}, g.Ghosts[0].Algo, g.Player.GetPosition(), g.Maze.Grid, g.Maze.Pellots, squareSize)
+				g.Ghosts = append(g.Ghosts, ghostNew)
+
+			} else if g.buttonsGhost[1].In(x, y) {
+				if len(g.Ghosts) > 1 {
+					g.Ghosts = g.Ghosts[:len(g.Ghosts)-1]
+					update(g.Ghosts, g.Maze, g.Player)
+				}
 
 			}
 
@@ -136,9 +177,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	case 1:
 		gameMenu(screen, g)
-		DrawSprite(screen, g.Ghosts.Attributes)
 		DrawSprite(screen, g.Player.Attributes)
-		drawPathsLines(screen, g.Ghosts.Path)
+
+		for _, ghosts := range g.Ghosts {
+			DrawSprite(screen, ghosts.Attributes)
+			drawPathsLines(screen, ghosts.Path)
+		}
 
 	}
 
@@ -164,7 +208,8 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ExpectimaxAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghosts := []*characters.NPC{&ghost}
 
 	// Initialize all buttons
 	buttonImage := ebiten.NewImage(100, 30)        // Set the size of the button
@@ -175,6 +220,8 @@ func NewGame() *Game {
 	buttonsSize := input.GameSizeButtons(screenWidth, screenHeight)
 
 	buttonsAlgo := input.GameAlgoButtons(screenWidth, screenHeight)
+
+	buttonsGhost := input.GameGhostButtons(screenWidth, screenHeight)
 
 	buttonBack := &input.Button{
 		Image:   buttonImage,
@@ -188,14 +235,15 @@ func NewGame() *Game {
 
 	// Initialize the game.
 	return &Game{
-		buttonsMenu: buttonsMenu,
-		buttonsSize: buttonsSize,
-		buttonsAlgo: buttonsAlgo,
-		buttonBack:  buttonBack,
-		fontFace:    basicfont.Face7x13,
-		Ghosts:      ghost,
-		Maze:        maze,
-		Player:      pacman,
+		buttonsMenu:  buttonsMenu,
+		buttonsSize:  buttonsSize,
+		buttonsAlgo:  buttonsAlgo,
+		buttonsGhost: buttonsGhost,
+		buttonBack:   buttonBack,
+		fontFace:     basicfont.Face7x13,
+		Ghosts:       ghosts,
+		Maze:         maze,
+		Player:       &pacman,
 	}
 }
 
@@ -214,18 +262,11 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 
 	}
 
-	if g.Ghosts.CancelFunc != nil {
-		g.Ghosts.CancelFunc()
-	}
-
-	// Cancel any ghosts undergoing movement
-	g.Ghosts.Ctx, g.Ghosts.CancelFunc = context.WithCancel(context.Background())
-
 	// Reset the player and the Ghosts position to their original start
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
 	g.Player.ResetPoints()
 
-	g.Ghosts.UpdatePosition(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, g.Player.GetPosition(), 0, g.Maze.Grid)
+	update(g.Ghosts, g.Maze, g.Player)
 
 }
 
