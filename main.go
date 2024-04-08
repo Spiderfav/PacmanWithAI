@@ -24,6 +24,8 @@ var (
 	screenHeight = screenshot.GetDisplayBounds(0).Dy()
 )
 
+var drawGhostLines bool
+
 // Sets the size the maze will be rendered
 const (
 	squareSize = 30
@@ -86,6 +88,7 @@ func (g *Game) Update() error {
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
 			} else if g.buttonsMenu[2].In(x, y) {
+				drawGhostLines = !drawGhostLines
 
 			} else if g.buttonsMenu[3].In(x, y) {
 				os.Exit(0)
@@ -186,7 +189,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		for _, ghosts := range g.Ghosts {
 			DrawSprite(screen, ghosts.Attributes)
-			drawPathsLines(screen, ghosts.Path)
+
+			if drawGhostLines {
+				drawPathsLines(screen, ghosts.Path)
+
+			}
 		}
 
 	}
