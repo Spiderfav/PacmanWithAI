@@ -2,7 +2,6 @@ package characters
 
 import (
 	"context"
-	"fmt"
 	"image/color"
 	_ "image/png"
 	"math"
@@ -55,12 +54,10 @@ func (npc *NPC) GetPosition() mazegrid.Position {
 func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
 	npc.Attributes.SetPosition(pos)
 
-	// if enemyPoints == 0 {
-	// 	npc.Cooldown = 3
-	// }
-
-	// npc.Pellots = mazegrid.GetPellotsPos(grid)
-	// npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
+	// If there are not enough pellots in the maze
+	if len(npc.Pellots) < 2*len(grid[0]) {
+		npc.Cooldown = 3
+	}
 
 	// Makes sure that the NPC is not stuck just recalculating paths each time
 	if npc.Cooldown == 3 || len(npc.Path) < 2 {
@@ -86,6 +83,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 	var path []mazegrid.MazeSquare
 
 	if npc.Algo == algorithms.MiniMaxAlgo {
+
 		enemyPosArr := []mazegrid.Position{enemyPos}
 
 		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
@@ -97,6 +95,7 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
 
 	} else if npc.Algo == algorithms.ExpectimaxAlgo {
+
 		enemyPosArr := []mazegrid.Position{enemyPos}
 
 		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
@@ -108,10 +107,6 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 	} else {
 
 		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize, npc.Algo)
-
-		// case algorithms.DFSAlgo:
-
-		// 	path, _ = algorithms.AbsolutePath(algorithms.DFSearch(grid, int(npc.Attributes.Position.XCoordinate), int(npc.Attributes.Position.YCoordinate), int(enemyPos.XCoordinate), int(enemyPos.YCoordinate), npc.MazeSquareSize))
 
 	}
 
@@ -153,8 +148,6 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 				nextNode = 0
 			}
 
-			fmt.Println("Here is my path :", algorithms.JustPositions(npc.Path))
-			fmt.Println("Here is my next node :", npc.Path[nextNode].NodePosition)
 			npc.UpdatePosition(npc.Path[nextNode].NodePosition, enemyPos, enemyPoints, grid)
 			npc.hasMutex = true
 			return

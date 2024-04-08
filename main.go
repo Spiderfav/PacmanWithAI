@@ -60,7 +60,7 @@ func (g *Game) Update() error {
 		go g.Player.IsPlayerMoving(g.Maze.Grid, squareSize)
 
 		// go moveGhosts(g) // Causes memory leak
-		moveGhosts(g)
+		go moveGhosts(g)
 
 	}
 
@@ -147,6 +147,11 @@ func (g *Game) Update() error {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[4].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
+
+			} else if g.buttonsAlgo[4].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[5].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.ExpectimaxAlgo)
 
 			} else if g.buttonsGhost[0].In(x, y) {
 				update(g.Ghosts, g.Maze, g.Player)

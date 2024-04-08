@@ -117,16 +117,6 @@ func GameAlgoButtons(screenWidth, screenHeight int) []*Button {
 		Y:       (screenHeight / 2) + 250,
 		Width:   100,
 		Height:  30,
-		Message: "MiniMax",
-		Enabled: true,
-	}
-
-	buttonMiniMaxPrune := &Button{
-		Image:   buttonImage,
-		X:       (screenWidth / 2) - 20, // Position of the button
-		Y:       (screenHeight / 2) + 300,
-		Width:   100,
-		Height:  30,
 		Message: "MiniMax(Pruned)",
 		Enabled: true,
 	}
@@ -134,14 +124,14 @@ func GameAlgoButtons(screenWidth, screenHeight int) []*Button {
 	buttonExpectimax := &Button{
 		Image:   buttonImage,
 		X:       (screenWidth / 2) - 20, // Position of the button
-		Y:       (screenHeight / 2) + 350,
+		Y:       (screenHeight / 2) + 300,
 		Width:   100,
 		Height:  30,
 		Message: "Expectimax",
 		Enabled: true,
 	}
 
-	var sizeButtons = []*Button{buttonAStar, buttonDij, buttonDFS, buttonBFS, buttonMiniMax, buttonMiniMaxPrune, buttonExpectimax}
+	var sizeButtons = []*Button{buttonAStar, buttonDij, buttonDFS, buttonBFS, buttonMiniMax, buttonExpectimax}
 
 	return sizeButtons
 }
