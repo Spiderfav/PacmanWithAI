@@ -155,3 +155,31 @@ func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazeg
 	}
 
 }
+
+// This function, given the array of ghosts, changes their algorithm
+func ChangeGhostsAlgo(ghosts []*NPC, ghostNewAlgo int) {
+
+	for i := range ghosts {
+		ghosts[i].Algo = ghostNewAlgo
+	}
+
+}
+
+// This functions, given the array of ghosts, the game grid and the player, resets the ghost's path and updates their position
+func ResetMovement(ghosts []*NPC, game mazegrid.Maze, player *Player) {
+
+	newPath := []mazegrid.MazeSquare{game.Grid[game.Size/2][game.Size/2], game.Grid[game.Size/2][game.Size/2], game.Grid[game.Size/2][game.Size/2]}
+
+	for i := range ghosts {
+		if ghosts[i].CancelFunc != nil {
+			ghosts[i].CancelFunc()
+		}
+
+		// Cancel any ghosts undergoing movement
+		ghosts[i].Ctx, ghosts[i].CancelFunc = context.WithCancel(context.Background())
+
+		ghosts[i].UpdatePosition(game.Grid[game.Size/2][game.Size/2].NodePosition, player.GetPosition(), 0, game.Grid)
+		ghosts[i].Path = newPath
+
+	}
+}

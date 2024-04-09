@@ -129,35 +129,35 @@ func (g *Game) Update() error {
 			} else if g.buttonsAlgo[0].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[0].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeGhostsAlgo(g.Ghosts, algorithms.DijkstraAlgo)
+				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.DijkstraAlgo)
 
 			} else if g.buttonsAlgo[1].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[1].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeGhostsAlgo(g.Ghosts, algorithms.AStarAlgo)
+				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.AStarAlgo)
 
 			} else if g.buttonsAlgo[2].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[2].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeGhostsAlgo(g.Ghosts, algorithms.BFSAlgo)
+				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.BFSAlgo)
 
 			} else if g.buttonsAlgo[3].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[3].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeGhostsAlgo(g.Ghosts, algorithms.DFSAlgo)
+				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.DFSAlgo)
 
 			} else if g.buttonsAlgo[4].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[4].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
+				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
 
 			} else if g.buttonsAlgo[4].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[5].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeGhostsAlgo(g.Ghosts, algorithms.ExpectimaxAlgo)
+				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.ExpectimaxAlgo)
 
 			} else if g.buttonsGhost[0].In(x, y) {
-				update(g.Ghosts, g.Maze, g.Player)
+				characters.ResetMovement(g.Ghosts, g.Maze, g.Player)
 				ghostNew := &characters.NPC{}
 				ghostNew.Init(g.Maze.Grid[g.Maze.Size/2][g.Maze.Size/2].NodePosition, color.RGBA{uint8(rand.Intn(255)), uint8(rand.Intn(255)), uint8(rand.Intn(255)), 255}, g.Ghosts[0].Algo, g.Player.GetPosition(), g.Maze.Grid, g.Maze.Pellots, squareSize)
 				g.Ghosts = append(g.Ghosts, ghostNew)
@@ -165,7 +165,7 @@ func (g *Game) Update() error {
 			} else if g.buttonsGhost[1].In(x, y) {
 				if len(g.Ghosts) > 1 {
 					g.Ghosts = g.Ghosts[:len(g.Ghosts)-1]
-					update(g.Ghosts, g.Maze, g.Player)
+					characters.ResetMovement(g.Ghosts, g.Maze, g.Player)
 				}
 
 			}
@@ -278,8 +278,25 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
 	g.Player.ResetPoints()
 
-	update(g.Ghosts, g.Maze, g.Player)
+	characters.ResetMovement(g.Ghosts, g.Maze, g.Player)
 
+}
+
+// This function is called every game update to move the ghosts.
+// It checks the ghost's and player position and pellots to end the game or just moves the ghosts in their path
+func moveGhosts(g *Game) {
+
+	// Game Over or new game
+	for i := range g.Ghosts {
+		if g.Ghosts[i].GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
+			changeMazeSize(g.Maze.Size, false, g)
+			break
+		}
+
+		// Move the ghosts
+		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
+
+	}
 }
 
 func main() {
