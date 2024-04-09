@@ -37,18 +37,6 @@ func (p *Player) SetPosition(m mazegrid.Position) {
 	p.Attributes.SetPosition(m)
 }
 
-func (p *Player) UpdateCount() {
-	p.Attributes.UpdateCount()
-}
-
-func (p *Player) GetCount() int {
-	return p.Attributes.GetCount()
-}
-
-func (p *Player) GetSprite() *ebiten.Image {
-	return p.Attributes.GetSprite()
-}
-
 func (p *Player) ResetPoints() {
 	p.Points = 0
 }
