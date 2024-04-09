@@ -15,9 +15,27 @@ type PriorityNode struct {
 	index    int
 }
 
+// For testing purposes, added an initialisation function to the node
+func (pn *PriorityNode) Init(node *mazegrid.MazeSquare, priority float64) {
+	pn.node = node
+	pn.priority = priority
+
+}
+
+// Returns the index of a Node in priority queue
+func (pn *PriorityNode) GetIndex() int {
+	return pn.index
+}
+
+// Returns the priority of a Node in priority queue
+func (pn *PriorityNode) GetPriority() float64 {
+	return pn.priority
+}
+
 // A PriorityQueue implements heap.Interface and holds PriorityNodes
 type PriorityQueue []*PriorityNode
 
+// Returns the length of a priority queue
 func (pq PriorityQueue) Len() int { return len(pq) }
 
 func (pq PriorityQueue) Less(i, j int) bool {
@@ -26,12 +44,14 @@ func (pq PriorityQueue) Less(i, j int) bool {
 	return pq[i].priority < pq[j].priority
 }
 
+// Swaps two items in the priority queue, given their indexes
 func (pq PriorityQueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
 	pq[i].index = i
 	pq[j].index = j
 }
 
+// Adds a new item to the priority queue
 func (pq *PriorityQueue) Push(x any) {
 	n := len(*pq)
 	item := x.(*PriorityNode)
@@ -39,6 +59,7 @@ func (pq *PriorityQueue) Push(x any) {
 	*pq = append(*pq, item)
 }
 
+// Removes the top item from the priority queue
 func (pq *PriorityQueue) Pop() any {
 	old := *pq
 	n := len(old)
