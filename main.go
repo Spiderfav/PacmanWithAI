@@ -24,6 +24,8 @@ var (
 	screenHeight = screenshot.GetDisplayBounds(0).Dy()
 )
 
+var drawGhostLines bool
+
 // Sets the size the maze will be rendered
 const (
 	squareSize = 30
@@ -60,7 +62,7 @@ func (g *Game) Update() error {
 		go g.Player.IsPlayerMoving(g.Maze.Grid, squareSize)
 
 		// go moveGhosts(g) // Causes memory leak
-		moveGhosts(g)
+		go moveGhosts(g)
 
 	}
 
@@ -86,6 +88,7 @@ func (g *Game) Update() error {
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
 			} else if g.buttonsMenu[2].In(x, y) {
+				drawGhostLines = !drawGhostLines
 
 			} else if g.buttonsMenu[3].In(x, y) {
 				os.Exit(0)
@@ -148,6 +151,11 @@ func (g *Game) Update() error {
 				g.buttonsAlgo[4].ChangeColour(color.RGBA{0, 255, 0, 250})
 				changeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
 
+			} else if g.buttonsAlgo[4].In(x, y) {
+				input.ResetColours(g.buttonsAlgo)
+				g.buttonsAlgo[5].ChangeColour(color.RGBA{0, 255, 0, 250})
+				changeGhostsAlgo(g.Ghosts, algorithms.ExpectimaxAlgo)
+
 			} else if g.buttonsGhost[0].In(x, y) {
 				update(g.Ghosts, g.Maze, g.Player)
 				ghostNew := &characters.NPC{}
@@ -181,7 +189,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		for _, ghosts := range g.Ghosts {
 			DrawSprite(screen, ghosts.Attributes)
-			drawPathsLines(screen, ghosts.Path)
+
+			if drawGhostLines {
+				drawPathsLines(screen, ghosts.Path)
+
+			}
 		}
 
 	}
@@ -208,7 +220,7 @@ func NewGame() *Game {
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.ReflexAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.DFSAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
 	ghosts := []*characters.NPC{&ghost}
 
 	// Initialize all buttons

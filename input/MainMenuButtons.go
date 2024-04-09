@@ -35,7 +35,7 @@ func MakeMainMenuButtons(screenWidth, screenHeight int) []*Button {
 		Y:       (screenHeight / 2) + 100,
 		Width:   100,
 		Height:  30,
-		Message: "Settings",
+		Message: "Draw Paths",
 		Enabled: true,
 	}
 
