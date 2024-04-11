@@ -151,7 +151,7 @@ func (g *Game) Update() error {
 				g.buttonsAlgo[4].ChangeColour(color.RGBA{0, 255, 0, 250})
 				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.MiniMaxAlgo)
 
-			} else if g.buttonsAlgo[4].In(x, y) {
+			} else if g.buttonsAlgo[5].In(x, y) {
 				input.ResetColours(g.buttonsAlgo)
 				g.buttonsAlgo[5].ChangeColour(color.RGBA{0, 255, 0, 250})
 				characters.ChangeGhostsAlgo(g.Ghosts, algorithms.ExpectimaxAlgo)
