@@ -171,7 +171,7 @@ func (g *Game) Update() error {
 
 			} else if g.buttonsGhost[1].In(x, y) {
 				if len(g.Ghosts) > 1 {
-					g.Ghosts = g.Ghosts[:len(g.Ghosts)-1]
+					g.Ghosts = g.Ghosts[:len(g.Ghosts)]
 					characters.ResetMovement(g.Ghosts, g.Maze, g.Player)
 				}
 
@@ -245,10 +245,10 @@ func (g *Game) changeMazeSize(newSize int, loadedMaze bool) {
 func (g *Game) moveGhosts() {
 
 	// Checking the position of every ghost
-	for i := range g.Ghosts {
+	for _, ghosts := range g.Ghosts {
 
 		// If the ghost has caught the player
-		if g.Ghosts[i].GetPosition() == g.Player.GetPosition() {
+		if ghosts.GetPosition() == g.Player.GetPosition() {
 
 			// Remove a life from the player
 			g.Player.RemoveLife()
@@ -267,7 +267,7 @@ func (g *Game) moveGhosts() {
 		}
 
 		// Move the ghosts
-		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetMapPoints(), g.Maze.Grid)
+		ghosts.Move(g.Player.GetPosition(), g.Player.GetMapPoints(), g.Maze.Grid)
 
 	}
 }
