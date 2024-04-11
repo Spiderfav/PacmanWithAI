@@ -90,6 +90,12 @@ func (p *Player) RemoveLife() {
 	p.lives -= 1
 }
 
+// Function that calls all necessary functions on a game over
+func (p *Player) GameOver() {
+	p.ResetLives()
+	p.ResetAllPoints()
+}
+
 // This function, given the direction that the player is moving, will move the player one square in that direction
 func (p *Player) move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize int) {
 

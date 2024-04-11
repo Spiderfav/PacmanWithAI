@@ -52,7 +52,7 @@ func (npc *NPC) IncreaseSpeed() {
 	npc.speed = npc.speed - 50
 }
 
-// Increases the ghost's speed
+// Resets the ghost's speed to original value
 func (npc *NPC) ResetSpeed() {
 	npc.speed = 500
 }

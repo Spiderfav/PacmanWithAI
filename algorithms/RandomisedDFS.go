@@ -193,3 +193,13 @@ func chooseDirection(x int, y int, size int, gameGrid [][]mazegrid.MazeSquare, s
 	// Return the direction chosen
 	return direction
 }
+
+// Generates a maze given the size of the maze and the square size
+func CreateMaze(mazeSize int, squareSize int) mazegrid.Maze {
+	// Creating the maze by aplying DFS twice
+	oldGameGridDFS := DFS(mazeSize, nil, squareSize)
+	MarkUnvisited(oldGameGridDFS, false)
+	gameGridDFS := DFS(mazeSize, oldGameGridDFS, squareSize)
+	return mazegrid.Maze{Size: mazeSize, Grid: gameGridDFS, Pellots: mazegrid.GetPellotsPos(gameGridDFS)}
+
+}

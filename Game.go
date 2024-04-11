@@ -225,11 +225,8 @@ func (g *Game) changeMazeSize(newSize int, loadedMaze bool) {
 	// If maze isn't being loaded
 	if !loadedMaze {
 		// Create new maze with the given size
-		oldGameGridDFS := algorithms.DFS(newSize, nil, squareSize)
-		algorithms.MarkUnvisited(oldGameGridDFS, false)
-		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS, squareSize)
-		// Set new game size to be the given size
-		g.Maze.Size = newSize
+		g.Maze = algorithms.CreateMaze(newSize, squareSize)
+
 		g.Player.ResetMapPoints()
 
 	}
@@ -257,9 +254,8 @@ func (g *Game) moveGhosts() {
 			// If the player's lives are zero, reset the maze
 			if g.Player.GetLives() == -1 {
 				g.changeMazeSize(g.Maze.Size, false)
-				g.Player.ResetLives()
-				g.Player.ResetAllPoints()
-				g.increaseGhostSpeed()
+				g.Player.GameOver()
+				g.resetGhostSpeed()
 				break
 			}
 
@@ -274,6 +270,14 @@ func (g *Game) moveGhosts() {
 	}
 }
 
+// This function resets the ghost's speed back to their original when Pacman loses
+func (g *Game) resetGhostSpeed() {
+	for _, ghosts := range g.Ghosts {
+		ghosts.ResetSpeed()
+	}
+}
+
+// This function increases the ghost's speed based on how many points Pacman has
 func (g *Game) increaseGhostSpeed() {
 	for _, ghosts := range g.Ghosts {
 		ghosts.IncreaseSpeed()
@@ -283,19 +287,15 @@ func (g *Game) increaseGhostSpeed() {
 // This function is called by the game object to create the game environment
 func NewGame() *Game {
 
-	// Creating the maze by aplying DFS twice
-	oldGameGridDFS := algorithms.DFS(mazeSizeOriginal, nil, squareSize)
-	algorithms.MarkUnvisited(oldGameGridDFS, false)
-	gameGridDFS := algorithms.DFS(mazeSizeOriginal, oldGameGridDFS, squareSize)
-	maze := mazegrid.Maze{Size: mazeSizeOriginal, Grid: gameGridDFS, Pellots: mazegrid.GetPellotsPos(gameGridDFS)}
+	maze := algorithms.CreateMaze(mazeSizeOriginal, squareSize)
 
 	// Creating the player object
 	pacman := characters.Player{}
-	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{255, 234, 0, 255}, 3)
+	pacman.Init(maze.Grid[0][0].NodePosition, color.RGBA{255, 234, 0, 255}, 3)
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
-	ghost.Init(gameGridDFS[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.DFSAlgo, pacman.GetPosition(), gameGridDFS, maze.Pellots, squareSize)
+	ghost.Init(maze.Grid[mazeSizeOriginal/2][mazeSizeOriginal/2].NodePosition, color.RGBA{200, 0, 0, 255}, algorithms.AStarAlgo, pacman.GetPosition(), maze.Grid, maze.Pellots, squareSize)
 	ghosts := []*characters.NPC{&ghost}
 
 	// Initialize all buttons
