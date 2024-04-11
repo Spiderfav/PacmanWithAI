@@ -58,10 +58,16 @@ func (g *Game) Update() error {
 
 		g.Maze.Pellots = mazegrid.GetPellotsPos(g.Maze.Grid)
 
+		if len(g.Maze.Pellots) == 0 {
+			g.Player.ResetMapPoints()
+			changeMazeSize(g.Maze.Size, false, g)
+
+		}
+
 		// Check if player is moving
 		go g.Player.IsPlayerMoving(g.Maze.Grid, squareSize)
 
-		// go moveGhosts(g) // Causes memory leak
+		// Move ghosts
 		go moveGhosts(g)
 
 	}
@@ -84,9 +90,11 @@ func (g *Game) Update() error {
 				return nil
 
 			} else if g.buttonsMenu[1].In(x, y) {
+
 				g.Maze.Grid = file.LoadFromFile()
 				g.Maze.Size = len(g.Maze.Grid[0])
 				changeMazeSize(0, true, g)
+
 			} else if g.buttonsMenu[2].In(x, y) {
 				drawGhostLines = !drawGhostLines
 
@@ -121,7 +129,7 @@ func (g *Game) Update() error {
 			} else if g.buttonsSize[2].In(x, y) {
 				input.ResetColours(g.buttonsSize)
 				g.buttonsSize[2].ChangeColour(color.RGBA{0, 255, 0, 250})
-				changeMazeSize((mazeSizeOriginal*2)*2, false, g)
+				changeMazeSize(mazeSizeOriginal*3, false, g)
 
 			} else if g.buttonsSize[3].In(x, y) {
 				file.SaveToFile(g.Maze.Grid)
@@ -216,7 +224,7 @@ func NewGame() *Game {
 
 	// Creating the player object
 	pacman := characters.Player{}
-	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{255, 234, 0, 255})
+	pacman.Init(gameGridDFS[0][0].NodePosition, color.RGBA{255, 234, 0, 255}, 3)
 
 	// Creating the Enemy
 	ghost := characters.NPC{}
@@ -271,12 +279,12 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 		g.Maze.Grid = algorithms.DFS(newSize, oldGameGridDFS, squareSize)
 		// Set new game size to be the given size
 		g.Maze.Size = newSize
+		g.Player.ResetMapPoints()
 
 	}
 
 	// Reset the player and the Ghosts position to their original start
 	g.Player.SetPosition(g.Maze.Grid[0][0].NodePosition)
-	g.Player.ResetPoints()
 
 	characters.ResetMovement(g.Ghosts, g.Maze, g.Player)
 
@@ -286,15 +294,30 @@ func changeMazeSize(newSize int, loadedMaze bool, g *Game) {
 // It checks the ghost's and player position and pellots to end the game or just moves the ghosts in their path
 func moveGhosts(g *Game) {
 
-	// Game Over or new game
+	// Checking the position of every ghost
 	for i := range g.Ghosts {
-		if g.Ghosts[i].GetPosition() == g.Player.GetPosition() || len(g.Maze.Pellots) == 0 {
-			changeMazeSize(g.Maze.Size, false, g)
+
+		// If the ghost has caught the player
+		if g.Ghosts[i].GetPosition() == g.Player.GetPosition() {
+
+			// Remove a life from the player
+			g.Player.RemoveLife()
+
+			// If the player's lives are zero, reset the maze
+			if g.Player.GetLives() == -1 {
+				changeMazeSize(g.Maze.Size, false, g)
+				g.Player.ResetLives()
+				g.Player.ResetAllPoints()
+				break
+			}
+
+			// As player was caught, restart the map
+			changeMazeSize(g.Maze.Size, true, g)
 			break
 		}
 
 		// Move the ghosts
-		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetPoints(), g.Maze.Grid)
+		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetMapPoints(), g.Maze.Grid)
 
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -42,11 +43,15 @@ func drawMenu(screen *ebiten.Image, arr []*input.Button, font font.Face) {
 
 // This function draws the game menu to the screen
 func gameMenu(screen *ebiten.Image, g *Game) {
-	// 	// Clear the screen to white
+	// Clear the screen to white
 	screen.Fill(color.Black)
-	// 	// Draw the maze to the screen
+	// Draw the maze to the screen
 	drawMaze(screen, g)
-	//OldMazeSystem(screen, g)
+
+	text.Draw(screen, "Lives "+strconv.Itoa(g.Player.GetLives()), g.fontFace, (screenWidth/2)-40, (screenHeight/2)-150, color.White)
+	text.Draw(screen, "Points "+strconv.Itoa(g.Player.GetTotalPoints()), g.fontFace, (screenWidth/2)-40, (screenHeight/2)-100, color.White)
+
+	// Draw the game buttons to the screen
 	backButton(screen, g)
 	drawMenu(screen, g.buttonsSize, g.fontFace)
 	drawMenu(screen, g.buttonsAlgo, g.fontFace)
