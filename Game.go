@@ -171,7 +171,7 @@ func (g *Game) Update() error {
 
 			} else if g.buttonsGhost[1].In(x, y) {
 				if len(g.Ghosts) > 1 {
-					g.Ghosts = g.Ghosts[:len(g.Ghosts)]
+					g.Ghosts = g.Ghosts[:len(g.Ghosts)-1]
 					characters.ResetMovement(g.Ghosts, g.Maze, g.Player)
 				}
 
