@@ -127,3 +127,58 @@ Week 7:
     . Both Pacman and the Ghosts have been implemented
     . Evaluation functions have been created for each position
     . Have created way to allow for Alpha-Beta pruning when later implemented
+
+Week 8:
+
+- Added Alpha-Beta pruning to MiniMax agents
+- Added the option to use MiniMax with or without pruning
+- Added various comments to functions:
+    . Draw functions have been simplified and Commented
+    . File operations have comments
+    . Maze objects and Game code have been Commented
+    . buttons
+    . Character object
+    . Player object
+    . Npc object
+
+- Fixed a bug where the ghosts were stuck recalculating the same path (added a cooldown to recalculate a new path)
+- Fixed A* randomly crashing during certain paths
+- Added a way to restart the game if every pellot has been collected
+- Fixed the ghosts following old paths when the maze has restarted
+- TODO: Simplify A* and Dijkstras (maybe implement priority queue)
+
+Week 9:
+
+- Implemented BFS algorithm
+- Changed the whole implementation of the code to use a variable of square size instead of a constant
+- Added colours to pacman and ghosts
+- Simplified Randomised DFS algorithm to use simpler terms
+
+Week 10:
+
+- Created a priority queue for Dijkstras and A* to use
+- Added super pellots, pellots with more points to the maze
+- Implemented Dijkstras using priority queue
+- Created a path reconstruction function to reverse the path taken to the goal and get shortest path
+    . It is based on the AbsolutePath implementation
+- Implemented A* using priority queue
+- Changed the game window size to detect the screen size and create the game window to the screen
+- Added comments to the new functions for A* and Dijkstras
+- Fixed MiniMax bugs
+- Implemented a crude Expectimax (implementation may be wrong)
+- Created buttons to change the algorithm the ghosts will use
+
+- TODO: Check Expectimax implementation. Should it use randomness?
+
+Week 11:
+
+- Added buttons to create and delete ghosts from the map
+    . Adding too many at a time and letting it run = Memory Leak :D
+- Improved Reflex to use improved reflexes according to the game map
+    . Less pellots = Go for pacman
+    . Near pacman = go for him
+- Fixed Dijkstras improving shortest path (It was basically using A* without heuristic)
+- Used a function to check memory allocation of functions
+- Removed unused functions and objects and properties from objects
+- Added even more comments!
+- Added a button to hide the trail that the ghosts make showing their path (can be toggled on)

@@ -46,8 +46,9 @@ func Expectimax(gameGrid [][]mazegrid.MazeSquare, pacmanPos []mazegrid.Position,
 
 		possibleMoves := getPossibleMoves(gameGrid, ghostPos[len(ghostPos)-1], squareSize)
 
-		randomNodeChosen := rand.Intn(len(possibleMoves) - 1)
+		randomNodeChosen := rand.Intn(len(possibleMoves))
 
+		// The average evaluation of every move is calculated and as every move has an equal chance, a random node is chosen
 		for i, element := range possibleMoves {
 			tempGhostPos := make([]mazegrid.Position, len(ghostPos))
 			copy(tempGhostPos, ghostPos)

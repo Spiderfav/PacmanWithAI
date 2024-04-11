@@ -73,11 +73,6 @@ func drawPathsLines(screen *ebiten.Image, pathTaken []mazegrid.MazeSquare) {
 
 // Function to draw the sprites of the characters to the screen
 func DrawSprite(screen *ebiten.Image, char characters.Character) {
-	// op := &ebiten.DrawImageOptions{}
-	// op.GeoM.Translate(float64(char.GetPosition().XCoordinate+10), float64((char.GetPosition().YCoordinate + 10)))
-	// i := (char.GetCount() / 5) % char.GetFrameProperties().FrameCount
-	// sx, sy := char.GetFrameProperties().FrameOX+i*char.GetFrameProperties().FrameWidth, char.GetFrameProperties().FrameOY
-	// screen.DrawImage(char.GetSprite().SubImage(image.Rect(sx, sy, sx+char.GetFrameProperties().FrameWidth, sy+char.GetFrameProperties().FrameHeight)).(*ebiten.Image), op)
 
 	vector.DrawFilledCircle(screen, char.GetPosition().XCoordinate+halfSquare, char.GetPosition().YCoordinate+halfSquare, halfSquare/2, char.Colour, true)
 

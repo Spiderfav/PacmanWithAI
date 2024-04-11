@@ -20,41 +20,80 @@ const (
 
 // This player object is an extension of character
 type Player struct {
-	Attributes Character
-	Points     int
+	Attributes  Character
+	mapPoints   int
+	totalPoints int
+	lives       int
 }
 
-func (p *Player) Init(startPos mazegrid.Position, colour color.Color) {
+// Function to initialise a player. Requires the starting position, colour and lives for the player.
+func (p *Player) Init(startPos mazegrid.Position, colour color.Color, lives int) {
 	p.Attributes.Init(startPos, colour)
+	p.lives = lives
 
 }
 
+// Function to return position of the player
 func (p *Player) GetPosition() mazegrid.Position {
 	return p.Attributes.GetPosition()
 }
 
+// Function to set position of the player
 func (p *Player) SetPosition(m mazegrid.Position) {
 	p.Attributes.SetPosition(m)
 }
 
-func (p *Player) UpdateCount() {
-	p.Attributes.UpdateCount()
+// Function that resets the total points of the player
+func (p *Player) addAllPoints(pointsToAdd int) {
+	p.totalPoints += pointsToAdd
+	p.mapPoints += pointsToAdd
 }
 
-func (p *Player) GetCount() int {
-	return p.Attributes.GetCount()
+// Function that resets the total points of the player
+func (p *Player) ResetAllPoints() {
+	p.totalPoints = 0
+	p.mapPoints = 0
 }
 
-func (p *Player) GetSprite() *ebiten.Image {
-	return p.Attributes.GetSprite()
+// Function that resets the total points of the player
+func (p *Player) ResetTotalPoints() {
+	p.totalPoints = 0
 }
 
-func (p *Player) ResetPoints() {
-	p.Points = 0
+// Function that returns the current total points of the player
+func (p *Player) GetTotalPoints() int {
+	return p.totalPoints
 }
 
-func (p *Player) GetPoints() int {
-	return p.Points
+// Function that resets the points of the player for that map
+func (p *Player) ResetMapPoints() {
+	p.mapPoints = 0
+}
+
+// Function that returns the current points of the player for the current map
+func (p *Player) GetMapPoints() int {
+	return p.mapPoints
+}
+
+// Function that resets the lives of the player
+func (p *Player) ResetLives() {
+	p.lives = 3
+}
+
+// Function that returns the current lives of the player
+func (p *Player) GetLives() int {
+	return p.lives
+}
+
+// Function that removes a life from the player
+func (p *Player) RemoveLife() {
+	p.lives -= 1
+}
+
+// Function that calls all necessary functions on a game over
+func (p *Player) GameOver() {
+	p.ResetLives()
+	p.ResetAllPoints()
 }
 
 // This function, given the direction that the player is moving, will move the player one square in that direction
@@ -66,12 +105,12 @@ func (p *Player) move(d DirectionOfPlayer, m [][]mazegrid.MazeSquare, squareSize
 	// If the square contains a pellot, add points to the player
 	// Delete the pellot from the square once collected
 	if m[array1Pos][array2Pos].HasPellot {
-		p.Points += 1
+		p.addAllPoints(1)
 		m[array1Pos][array2Pos].HasPellot = false
 	}
 
 	if m[array1Pos][array2Pos].HasSuperPellot {
-		p.Points += 5
+		p.addAllPoints(5)
 		m[array1Pos][array2Pos].HasSuperPellot = false
 	}
 

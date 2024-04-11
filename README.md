@@ -31,17 +31,12 @@ Now I don't exactly know how since my machines are using the access tokens creat
     The program should begin to run in the a window or fullscreen (depending on your monitor's resolution)
 
 5. To use the program, the following keys are used:
-    1 - Switch to smallest Maze Size
-    2 - Switch to medium Maze Size
-    3 - Switch to largest Maze Size
-    A - Run's Dijkstras Algorithm on the Maze
-    B - Run's A* Algorithm on the Maze
-    C - Run's "Maze to Weighted Graph" Algorithm on the Maze
-    D - Clear's the screen to the normal maze built
-
-    ### NOTE: Clicking on 1-3 multiple times will result in new maze configurations each time!
+    W : Moves the character up
+    S : Moves the character down
+    A: Moves the character left
+    D: Moves the character right
 
 6. While the maze is being run, the terminal window used to run the maze will also output the time taken for each algorithm to run on the disired maze size.
 
-7. To quit the program, simply "Alt+Tab" to the terminal window used to run the program and "Ctrl+C" the terminal window
+7. To quit the program, simply "Alt+Tab" to the terminal window used to run the program and "Ctrl+C" the terminal window or go to the main menu and exit. 
 

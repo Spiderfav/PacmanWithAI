@@ -20,7 +20,7 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 	file.PrintMemUsage()
 
 	// Create a priority queue for choosing next nodes
-	priorityQueue := make(PriorityQueue, 0)
+	priorityQueue := make(mazegrid.PriorityQueue, 0)
 	heap.Init(&priorityQueue)
 
 	startNode := &gameGrid[(startY/squareSize)-1][(startX/squareSize)-1]
@@ -31,14 +31,17 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 	startNode.Weight = 0
 	startNode.Heuristic = HeuristicsDistance(float64(startX), float64(startY), float64(finishX), float64(finishY))
 
-	heap.Push(&priorityQueue, &PriorityNode{node: startNode, priority: startNode.Weight + startNode.Heuristic})
+	pqNode := mazegrid.PriorityNode{}
+	pqNode.Init(startNode, startNode.Weight+startNode.Heuristic)
+
+	heap.Push(&priorityQueue, &pqNode)
 
 	// Store each node's predecessor for path reconstruction
 	predecessor := make(map[*mazegrid.MazeSquare]*mazegrid.MazeSquare)
 
 	// While the priority queue is not empty
 	for len(priorityQueue) > 0 {
-		currentNode := heap.Pop(&priorityQueue).(*PriorityNode).node
+		currentNode := heap.Pop(&priorityQueue).(*mazegrid.PriorityNode).GetNode()
 
 		if currentNode == endNode {
 			break // Reached the end node
@@ -61,8 +64,11 @@ func AStar(gameGrid [][]mazegrid.MazeSquare, startX, startY, finishX, finishY, s
 					nodeToTest.Heuristic = HeuristicsDistance(float64(move.XCoordinate), float64(move.YCoordinate), float64(finishX), float64(finishY))
 
 					if !nodeInQueue(nodeToTest, priorityQueue) {
+						pqNodeTemp := mazegrid.PriorityNode{}
+						pqNodeTemp.Init(nodeToTest, nodeToTest.Weight+nodeToTest.Heuristic)
+
 						//The node will be added to the priority queue, with the both heuristics
-						heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight + nodeToTest.Heuristic})
+						heap.Push(&priorityQueue, &pqNodeTemp)
 					}
 				}
 			}
@@ -117,9 +123,9 @@ func JustPositions(path []mazegrid.MazeSquare) []mazegrid.Position {
 }
 
 // This function checks if a node is in the given priority queue.
-func nodeInQueue(node *mazegrid.MazeSquare, pq PriorityQueue) bool {
+func nodeInQueue(node *mazegrid.MazeSquare, pq mazegrid.PriorityQueue) bool {
 	for _, pn := range pq {
-		if pn.node == node {
+		if pn.GetNode() == node {
 			return true
 		}
 	}
