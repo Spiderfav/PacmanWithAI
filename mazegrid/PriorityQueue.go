@@ -1,25 +1,28 @@
-package algorithms
+package mazegrid
 
 import (
 	"container/heap"
-
-	"gitlab.cim.rhul.ac.uk/zkac432/PROJECT/mazegrid"
 )
 
 // This priority queue is based on the Golang's own documentation from the GO heap package:
 // https://pkg.go.dev/container/heap .
 // However, to fit my purposes, as I will use the distance as priority, some functions have changed.
 type PriorityNode struct {
-	node     *mazegrid.MazeSquare
+	node     *MazeSquare
 	priority float64
 	index    int
 }
 
 // For testing purposes, added an initialisation function to the node
-func (pn *PriorityNode) Init(node *mazegrid.MazeSquare, priority float64) {
+func (pn *PriorityNode) Init(node *MazeSquare, priority float64) {
 	pn.node = node
 	pn.priority = priority
 
+}
+
+// Returns the mazeSquare of a Node in priority queue
+func (pn *PriorityNode) GetNode() *MazeSquare {
+	return pn.node
 }
 
 // Returns the index of a Node in priority queue
@@ -71,7 +74,7 @@ func (pq *PriorityQueue) Pop() any {
 }
 
 // Update changes the priority and value of an PriorityNode in the queue
-func (pq *PriorityQueue) update(item *PriorityNode, value *mazegrid.MazeSquare, priority float64) {
+func (pq *PriorityQueue) update(item *PriorityNode, value *MazeSquare, priority float64) {
 	item.node = value
 	item.priority = priority
 	heap.Fix(pq, item.index)

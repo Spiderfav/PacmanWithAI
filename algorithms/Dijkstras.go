@@ -19,7 +19,7 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 	fmt.Println("Mem usage before:")
 	file.PrintMemUsage()
 
-	priorityQueue := make(PriorityQueue, 0)
+	priorityQueue := make(mazegrid.PriorityQueue, 0)
 	heap.Init(&priorityQueue)
 
 	// Store each node's predecessor for path reconstruction
@@ -30,11 +30,14 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 
 	endNode := &gameGrid[(finishY/squareSize)-1][(finishX/squareSize)-1]
 
-	heap.Push(&priorityQueue, &PriorityNode{node: startNode, priority: startNode.Weight})
+	pqNode := mazegrid.PriorityNode{}
+	pqNode.Init(startNode, startNode.Weight)
+
+	heap.Push(&priorityQueue, &pqNode)
 
 	for len(priorityQueue) > 0 {
 
-		currentNode := heap.Pop(&priorityQueue).(*PriorityNode).node //Asserting the type from the pop
+		currentNode := heap.Pop(&priorityQueue).(*mazegrid.PriorityNode).GetNode() //Asserting the type from the pop
 
 		// Check if this is the end node
 		if currentNode == endNode {
@@ -52,7 +55,11 @@ func Dijkstras(gameGrid [][]mazegrid.MazeSquare, startX int, startY int, finishX
 
 				nodeToTest.Weight = currentNode.Weight + 1
 				nodeToTest.Visited = true
-				heap.Push(&priorityQueue, &PriorityNode{node: nodeToTest, priority: nodeToTest.Weight})
+
+				pqNodeTemp := mazegrid.PriorityNode{}
+				pqNodeTemp.Init(nodeToTest, nodeToTest.Weight)
+
+				heap.Push(&priorityQueue, &pqNodeTemp)
 				predecessor[nodeToTest] = currentNode
 
 			}
