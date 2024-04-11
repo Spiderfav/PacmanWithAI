@@ -88,10 +88,7 @@ func (g *Game) Update() error {
 				g.buttonBack.Enabled = true
 
 				// Change Size and Algo buttons to enabled and disable the Menu Buttons
-				input.ChangeStateButtons(g.buttonsSize[:], true)
-				input.ChangeStateButtons(g.buttonsAlgo[:], true)
-				input.ChangeStateButtons(g.buttonsGhost[:], true)
-				input.ChangeStateButtons(g.buttonsMenu[:], false)
+				g.changeStates(true)
 				return nil
 
 			} else if g.buttonsMenu[1].In(x, y) {
@@ -115,10 +112,7 @@ func (g *Game) Update() error {
 				g.buttonBack.Enabled = false
 
 				// Change Size and Algo buttons to disabled and enable the Menu Buttons
-				input.ChangeStateButtons(g.buttonsSize[:], false)
-				input.ChangeStateButtons(g.buttonsAlgo[:], false)
-				input.ChangeStateButtons(g.buttonsGhost[:], false)
-				input.ChangeStateButtons(g.buttonsMenu[:], true)
+				g.changeStates(false)
 				return nil
 
 			} else if g.buttonsSize[0].In(x, y) {
@@ -187,6 +181,14 @@ func (g *Game) Update() error {
 	}
 
 	return nil
+}
+
+// This function is called to change the buttons shown on screen
+func (g *Game) changeStates(shown bool) {
+	input.ChangeStateButtons(g.buttonsSize[:], shown)
+	input.ChangeStateButtons(g.buttonsAlgo[:], shown)
+	input.ChangeStateButtons(g.buttonsGhost[:], shown)
+	input.ChangeStateButtons(g.buttonsMenu[:], !shown)
 }
 
 // This function is called every second to update what is drawn on the screen
