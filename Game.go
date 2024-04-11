@@ -48,6 +48,8 @@ type Game struct {
 	Player   *characters.Player
 }
 
+var lastPlayerPoints int
+
 // This function updates the game logic 60 times a second
 func (g *Game) Update() error {
 
@@ -59,6 +61,12 @@ func (g *Game) Update() error {
 			g.Player.ResetMapPoints()
 			g.changeMazeSize(g.Maze.Size, false)
 
+		}
+
+		if g.Player.GetTotalPoints()%50 == 0 && lastPlayerPoints != g.Player.GetTotalPoints() {
+			//Increase ghost speed
+			lastPlayerPoints = g.Player.GetTotalPoints()
+			g.increaseGhostSpeed()
 		}
 
 		// Check if player is moving
@@ -251,6 +259,7 @@ func (g *Game) moveGhosts() {
 				g.changeMazeSize(g.Maze.Size, false)
 				g.Player.ResetLives()
 				g.Player.ResetAllPoints()
+				g.increaseGhostSpeed()
 				break
 			}
 
@@ -262,6 +271,12 @@ func (g *Game) moveGhosts() {
 		// Move the ghosts
 		g.Ghosts[i].Move(g.Player.GetPosition(), g.Player.GetMapPoints(), g.Maze.Grid)
 
+	}
+}
+
+func (g *Game) increaseGhostSpeed() {
+	for _, ghosts := range g.Ghosts {
+		ghosts.IncreaseSpeed()
 	}
 }
 

@@ -19,20 +19,22 @@ type NPC struct {
 	hasMutex       bool
 	Ctx            context.Context
 	CancelFunc     context.CancelFunc
-	Pellots        []mazegrid.Position
-	Cooldown       int
-	MazeSquareSize int
+	pellots        []mazegrid.Position
+	speed          int
+	cooldown       int
+	mazeSquareSize int
 }
 
 // This function intialises the NPC variables and creates a starting path for the ghost to take
 func (npc *NPC) Init(pos mazegrid.Position, colour color.Color, algo algorithms.Algorithm, enemyPos mazegrid.Position, grid [][]mazegrid.MazeSquare, pellots []mazegrid.Position, squareSize int) {
 	npc.Attributes.Init(pos, colour)
 	npc.Algo = algo
-	npc.Pellots = pellots
-	npc.MazeSquareSize = squareSize
+	npc.pellots = pellots
+	npc.mazeSquareSize = squareSize
 	npc.Path = npc.calculatePath(enemyPos, 0, grid)
 	npc.hasMutex = true
-	npc.Cooldown = 0
+	npc.cooldown = 0
+	npc.speed = 500
 	npc.Ctx, npc.CancelFunc = context.WithCancel(context.Background())
 
 }
@@ -45,6 +47,16 @@ func (npc *NPC) CancelContext() {
 	}
 }
 
+// Increases the ghost's speed
+func (npc *NPC) IncreaseSpeed() {
+	npc.speed = npc.speed - 50
+}
+
+// Increases the ghost's speed
+func (npc *NPC) ResetSpeed() {
+	npc.speed = 500
+}
+
 // Returns the position of the NPC
 func (npc *NPC) GetPosition() mazegrid.Position {
 	return npc.Attributes.GetPosition()
@@ -55,19 +67,19 @@ func (npc *NPC) UpdatePosition(pos mazegrid.Position, enemyPos mazegrid.Position
 	npc.Attributes.SetPosition(pos)
 
 	// If there are not enough pellots in the maze
-	if len(npc.Pellots) < 2*len(grid[0]) {
-		npc.Cooldown = 3
+	if len(npc.pellots) < 2*len(grid[0]) {
+		npc.cooldown = 3
 	}
 
 	// Makes sure that the NPC is not stuck just recalculating paths each time
-	if npc.Cooldown == 3 || len(npc.Path) < 2 {
-		npc.Pellots = mazegrid.GetPellotsPos(grid)
+	if npc.cooldown == 3 || len(npc.Path) < 2 {
+		npc.pellots = mazegrid.GetPellotsPos(grid)
 		npc.Path = npc.calculatePath(enemyPos, enemyPoints, grid)
 
-		npc.Cooldown = 0
+		npc.cooldown = 0
 	} else {
 		npc.Path = npc.Path[:len(npc.Path)-1]
-		npc.Cooldown += 1
+		npc.cooldown += 1
 	}
 
 }
@@ -90,9 +102,9 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		params := algorithms.PruningParams{Alpha: math.Inf(1), Beta: math.Inf(-1)}
 
-		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, true, npc.MazeSquareSize)
+		_, _, ghostPosArrNew, _ := algorithms.MiniMax(grid, params, enemyPosArr, enemyPoints, ghostPosArr, npc.pellots, 10, true, true, npc.mazeSquareSize)
 
-		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
+		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.mazeSquareSize))
 
 	} else if npc.Algo == algorithms.ExpectimaxAlgo {
 
@@ -100,13 +112,13 @@ func (npc *NPC) calculatePath(enemyPos mazegrid.Position, enemyPoints int, grid 
 
 		ghostPosArr := []mazegrid.Position{npc.Attributes.Position}
 
-		_, _, ghostPosArrNew := algorithms.Expectimax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.Pellots, 10, true, npc.MazeSquareSize)
+		_, _, ghostPosArrNew := algorithms.Expectimax(grid, enemyPosArr, enemyPoints, ghostPosArr, npc.pellots, 10, true, npc.mazeSquareSize)
 
-		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.MazeSquareSize))
+		path = algorithms.ReversePath(algorithms.PosToNode(grid, ghostPosArrNew, npc.mazeSquareSize))
 
 	} else {
 
-		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.Pellots, npc.MazeSquareSize, npc.Algo)
+		path = algorithms.Reflex(grid, enemyPos, npc.Attributes.Position, npc.pellots, npc.mazeSquareSize, npc.Algo)
 
 	}
 
@@ -131,7 +143,7 @@ func (npc *NPC) ResetMutex() {
 
 // This function will make the NPC wait to move to the next position until the given time is up
 func (npc *NPC) wait(enemyPos mazegrid.Position, enemyPoints int, grid [][]mazegrid.MazeSquare) {
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * time.Duration(npc.speed))
 	defer ticker.Stop()
 
 	for {
